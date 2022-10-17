@@ -174,6 +174,67 @@ ggsave("Zurich_overview.png", width = 8, height = 14)
 setwd(input)
 
 
+#### Compare and look at leg/body differences ####
+
+# filter for entries only on body per bbspecies
+BB22.lapi.body <- BB22.abund %>% 
+  filter(str_detect(bborgan, "B") & bbspecies == "l")
+BB22.lapi.body.OTU <- BB22.lapi.body %>% 
+  group_by(OTU) %>%
+  summarise(cum.abund = sum(Abundance))
+
+BB22.pasc.body <- BB22.abund %>% 
+  filter(str_detect(bborgan, "B") & bbspecies == "p")
+BB22.pasc.body.OTU <- BB22.pasc.body %>% 
+  group_by(OTU) %>%
+  summarise(cum.abund = sum(Abundance))
+
+# filter for entries only on legs
+BB22.lapi.leg <- BB22.abund %>% 
+  filter(str_detect(bborgan, "L") & bbspecies == "l")
+BB22.lapi.leg.OTU <- BB22.lapi.leg %>% 
+  group_by(OTU) %>%
+  summarise(cum.abund = sum(Abundance))
+
+BB22.pasc.leg <- BB22.abund %>% 
+  filter(str_detect(bborgan, "L") & bbspecies == "p")
+BB22.pasc.leg.OTU <- BB22.pasc.leg %>% 
+  group_by(OTU) %>%
+  summarise(cum.abund = sum(Abundance))
+
+# find common visited plant species body
+shared.pasc <- length(intersect(BB22.pasc.leg.OTU$OTU, BB22.pasc.body.OTU$OTU)) #shared species B.p.
+visited.pasc <- length(unique(as_factor(c(BB22.pasc.leg.OTU$OTU, BB22.pasc.body.OTU$OTU)))) #all species B.p.
+
+shared.lapi <- length(intersect(BB22.lapi.leg.OTU$OTU, BB22.lapi.body.OTU$OTU)) #shared species B.l.
+visited.lapi <- length(unique(as_factor(c(BB22.lapi.leg.OTU$OTU, BB22.lapi.body.OTU$OTU)))) #all species B.l.
+
+df.ratio <- data.frame (percent = c(shared.pasc, visited.pasc, shared.lapi, visited.lapi),
+                  bbspecies = c("B.pascuorum", "B.pascuorum", "B.lapidarius", "B.lapidarius"),
+                  plant_species = c("shared", "all (body+leg)", "shared", "all (body+leg)"))
+# Stacked + percent
+p1 <- ggplot(df.ratio, aes(fill=plant_species, y=percent, x=bbspecies)) + 
+  geom_bar(position="fill", stat="identity") + xlab("") +
+  ggtitle("Body and Leg: Ratio of Shared Plant Species detected")
+
+# plot sum of plant species visited
+df.sum <- data.frame(sum = c(length(BB22.pasc.leg.OTU$OTU), length(BB22.pasc.body.OTU$OTU), length(BB22.lapi.leg.OTU$OTU), length(BB22.lapi.body.OTU$OTU)),
+                     bbspecies = c("B.pascuorum", "B.pascuorum", "B.lapidarius", "B.lapidarius"),
+                     bborgan = c("leg", "body","leg", "body"))
+p2 <- ggplot(df.sum, aes(x=bbspecies, y=sum, fill = bborgan)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  ylab("Sum of Plant Species detected") + xlab("")+
+  ggtitle("Body and Leg: Sum of Plant Species detected")
+
+setwd(output)
+plot1 <- ggarrange(p1, p2, ncol = 2, labels = c("A", "B"))
+annotate_figure(plot1, top = text_grob("Comparison Body and Leg Pollen", 
+                                       face = "bold", size = 14))
+ggsave("Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
+setwd(input)
+
+
+#### Compare and look at leg/body differences and landscapes ####
 
 
 
