@@ -1,5 +1,5 @@
 ################################################
-# R data preparation
+# R data preparation and first looks
 # by Simonetta Selva
 #
 # Created: October 17, 2022
