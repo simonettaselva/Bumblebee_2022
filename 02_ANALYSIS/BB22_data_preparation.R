@@ -235,8 +235,130 @@ setwd(input)
 
 
 #### Compare and look at leg/body differences and landscapes ####
+# BB22.OTU <- BB22.abund %>% 
+#   group_by(OTU, landscape, bbspecies, bborgan) %>%
+#   summarise(cum.abund = sum(Abundance))
 
 
+# URBAN
+BB22.abund.urban <- BB22.abund %>%
+  filter(landscape == "U")
 
+# filter for entries only on body per bbspecies
+BB22.lapi.body <- BB22.abund.urban %>%
+  filter(str_detect(bborgan, "B") & bbspecies == "l")
+BB22.lapi.body.OTU.urban <- BB22.lapi.body %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+BB22.pasc.body <- BB22.abund.urban %>%
+  filter(str_detect(bborgan, "B") & bbspecies == "p")
+BB22.pasc.body.OTU.urban <- BB22.pasc.body %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+# filter for entries only on legs
+BB22.lapi.leg <- BB22.abund.urban %>%
+  filter(str_detect(bborgan, "L") & bbspecies == "l")
+BB22.lapi.leg.OTU.urban <- BB22.lapi.leg %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+BB22.pasc.leg <- BB22.abund.urban %>%
+  filter(str_detect(bborgan, "L") & bbspecies == "p")
+BB22.pasc.leg.OTU.urban <- BB22.pasc.leg %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+# RURAL
+BB22.abund.rural <- BB22.abund %>%
+  filter(landscape == "R")
+
+# filter for entries only on body per bbspecies
+BB22.lapi.body <- BB22.abund.rural %>%
+  filter(str_detect(bborgan, "B") & bbspecies == "l")
+BB22.lapi.body.OTU.rural <- BB22.lapi.body %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+BB22.pasc.body <- BB22.abund.rural %>%
+  filter(str_detect(bborgan, "B") & bbspecies == "p")
+BB22.pasc.body.OTU.rural <- BB22.pasc.body %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+# filter for entries only on legs
+BB22.lapi.leg <- BB22.abund.rural %>%
+  filter(str_detect(bborgan, "L") & bbspecies == "l")
+BB22.lapi.leg.OTU.rural <- BB22.lapi.leg %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+BB22.pasc.leg <- BB22.abund.rural %>%
+  filter(str_detect(bborgan, "L") & bbspecies == "p")
+BB22.pasc.leg.OTU.rural <- BB22.pasc.leg %>%
+  group_by(OTU, landscape) %>%
+  summarise(cum.abund = sum(Abundance))
+
+# find common visited plant species body per landscape
+shared.pasc <- length(intersect(BB22.pasc.leg.OTU.urban$OTU, BB22.pasc.body.OTU.urban$OTU)) #shared species B.p.
+visited.pasc <- length(unique(as_factor(c(BB22.pasc.leg.OTU.urban$OTU, BB22.pasc.body.OTU.urban$OTU)))) #all species B.p.
+
+shared.lapi <- length(intersect(BB22.lapi.leg.OTU.urban$OTU, BB22.lapi.body.OTU.urban$OTU)) #shared species B.l.
+visited.lapi <- length(unique(as_factor(c(BB22.lapi.leg.OTU.urban$OTU, BB22.lapi.body.OTU.urban$OTU)))) #all species B.l.
+
+df.ratio.urban <- data.frame (percent = c(shared.pasc, visited.pasc, shared.lapi, visited.lapi),
+                        bbspecies = c("B.pascuorum", "B.pascuorum", "B.lapidarius", "B.lapidarius"),
+                        plant_species = c("shared", "all (body+leg)", "shared", "all (body+leg)"),
+                        landscape = rep("U",4))
+
+shared.pasc <- length(intersect(BB22.pasc.leg.OTU.rural$OTU, BB22.pasc.body.OTU.rural$OTU)) #shared species B.p.
+visited.pasc <- length(unique(as_factor(c(BB22.pasc.leg.OTU.rural$OTU, BB22.pasc.body.OTU.rural$OTU)))) #all species B.p.
+
+shared.lapi <- length(intersect(BB22.lapi.leg.OTU.rural$OTU, BB22.lapi.body.OTU.rural$OTU)) #shared species B.l.
+visited.lapi <- length(unique(as_factor(c(BB22.lapi.leg.OTU.rural$OTU, BB22.lapi.body.OTU.rural$OTU)))) #all species B.l.
+
+df.ratio.rural <- data.frame (percent = c(shared.pasc, visited.pasc, shared.lapi, visited.lapi),
+                              bbspecies = c("B.pascuorum", "B.pascuorum", "B.lapidarius", "B.lapidarius"),
+                              plant_species = c("shared", "all (body+leg)", "shared", "all (body+leg)"),
+                              landscape = rep("R",4))
+
+df.ratio <- rbind(df.ratio.urban, df.ratio.rural)
+
+# Stacked + percent
+p3 <- ggplot(df.ratio, aes(fill=plant_species, y=percent, x=landscape)) + 
+  geom_bar(position="fill", stat="identity") + xlab("") +
+  ggtitle("Body and Leg: Ratio of Shared Plant Species detected") + facet_wrap(~bbspecies)
+
+
+# plot sum of plant species visited
+df.sum.urban <- data.frame(sum = c(length(BB22.pasc.leg.OTU.urban$OTU), length(BB22.pasc.body.OTU.urban$OTU), 
+                                   length(BB22.lapi.leg.OTU.urban$OTU), length(BB22.lapi.body.OTU.urban$OTU)),
+                     bbspecies = c("B.pascuorum", "B.pascuorum", "B.lapidarius", "B.lapidarius"),
+                     bborgan = c("leg", "body","leg", "body"),
+                     landscape = rep("U",4))
+df.sum.rural <- data.frame(sum = c(length(BB22.pasc.leg.OTU$OTU), length(BB22.pasc.body.OTU$OTU), length(BB22.lapi.leg.OTU$OTU), length(BB22.lapi.body.OTU$OTU)),
+                     bbspecies = c("B.pascuorum", "B.pascuorum", "B.lapidarius", "B.lapidarius"),
+                     bborgan = c("leg", "body","leg", "body"),
+                     landscape = rep("R",4))
+
+df.sum <- rbind(df.sum.urban, df.sum.rural)
+
+p4 <- ggplot(df.sum, aes(x=landscape, y=sum, fill = bborgan)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  ylab("Sum of Plant Species detected") + xlab("")+
+  ggtitle("Body and Leg: Sum of Plant Species detected")+ facet_wrap(~bbspecies)
+
+setwd(output)
+plot1 <- ggarrange(p3, p4, ncol = 2, labels = c("A", "B"))
+annotate_figure(plot1, top = text_grob("Comparison Body and Leg Pollen across Landscapes", 
+                                       face = "bold", size = 14))
+ggsave("Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
+setwd(input)
+
+
+#### new #### 
+
+#### new #### 
 
 
