@@ -372,7 +372,7 @@ ggsave("Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
 setwd(input)
 
 
-#### Compare and look at poll differences in landscapes #### 
+#### Compare and look at pollen differences in landscapes #### 
 BB22.abund.land <- BB22.abund %>%
   group_by(OTU, bbspecies, landscape) %>%
   summarise(cum.abund = sum(Abundance),
