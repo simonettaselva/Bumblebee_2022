@@ -24,12 +24,18 @@ BB22 <- read.csv("BB22_data_tres_0.01.csv")
 #create binom. abundance variable
 BB22 <- BB22%>% 
   mutate(binom.abund = if_else(Abundance == 0, 0, 1),
-         ID = substring(Sample, 2))
+         ID = substring(Sample, 2),
+         site = paste(location, replicate, sep="_"),
+         bbspecies = as_factor(bbspecies))
+levels(BB22$bbspecies) <- c("B.lapidarius", "B.pascuorum")
+
 
 #remove entries with abundance = 0
 BB22.abund <- BB22%>% 
   filter(binom.abund == 1)
 
+
+#### SHANNON AND S across locations ####
 # calculate Shannon and Number of Species by individual
 library(vegan)
 
@@ -47,7 +53,12 @@ BB22.shannon <- BB22.abund %>%
          landscape = fct_relevel(landscape, "U", "R")) %>%
   distinct()
 
-#### SHANNON AND S across locations ####
+#Densitiy plots of Shannon and Nr Species
+density.NrSpecies <- ggdensity(BB22.shannon, x = "NrSpecies", 
+                       fill = "bbspecies", palette = "jco")
+density.Shannon <- ggdensity(BB22.shannon, x = "Shannon", 
+                       fill = "bbspecies", palette = "jco")
+
 # plot mean shannon and S vs. landscape and location
 sh1 <- ggplot(BB22.shannon, aes(Shannon, landscape, fill=location)) +
   geom_boxplot(notch = T) + xlab("Shannon Index") +
@@ -360,5 +371,123 @@ setwd(input)
 #### new #### 
 
 #### new #### 
+BB16 <- read.csv("Bumblebee_Data_Eggenberger_et.al_JAE_2019.csv")
+BB22.shannon.body <- BB22.shannon %>%
+  filter(str_detect(bborgan, "B"))%>%
+  mutate(ID = substring(ID,1, nchar(ID)-1))
 
+BBtot <- merge(BB22.shannon.body,BB16, by ="ID") %>%
+  summarize(ID = ID,
+            Shannon = Shannon,
+            NrSpecies = NrSpecies,
+            location = as.factor(location),
+            landscape = as.factor(Habitat),
+            replicate = as.factor(replicate),
+            bbspecies = as.factor(bbspecies),
+            intertegular_distance = Intertegular_distance,
+            glossa = Glossa,
+            prementum = Prementum,
+            proboscis_length = Proboscis_length,
+            proboscis_ratio = proboscis_ratio,
+            fore_wing_length = fore_wing_length,
+            fore_wing_ratio = fore_wing_ratio,
+            corbicula_length = corbicula_length,
+            corbicula_ratio = corbicula_ratio)
+names(BBtot)
+levels(BBtot$bbspecies) <- c("B.lapidarius", "B.pascuorum")
+
+# plot relation Shannon/NrSpecies and phenitypic traits BB
+#NrSpecies
+a1 <- ggplot(BBtot, aes(glossa, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a2 <- ggplot(BBtot, aes(prementum, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a3 <- ggplot(BBtot, aes(proboscis_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a4 <- ggplot(BBtot, aes(proboscis_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a5 <- ggplot(BBtot, aes(fore_wing_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a6 <- ggplot(BBtot, aes(fore_wing_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a7 <- ggplot(BBtot, aes(corbicula_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a8 <- ggplot(BBtot, aes(corbicula_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+
+setwd(output)
+plot3 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
+annotate_figure(plot3, top = text_grob("Comparison Traits and Number of Species across Landscapes", 
+                                       face = "bold", size = 14))
+ggsave("Comparison_Traits_NrSpecies_Landscapes.png", width = 16, height = 8)
+setwd(input)
+
+
+# SHANNON
+a1 <- ggplot(BBtot, aes(glossa, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a2 <- ggplot(BBtot, aes(prementum, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a3 <- ggplot(BBtot, aes(proboscis_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a4 <- ggplot(BBtot, aes(proboscis_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a5 <- ggplot(BBtot, aes(fore_wing_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a6 <- ggplot(BBtot, aes(fore_wing_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a7 <- ggplot(BBtot, aes(corbicula_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+a8 <- ggplot(BBtot, aes(corbicula_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+  geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+  scale_linetype_manual(values=c("solid", "dotted"))
+
+setwd(output)
+plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
+annotate_figure(plot4, top = text_grob("Comparison Traits and Shannon across Landscapes", 
+                                       face = "bold", size = 14))
+ggsave("Comparison_Traits_Shannon_Landscapes.png", width = 16, height = 8)
+setwd(input)
+
+
+##### Species Abundance per site ####
+head(BB22)
+
+# BB22.lapi <- BB22 %>%
+#   filter(bbspecies == "l")
+# BB22.lapi <- BB22 %>%
+#   filter(BB22$bbspecies == "B.lapidarius" & binom.abund == 1) 
+# BB22.lapi.site <- BB22.lapi %>%
+#   group_by(OTU) %>%
+#   summarise(bbspecies = bbspecies,
+#             Abundance.sum = sum(Abundance))
+
+# plot plant abundances for lapi - not really aussagekräftig
+# ggplot(BB22.lapi.site, aes(Abundance.sum, reorder(OTU, -Abundance.sum))) + 
+#   geom_bar(stat="identity")
+# 
+# BB22.pasc <- BB22 %>%
+#   filter(BB22$bbspecies == "B.pascuorum" & binom.abund == 1) 
+# BB22.pasc.site <- BB22.pasc %>%
+#   group_by(OTU) %>%
+#   summarise(bbspecies = bbspecies,
+#             Abundance.sum = sum(Abundance))
+# 
+# BB22.site <- merge(BB22.lapi.site,BB22.pasc.site, by ="OTU") %>%
+#   distinct()
 
