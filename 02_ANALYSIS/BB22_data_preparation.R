@@ -529,6 +529,44 @@ head(BB22)
 
 
 
+#### PLANTS ####
+plants <- read.csv2("phenology_pollen_nectar_sugar_database_copy.csv",sep = ",")
+plants.sum <- plants%>% 
+  summarize(plant.species = plant.species,
+            community = community,
+            continent.region = continent.region,
+            country = country,
+            location.name = location.name,
+            year = year.of.the..data.collection,
+            mean.yearly.air.temperature = mean.yearly.air.temperature.in.degrees.Celsius,
+            total.yearly.pecipitation= total.yearly..pecipitation.in.mm,
+            flowering.start =flowering.start,                                                  
+            flowering.end = flowering.end,                                                    
+            flowering.peak = flowering.peak,
+            flowering.peak.2..if.occured. = flowering.peak.2..if.occured.,
+            flowering.lenght = flowering.lenght,
+            flower.longevity = flower.longevity..days.,
+            sugar.concentration...in.nectar = sugar.concentration...in.nectar,
+            pollen.flower = total.pollen.per.flower..the.number.of.grains.)
 
+shared.plants <- length(intersect(BB22.abund$OTU,plants.sum$plant.species))
+#102 plants are shared
+levels(as_factor(intersect(BB22.abund$OTU,plants.sum$plant.species)))
+
+
+# check if 50 most abundant plants are in data set above
+BB22.abund.plants <- BB22.abund %>%
+  group_by(OTU) %>%
+  summarise(cum.abund = sum(Abundance))%>%
+  distinct()
+OTU.most <- BB22.abund.plants[with(BB22.abund.plants, order(cum.abund, decreasing = TRUE)),]
+OTU.most <- OTU.most[1:50,]
+shared.plants <- length(intersect(OTU.most$OTU,plants.sum$plant.species))
+#only 30 species are shared
+shared=levels(as_factor(intersect(OTU.most$OTU,plants.sum$plant.species)))
+
+
+
+OTU.most[!OTU.most$OTU %in% shared,1]                                     
 
 
