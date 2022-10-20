@@ -55,23 +55,27 @@ ggplot(BB.pasc, aes(x=landscape, y=Shannon)) +
 
 
 # correlation analysis
-library(ggbiplot)
 
-pairs.panels(BB.pasc[,c(2,3,8:16)], 
+pairs.panels(BB.pasc[,c(3,4,9:17)], 
              method = "pearson", # correlation method
              hist.col = "#00AFBB",
              density = TRUE,  # show density plots
              ellipses = TRUE # show correlation ellipses
              ) 
+library(ellipse)
+plotcorr(cor(BB.pasc[,c(3,4,9:17)]))
+
+# glossa, prementum and fore wings lenght highly correlated to proboscis lenght --> removed from intial model
 
 # PCA for finding correlations
-pca <- prcomp(BB.pasc[,c(2,3,8:16)], center = TRUE,scale. = TRUE)
+library(ggbiplot)
+pca <- prcomp(BB.pasc[,c(3,4,9:17)], center = TRUE, scale. = TRUE)
 summary(pca)
 ggbiplot(pca, groups=BB.pasc$location, ellipse = TRUE) + #PC1 and PC2
   ggtitle("PCA")+
   theme_minimal()+ theme(aspect.ratio=1)
 #  first 2 axis explain 0.6684 of variance
-ggbiplot(pca, groups=BB.pasc$landscape, ellipse = TRUE) + #PC1 and PC2
+ggbiplot(pca, groups=BB.pasc$site, ellipse = TRUE) + #PC1 and PC2
   ggtitle("PCA")+
   theme_minimal()+ theme(aspect.ratio=1)
 
@@ -81,15 +85,48 @@ library(lme4)
 library(nlme)
 library(arm)
 
+
 #first a random intercept model
-mod_lme1<-lme(Shannon~glossa,data=BB.pasc,random=~1|Beach)
-mod_lmer1<-lmer(Richness~NAP+(1|Beach),data=data)
+mod_lme1<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length + proboscis_ratio 
+              + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|landscape),
+              data=BB.pasc) # add constant???
+summary(mod_lme1)
+
+plot(mod_lme1)
+qqnorm(residuals(mod_lme1)) # Short-Tailed but ok??
+qqline(residuals(mod_lme1))
+hist(log(BB.pasc$Shannon+1))
+
+library(car)
+vif(mod_lme1)
+
+mod_lme1.1<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length + proboscis_ratio 
+               + fore_wing_ratio  + corbicula_ratio + (1|landscape),
+               data=BB.pasc) # add constant???
+summary(mod_lme1.1)
+vif(mod_lme1.1)
+
+mod_lme1.2<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length
+                 + fore_wing_ratio  + corbicula_ratio + (1|landscape),
+                 data=BB.pasc) # add constant???
+summary(mod_lme1.2)
+vif(mod_lme1.2) #looks ok
+
+
+
+
+
+# Variable selection: Stepwise regression model
+library(lmerTest)
+
+step.model <- drop1(mod_lme1, test="Chisq")
+summary(step.model)
+
 #then a random slope plus intercept model
-mod_lme2<-lme(Richness~NAP,data=data,random=NAP|Beach)
-mod_lmer2<-lmer(Richness~NAP+(NAP|Beach),data=data)
-#Poisson model
-mod_glmer1<-glmer(Richness~NAP+(1|Beach),data=data,family="poisson")
-#nested and crossed random effect??
+mod_lme2<-lme(log(Shannon+1)~prementum,data=BB.pasc,random=~prementum|site)
+summary(mod_lme2)
+
+BB.pasc$Shannon + 1
 
 #### B.lapidarius ####
 # look at data

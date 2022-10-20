@@ -5,6 +5,7 @@
 # Created: October 17, 2022
 # Project: Bumblebee 2022
 ################################################
+rm(list=ls())
 
 #load libraries
 library(dplyr)
@@ -43,7 +44,7 @@ library(vegan)
 
 BB22.shannon <- BB22.abund %>% 
   group_by(ID) %>%
-  summarize(site = site,
+  summarise(site = site,
             Shannon = diversity(Abundance),
             NrSpecies=n_distinct(species),
             location = as.factor(location),
