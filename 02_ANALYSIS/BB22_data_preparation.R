@@ -31,8 +31,10 @@ levels(BB22$bbspecies) <- c("B.lapidarius", "B.pascuorum")
 
 
 #remove entries with abundance = 0
+setwd(input)
 BB22.abund <- BB22%>% 
   filter(binom.abund == 1)
+# write.csv(BB22.abund, "BB22.abund.csv")
 
 
 #### SHANNON AND S across locations ####
@@ -52,6 +54,8 @@ BB22.shannon <- BB22.abund %>%
   mutate(replicate = fct_relevel(replicate,"A", "B", "C", "D", "E", "F"),
          landscape = fct_relevel(landscape, "U", "R")) %>%
   distinct()
+
+# write.csv(BB22.shannon, "BB22_s_h.csv")
 
 #Densitiy plots of Shannon and Nr Species
 density.NrSpecies <- ggdensity(BB22.shannon, x = "NrSpecies", 
@@ -428,6 +432,8 @@ BBtot <- merge(BB22.shannon.body,BB16, by ="ID") %>%
             corbicula_ratio = corbicula_ratio)
 names(BBtot)
 levels(BBtot$bbspecies) <- c("B.lapidarius", "B.pascuorum")
+
+write_csv(BBtot, "BBtot.csv")
 
 # plot relation Shannon/NrSpecies and phenitypic traits BB
 #NrSpecies
