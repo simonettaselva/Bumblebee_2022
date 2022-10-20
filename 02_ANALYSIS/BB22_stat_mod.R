@@ -75,8 +75,21 @@ ggbiplot(pca, groups=BB.pasc$landscape, ellipse = TRUE) + #PC1 and PC2
   ggtitle("PCA")+
   theme_minimal()+ theme(aspect.ratio=1)
 
+#  fit GLMM
+#load the libraries
+library(lme4)
+library(nlme)
+library(arm)
 
-
+#first a random intercept model
+mod_lme1<-lme(Shannon~glossa,data=BB.pasc,random=~1|Beach)
+mod_lmer1<-lmer(Richness~NAP+(1|Beach),data=data)
+#then a random slope plus intercept model
+mod_lme2<-lme(Richness~NAP,data=data,random=NAP|Beach)
+mod_lmer2<-lmer(Richness~NAP+(NAP|Beach),data=data)
+#Poisson model
+mod_glmer1<-glmer(Richness~NAP+(1|Beach),data=data,family="poisson")
+#nested and crossed random effect??
 
 #### B.lapidarius ####
 # look at data

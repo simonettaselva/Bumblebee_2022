@@ -43,14 +43,15 @@ library(vegan)
 
 BB22.shannon <- BB22.abund %>% 
   group_by(ID) %>%
-  summarise(Shannon = diversity(Abundance),
+  summarize(site = site,
+            Shannon = diversity(Abundance),
             NrSpecies=n_distinct(species),
             location = as.factor(location),
             landscape = as.factor(landscape),
             replicate = as.factor(replicate),
             bbspecies = as.factor(bbspecies),
             bborgan = as.factor(bborgan),
-            site = as.factor(paste(location, landscape, sep="_")))%>%
+            site = as.factor(paste(location, landscape, sep="_"))) %>%
   mutate(replicate = fct_relevel(replicate,"A", "B", "C", "D", "E", "F"),
          landscape = fct_relevel(landscape, "U", "R")) %>%
   distinct()
@@ -415,6 +416,7 @@ BB22.shannon.body <- BB22.shannon %>%
 
 BBtot <- merge(BB22.shannon.body,BB16, by ="ID") %>%
   summarize(ID = ID,
+            site = site,
             Shannon = Shannon,
             NrSpecies = NrSpecies,
             location = as.factor(location),
