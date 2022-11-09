@@ -35,10 +35,15 @@ BB22.plantspecies <- unique(BB22$OTU)
 #import Joans dataset
 JC_floral_traits <- read.csv2("floral_traits.csv",sep = ",")%>% 
   mutate(Sp.merge = as_factor(Sp.merge))
+JC.plantspecies <- unique(JC_floral_traits$Sp.merge)
 
 # see how many of hte plant species are shared by datasets
-shared.species <- length(intersect(JC.plantspecies,BB22.plantspecies))
+shared.species <- intersect(JC.plantspecies,BB22.plantspecies)
 # 169 are shared
+
+species.not.covered <- setdiff(BB22.plantspecies, shared.species)
+
+
 
 
 ###############
