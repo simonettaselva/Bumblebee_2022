@@ -1,0 +1,537 @@
+﻿taxon,genus,family,vernacular_name,native_status,floral_unit_definition,sugar_per_floral_unit_ug,sugar_data_type,sugar_data_source,comments
+Abelia x grandiflora,Abelia,Caprifoliaceae,glossy abelia,non-native,single flower,432.08,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Acer spp,Acer,Sapindaceae,maples,non-native,single flower,71.44,empirical,Baude et al. 2016,1 species in genus (Acer pseudoplatanus); 18 flowers measured (2 sites on 2 days)
+Achillea millefolium,Achillea,Asteraceae,yarrow,native,single capitulum,34.62,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 32 floral units sampled (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Achillea ptarmica,Achillea,Asteraceae,sneezewort,native,single capitulum,34.62,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Achillea millefolium); 32 floral units sampled (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Aconitum napellus,Aconitum,Ranunculaceae,"monk's-hood, aconite, wolfsbane",native,single flower,1277.22,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Aegopodium podagraria,Aegopodium,Apiaceae,ground elder,non-native,secondary umbel,197.10,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Aethusa cynapium,Aethusa,Apiaceae,"fool's parsley, fool's cicely, poison parsley",native,secondary umbel,61.07,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day) and 10 FUs counted
+Agapanthus sp,Agapanthus,Amaryllidaceae,"lily of the Nile, African lily",non-native,single flower,1161.54,empirical,Tew et al. (this study),a few varieties (3/4) in genus; 40 flowers measured (3 sites on 4 days); mean of all 40 flowers taken
+Agrimonia eupatoria,Agrimonia,Rosaceae,common agrimony,native,single flower,1.37,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Agrostemma githago,Agrostemma,Caryophyllaceae,corn-cockle,non-native,single flower,403.50,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ajuga reptans,Ajuga,Lamiaceae,bugle,native,single flower,155.06,empirical,Baude et al. 2016,same species; 10 flowers measured (2 sites on 2 days)
+Alcea rosea,Alcea,Malvaceae,common hollyhock,non-native,single flower,2545.74,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Alchemilla mollis,Alchemilla,Rosaceae,lady's mantle,non-native,single flower,1.29,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Alliaria petiolata,Alliaria,Brassicaceae,garlic mustard,native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Allium spp,Allium,Amaryllidaceae,"leek, onion, garlic, chives etc",non-native,single flower,235.10,empirical,Baude et al. 2016,2 species in genus (unweighted mean of Allium cepa and Allium schoenoprasum); 30 flowers measured (3 sites on 3 days)
+Aloysia citrodora,Aloysia,Verbenaceae,lemon verbena,non-native,single flower,18.57,empirical,Tew et al. (this study),1 species in genus (Verbena bonariensis used given Aloysia citrodora is synonymous with Verbena triphylla); 30 flowers measured (2 sites on 2 days)
+Alstroemeria spp,Alstroemeria,Alstroemeriaceae,"Peruvian lily, lily of the Incas",non-native,single flower,2379.28,empirical,Tew et al. (this study),1 species in genus (Alstroemeria aurea); 10 flowers measured (1 site on 1 day) 
+Anagallis arvensis,Anagallis,Primulaceae,scarlet pimpernel,native,single flower,0.00,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Anemone blanda,Anemone,Ranunculaceae,"Balkan anemone, winter windflower",non-native,single flower,0.00,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Anemone coronaria,Anemone,Ranunculaceae,poppy anemone,non-native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Anemone huphensis); 10 flowers measured (1 site on 1 day)
+Anemone hupehensis and hybrids,Anemone,Ranunculaceae,Chinese/Japanese anemone,non-native,single flower,0.00,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Anemone nemorosa,Anemone,Ranunculaceae,wood anemone,native,single flower,0.79,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Anethum graveolens,Anethum,Apiaceae,dill,non-native,secondary umbel,0.42,empirical,Baude et al. 2016,1 species in genus (Pastinaca sativa used as Anethum graveolens is synonymous with Pastinaca anethum); 20 flowers measured (1 site on 1 day) and 8 FUs counted
+Angelica sylvestris,Angelica,Apiaceae,wild angelica,native,secondary umbel,270.92,empirical,Baude et al. 2016,same species; 19 flowers measured (2 sites on 2 days) and 10 FUs counted
+Anthriscus sylvestris,Anthriscus,Apiaceae,"cow parsley, wild chervil",native,secondary umbel,95.17,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days) and 5 FUs counted
+Antirrhinum majus,Antirrhinum,Scrophulariaceae,common snapdragon,non-native,single flower,1079.17,empirical,Tew et al. (this study),same species; 30 flowers measured (1 site on 2 days)
+Aquilegia sp,Aquilegia,Ranunculaceae,"columbine, granny's bonnet",native,single flower,2742.29,empirical,Tew et al. (this study),1 species in genus (Aquilegia vulgaris); 20 flowers measured (2 sites on 2 days)
+Arabidopsis thaliana,Arabidopsis,Brassicaceae,"thale-cress, mouse-ear cress",native,single flower,4.16,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Arabis caucasica,Arabis,Brassicaceae,"garden arabis, mountain rock cress",non-native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Arenaria serpyllifolia,Arenaria,Caryophyllaceae,thyme-leaf sandwort,native,single flower,15.98,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Argyranthemum frutescens,Argyranthemum,Asteraceae,"marguerite daisy, Paris daisy",non-native,single capitulum,167.10,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day) and 3 FUs counted
+Armeria maritima,Armeria,Plumbaginaceae,sea thrift,native,single flower,63.96,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Armeria pseudoarmeria,Armeria,Plumbaginaceae,great thrift,non-native,single flower,63.96,empirical,Baude et al. 2016,1 species in genus (Armeria maritimata); 10 flowers measured (1 site on 1 day)
+Armoracia rusticana,Armoracia,Brassicaceae,horseradish,non-native,single flower,58.68,empirical,Baude et al. 2016,1 species in genus (Cardamine pratensis used given Armoracia rusticana is synonymous with Cardamine armoracia); 20 flowers measured (2 sites on 2 days)
+Artemisia vulgaris,Artemisia,Asteraceae,common mugwort,non-native,single capitulum,0.00,modelled,Tew et al. (this study - modelled),"Values estimated from predictive modelling; prediction from model was -0.53, so assigned 0"
+Aruncus spp,Aruncus,Rosaceae,goat's beard,non-native,single flower,0.00,modelled,Tew et al. (this study - modelled),"Values estimated from predictive modelling; prediction from model was -0.60, so assigned 0"
+Asparagus officinalis,Asparagus,Asparagaceae,garden asparagus,non-native,single flower,191.03,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Aster spp,Aster,Asteraceae,Michaelmas daisy,non-native,single capitulum,828.74,empirical,Tew et al. (this study),1 species in genus (Aster × frikartii); 11 flowers measured (2 sites on 2 days) and 9 FUs counted
+Astilbe sp,Astilbe,Saxifragaceae,"false goat's beard, false spirea",non-native,single flower,2.73,empirical,Tew et al. (this study),1 species genus (Astilbe x arendsii); 10 flowers measured (1 site on 1 day)
+Astrantia major,Astrantia,Apiaceae,great masterwort,non-native,secondary umbel,900.55,empirical,Tew et al. (this study),same species; 32 flowers measured (3 sites on 3 days) and 20 FUs counted
+Atriplex spp,Atriplex,Amaranthaceae,"saltbush, orache",native,single flower,0.10,empirical,Baude et al. 2016,1 species in genus (Atriplex patula); 20 flowers measured (2 sites on 1 day)
+Aubrieta spp,Aubrieta,Brassicaceae,aubretia,non-native,single flower,250.10,empirical,Tew et al. (this study),1 species in genus (Aubrieta gracilis); 20 flowers measured (2 sites on 2 days)
+Aurinia saxatilis,Aurinia,Brassicaceae," basket of gold, goldentuft alyssum",non-native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ballota nigra,Ballota,Lamiaceae,black horehound,non-native,single flower,311.11,empirical,Baude et al. 2016,1 species in genus (Stachys sylvatica used given Ballota nigra is synonymous with Stachys ballota); 19 flowers measured (2 sites on 2 days)
+Barbarea spp,Barbarea,Brassicaceae,"winter cress, yellow rocket",non-native,single flower,41.50,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Begonia spp,Begonia,Begoniaceae,begonia,non-native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Begonia sp.); 10 flowers measured (1 site on 1 day)
+Bellis perennis,Bellis,Asteraceae,common daisy,native,single capitulum,64.75,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 21 floral units sampled (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Berberis spp,Berberis,Berberidaceae,barberry,non-native,single flower,2271.34,empirical,Tew et al. (this study),"4 species in genus (unweighted mean of Berberis darwinii, Berberis julianae, Berberis thunbergii, Berberis verruculosa); 120 flowers measured (3 sites on 4 days)"
+Bergenia spp,Bergenia,Saxifragaceae,"elephant-eared saxifrage, elephant's ears",non-native,single flower,871.57,empirical,Tew et al. (this study),1 species in genus (Bergenia cordifolia); 24 flowers measured (2 sites on 2 days)
+Bidens ferulifolia,Bidens,Asteraceae,fern-leaved beggarticks,non-native,single capitulum,1235.79,empirical,Tew et al. (this study),1 species in genus (Coreopsis verticiliata used as Bidens ferulifolia is synonymous with Coreopsis spp.); 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Borago officinalis,Borago,Boraginaceae,"borage, starflower",non-native,single flower,1843.88,empirical,Tew et al. (this study),same species; 30 flowers measured (2 sites on 2 days)
+Brachyglottis spp,Brachyglottis,Asteraceae,daisy bush,non-native,single capitulum,947.58,empirical,Tew et al. (this study),1 species in genus (Brachyglottis x jubar); 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Brachyscome iberidifolia,Brachyscome,Asteraceae,Swan River daisy,non-native,single capitulum,1067.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Brassica spp,Brassica,Brassicaceae,"oilseed rape, cabbage, mustard etc.",non-native,single flower,280.10,empirical,Baude et al. 2016,2 species in genus (unweighted mean of Brassica napus & Brassica rapa); 40 flowers measured (4 sites on 4 days)
+Brunnera macrophylla,Brunnera,Boraginaceae,"Siberian bugloss, great forget-me-not",non-native,single flower,19.87,empirical,Tew et al. (this study),same species (2 sites on 2 days)
+Bryonia dioica,Bryonia,Cucurbitaceae,white bryony,native,single flower,187.29,empirical,Timberlake et al. 2019,same species
+Buddleja davidii,Buddleja,Scrophulariaceae,"buddleja, summer lilac, butterfly-bush",non-native,single panicle,10306.86,empirical,Baude et al. 2016,same species; 19 flowers measured (2 sites on 2 days) and 10 FUs counted
+Buphthalmum salicifolium,Buphthalmum,Asteraceae,ox-eye,non-native,single capitulum,1067.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Calendula officinalis,Calendula,Asteraceae,"English marigold, pot marigold",non-native,single capitulum,469.52,empirical,Hicks et al. 2016,same species; 11 floral units sampled (1 site on 1 day)
+Calibrachoa sp,Calibrachoa,Solanaceae,mini petunia,non-native,single flower,342.46,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Callistephus chinensis,Callistephus,Asteraceae,China aster,non-native,single capitulum,828.74,empirical,Tew et al. (this study),1 species in genus (Aster × frikartii used as Callistephus chinensis is synonymous with Aster chinensis); 11 flowers measured (2 sites on 2 days) and 9 FUs counted
+Calluna vulgaris,Calluna,Ericaceae,"common heather, ling",native,single raceme,511.34,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Caltha palustris,Caltha,Ranunculaceae,marsh-marigold,native,single flower,4.37,empirical,Baude et al. 2016,same species; 15 flowers measured (2 sites on 2 days)
+Calystegia sepium,Calystegia,Convolvulaceae,hedge bindweed,native,single flower,1800.78,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Calystegia silvatica,Calystegia,Convolvulaceae,giant bindweed,non-native,single flower,1800.78,empirical,Baude et al. 2016,1 species in genus (Calystegia sepium); 20 flowers measured (2 sites on 2 days)
+Camellia japonica,Camellia,Theaceae,"common camellia, Japanese camellia",non-native,single flower,5775.62,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Campanula persicifolia,Campanula,Campanulaceae,peach-leaved bellflower,non-native,single flower,185.63,empirical,Tew et al. (this study),1 species in genus (Campanula lactiflora); 10 flowers measured (1 site on 1 day)
+Campanula portenschlagiana/poscharskyana,Campanula,Campanulaceae,"trailing/Serbian bellflower, wall/Dalmatian bellflower",non-native,single flower,598.35,empirical,Tew et al. (this study),same species (Campanula poscharskyana); 30 flowers measured (2 sites on 2 days)
+Campanula rotundifolia,Campanula,Campanulaceae,harebell,native,single flower,290.18,empirical,Baude et al. 2016,same species; 15 flowers measured (2 sites on 2 days)
+Capsella bursa-pastoris,Capsella,Brassicaceae,shepherd's purse,non-native,single flower,3.67,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 29 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Cardamine amara,Cardamine,Brassicaceae,large bitter-cress,native,single flower,58.68,empirical,Baude et al. 2016,1 species in genus (Cardamine pratensis); 20 flowers measured (2 sites on 2 days)
+Cardamine hirsuta/flexuosa,Cardamine,Brassicaceae,"hairy bittercress, wavy bittercress, wood bittercress",native,single flower,4.50,empirical,Baude et al. 2016,same species (Cardamine hirsuta/flexuosa); 10 flowers measured (1 site on 1 day)
+Cardamine pratensis,Cardamine,Brassicaceae,"cuckooflower, lady's smock, mayflower",native,single flower,58.68,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Carduus nutans,Carduus,Asteraceae,"musk thistle, nodding thistle",native,single capitulum,1067.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ceanothus sp,Ceanothus,Rhamnaceae,"California lilac, wild lilac, soap bush",non-native,single thyrse,3316.29,empirical,Tew et al. (this study),2/3 varieties in genus; 24 flowers measured (2 sites on 2 days) and 6 FUs counted
+Centaurea cyanus,Centaurea,Asteraceae,"cornflower, bachelor's button",non-native,single capitulum,895.83,empirical,Hicks et al. 2016,same species; 17 floral units sampled (1 site on 1 day)
+Centaurea montana,Centaurea,Asteraceae,"perennial cornflower, mountain cornflower",non-native,single capitulum,17945.11,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Centaurea nigra,Centaurea,Asteraceae,lesser/common/black knapweed,native,single capitulum,6089.74,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 20 floral units sampled (3 sites on 4 days); weighted mean used to combine datasets at FU level
+Centranthus ruber,Centranthus,Valerianaceae,red valerian,non-native,single compound cyme,908.18,empirical,Tew et al. (this study),same species; 30 flowers measured (2 sites on 2 days) and 5 FUs counted
+Cephalaria gigantea,Cephalaria,Dipsacaceae,giant/Tatarian scabious,non-native,single capitulum,2253.25,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Cerastium fontanum,Cerastium,Caryophyllaceae,mouse-ear chickweed,native,single flower,20.90,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 28 flowers measured (3 sites on 4 days); weighted mean used to combine datasets
+Cerastium tomentosum,Cerastium,Caryophyllaceae,snow-in-summer,non-native,single flower,46.44,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ceratocapnos claviculata,Ceratocapnos,Papaveraceae,climbing corydalis,native,single flower,241.58,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ceratostigma plumbaginoides,Ceratostigma,Plumbaginaceae,"blue leadwort, plumbago",non-native,single flower,309.78,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Chaenomeles japonica/speciosa and hybrids,Chaenomeles,Rosaceae,"Japanese quince, Chinese quince, Maule's quince",non-native,single flower,201.46,empirical,Tew et al. (this study),same species (Chaenomeles speciosa and hybrid); 40 flowers (2 sites on 2 days); mean of all 40 flowers taken
+Chaenorhinum minus,Chaenorhinum,Scrophulariaceae,"small toadflax, dwarf snapdragon",non-native,single flower,74.93,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Chaerophyllum temulum,Chaerophyllum,Apiaceae,rough chervil,native,secondary umbel,69.91,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Chamaemelum nobile,Chamaemelum,Asteraceae,Roman/English/garden chamomile,native,single capitulum,496.53,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Chamerion angustifolium,Chamerion,Onagraceae,"fireweed, rosebay willowberb",native,single flower,707.86,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 31 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Chenopodium spp,Chenopodium,Chenopodiaceae,goosefoots,native,single flower,0.00,modelled,Tew et al. (this study - modelled),"Values estimated from predictive modelling; prediction from model was -0.40, so assigned 0"
+Chionodoxa sp,Chionodoxa,Asparagaceae,glory-of-the-snow,non-native,single flower,298.09,empirical,Tew et al. (this study),1 species in genus (Chionodoxa luciliae); 25 flowers measured (2 sites on 2 days)
+Choisya ternata,Choisya,Rutaceae,Mexican orange blossom,non-native,single flower,300.08,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Chrysanthemum x grandiflorum,Chrysanthemum,Asteraceae,"florist's daisy, chrysanthemum",non-native,single capitulum,3144.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Circaea lutetiana,Circaea,Onagraceae,enchanter's-nightshade,native,single flower,6.52,empirical,Baude et al. 2016,same species; 19 flowers measured (2 sites on 2 days)
+Cirsium arvense,Cirsium,Asteraceae,creeping thistle,native,single capitulum,4967.38,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 25 floral units sampled (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Cirsium palustre,Cirsium,Asteraceae,marsh thistle,native,single capitulum,12279.02,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Cirsium rivulare,Cirsium,Asteraceae,plume thistle,non-native,single capitulum,4967.38,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Cirsium arvense); 25 floral units sampled (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Cirsium vulgare,Cirsium,Asteraceae,spear thistle,native,single capitulum,12024.29,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 13 floral units sampled (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Cistus sp,Cistus,Cistaceae,rock rose,non-native,single flower,369.78,empirical,Tew et al. (this study),2 species in genus (unweighted mean of Cistus x argenteus and Cistus × purpureus); 35 flowers measured (2 sites on 4 days)
+Citrus sp,Citrus,Rutaceae,"orange, lemon etc.",non-native,single flower,401.86,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Clarkia amoena,Clarkia,Onagraceae,"farewell to spring, godetia",non-native,single flower,234.15,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Claytonia sibirica,Claytonia,Montiaceae,"pink purslane, candy flower, Siberian spring beauty",non-native,single flower,60.12,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Clematis spp (ornamental),Clematis,Ranunculaceae,clematis,non-native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Clematis montana); 3 flowers measured (1 site on 1 day)
+Clematis vitalba,Clematis,Ranunculaceae,"old man's beard, traveller's joy",native,single flower,149.73,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Clinopodium sp.,Clinopodium,Lamiaceae,calamints,native,single flower,98.64,empirical,Tew et al. (this study),1 species in genus (Satureja montana used given it is synonymous with Clinopodium montanum); 15 flowers measured (1 site on 1 day)
+Cochlearia anglica,Cochlearia,Brassicaceae,English scurvygrass,native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Conopodium majus,Conopodium,Apiaceae,"pignut, groundnut",native,secondary umbel,69.91,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Consolida regalis,Consolida,Ranunculaceae,forking/field/rocket larkspur,non-native,single flower,60.65,empirical,Tew et al. (this study),1 species in genus (Delphinium elatum used given Consolida regalis is synonymous with various Delphinium spp.); 12 flowers measured (1 site on 1 day)
+Convolvulus arvensis,Convolvulus,Convolvulaceae,field bindweed,native,single flower,351.82,empirical,Baude et al. 2016,same species; 14 flowers (2 sites on 2 days)
+Conyza canadensis,Conyza,Asteraceae,"horseweed, Canadian fleabane",non-native,single capitulum,59.44,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Coreopsis spp,Coreopsis,Asteraceae,tickseed,non-native,single capitulum,1235.79,empirical,Tew et al. (this study),1 species in genus (Coreopsis verticiliata); 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Coriandrum sativum,Coriandrum,Apiaceae,"coriander, Chinese parsley, cilantro",non-native,secondary umbel,69.91,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Cornus alba/sericea,Cornus,Cornaceae,white/red-osier dogwood,non-native,single corymb,2531.47,empirical,Baude et al. 2016,1 species in genus (Cornus sanguinea); 10 flowers measured (1 site on 1 day) and 10 FUs counted
+Cornus sanguinea,Cornus,Cornaceae,common dogwood,native,single corymb,2531.47,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day) and 10 FUs counted
+Cosmos atrosanguineus,Cosmos,Asteraceae,chocolate cosmos,non-native,single capitulum,701.08,empirical,Hicks et al. 2016,1 species in genus (Cosmos bipinnatus); 11 FUs counted (1 site on 1 day)
+Cosmos bipinnatus,Cosmos,Asteraceae,"garden cosmos, Mexican aster",non-native,single capitulum,701.08,empirical,Hicks et al. 2016,same species; 11 FUs counted (1 site on 1 day)
+Cotoneaster spp,Cotoneaster,Rosaceae,cotoneaster,non-native,single flower,337.72,empirical,Tew et al. (this study),1 or 2 species in genus; 42 flowers measured (2 sites on 2 days); mean of all 42 flowers taken
+Cotula coronopifolia,Cotula,Asteraceae,brass/golden buttons,non-native,single capitulum,177.09,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Crataegus monogyna,Crataegus,Rosaceae,common hawthorn,native,single flower,102.47,empirical,Baude et al. 2016,same species; 18 flowers measured (2 sites measured on 2 days)
+Crepis biennis,Crepis,Asteraceae,rough hawksbeard,native,single capitulum,134.70,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Crepis capillaris); 15 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Crepis capillaris,Crepis,Asteraceae,smooth hawksbeard,native,single capitulum,134.70,empirical,Baude et al. 2016; Hicks et al. 2016,same species (Crepis capillaris); 15 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Crepis vesicaria,Crepis,Asteraceae,beaked hawk's-beard,non-native,single capitulum,134.70,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Crepis capillaris); 15 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Crocosmia x crocosmiiflora,Crocosmia,Iridaceae,"montbretia, crocosmia",non-native,single flower,4159.05,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Cruciata laevipes,Cruciata,Rubiaceae,"crosswort, smooth bedstraw",native,single flower,0.94,empirical,Baude et al. 2016,1 species in genus (Galium saxatile used as Cruciata laevipes is synonymous with Galium spp.); 10 flowers measured (1 site on 1 day)
+Cucumis sativus,Cucumis,Cucurbitaceae,cucumber,non-native,single flower,5.68,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Cucurbita pepo,Cucurbita,Cucurbitaceae,"squash, pumkin, cucumber",non-native,single flower,18.67,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Cuphea ignea,Cuphea,Lythraceae,cigar plant,non-native,single flower,2128.05,empirical,Tew et al. (this study),1 species in genus (Cuphea cyanea); 10 flowers measured (1 site on 1 day)
+Cyclamen hederifolium,Cyclamen,Myrsinoideae,ivy-leaved cyclamen,non-native,single flower,27.25,empirical,Tew et al. (this study),1 species in genus (Cycamen coum); 20 flowers measured (2 sites on 2 days)
+Cymbalaria muralis,Cymbalaria,Scrophulariaceae,ivy-leaved toadflax,non-native,single flower,12.25,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Cynara cardunculus,Cynara,Asteraceae,"artichoke, cardoon",non-native,single capitulum,3144.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Cytisus scoparius,Cytisus,Fabaceae,"common broom, Scotch broom",native,single flower,33.96,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Dactylorhiza fuchsii,Dactylorhiza,Orchidaceae,common spotted orchid,native,single flower,384.47,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Dactylorhiza maculata,Dactylorhiza,Orchidaceae,heath spotted-orchid,native,single flower,384.47,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Dahlia x hortensis,Dahlia,Asteraceae,dahlia,non-native,single capitulum,11253.21,empirical,Tew et al. (this study),same species; 29 flowers measured (2 sites on 2 days) and 10 FUs counted
+Daucus carota,Daucus,Apiaceae,wild carrot,native,secondary umbel,573.10,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 41 flowers measured (3 sites on 3 days) and 15 FUs counted; weighted mean used to combine datasets at flower level
+Delphinium sp,Delphinium,Ranunculaceae,larkspur,non-native,single flower,60.65,empirical,Tew et al. (this study),1 species in genus (Delphinium elatum); 12 flowers measured (1 site on 2 days)
+Dianthus spp,Dianthus,Caryophyllaceae,"carnation, sweet william",non-native,single flower,670.06,empirical,Tew et al. (this study),2 species in genus (unweighted mean of Dianthus caryophyllus and Dianthus barbatus); 34 flowers measured (2 sites on 3 days) 
+Diascia barberae and hybrids,Diascia,Scrophulariaceae,twinspur,non-native,single flower,0.00,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Dicentra formosa,Dicentra,Papaveraceae,Pacific bleeding heart,non-native,single flower,676.68,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Digitalis purpurea,Digitalis,Scrophulariaceae,foxglove,native,single flower,1273.88,empirical,Baude et al. 2016,same species; 18 flowers measured (2 sites measured on 2 days)
+Diplotaxis muralis,Diplotaxis,Brassicaceae,annual wall-rocket,non-native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Diplotaxis tenuifolia,Diplotaxis,Brassicaceae,perennial wall-rocket,non-native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Dipsacus fullonum,Dipsacus,Dipsacaceae,teasel,native,single capitulum,1058.33,empirical,Timberlake et al. 2019,same species
+Doronicum spp,Doronicum,Asteraceae,leopard's bane,non-native,single capitulum,1067.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Dorotheanthus bellidiformis,Dorotheanthus,Aizoaceae,Livingstone daisy,non-native,single flower,1078.35,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Echeveria sp,Echeveria,Crassulaceae,echeveria,non-native,single flower,60.12,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Echinacea purpurea,Echinacea,Asteraceae,purple coneflower,non-native,single capitulum,2349.55,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 9 FUs counted
+Echinops ritro,Echinops,Asteraceae,southern globe thistle,non-native,single capitulum,22622.98,empirical,Tew et al. (this study),same species; 34 flowers measured (2 sites on 3 days) and 11 FUs counted
+Epilobium spp,Epilobium,Onagraceae,willowherbs,native,single flower,136.59,empirical,Baude et al. 2016; Hicks et al. 2016,"4 species in genus (unweighted mean of Epilobium ciliatum, Epilobium hirsutum, Epilobium montanum and Epilobium tetragonum); 70 flowers measured (4 sites on 7 days); value for Epilobium montanum already a weighted mean of two datasets"
+Erica carnea and hybrids,Erica,Ericaceae,winter heath,non-native,single flower,80.63,empirical,Baude et al. 2016,1 species in genus (Erica cinerea); 20 flowers measured (1 site on 2 days)
+Erica cinerea,Erica,Ericaceae,bell heather,native,single flower,80.63,empirical,Baude et al. 2016,same species; 20 flowers measured (1 site on 2 days)
+Erica tetralix,Erica,Ericaceae,corss-leafed heath,native,single flower,70.30,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Erigeron glaucus,Erigeron,Asteraceae,"seaside daisy/fleabane, beach aster",non-native,single capitulum,1374.60,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Erigeron karvinskianus,Erigeron,Asteraceae,Mexican fleabane,non-native,single capitulum,496.53,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Erodium cicutarium,Erodium,Geraniaceae,common stork's-bill,native,single flower,13.01,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Erophila verna,Erophila,Brassicaceae,"spring draba, common whitlowgrass",native,single flower,4.16,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Eruca vesicaria,Eruca,Brassicaceae,rocket,non-native,single flower,115.08,empirical,Baude et al. 2016,1 species in genus (Raphanus raphanistrum used as Eruca vesicaria synonymous with Raphanus vesicarius); 20 flowers measured (1 site on 1 day)
+Erysimum spp,Erysimum,Brassicaceae,wallflower,non-native,single flower,550.32,empirical,Tew et al. (this study),2 species in genus (unweighted mean of Erysimum cheiri and Erysimum linifolium); 42 flowers measured (3 sites on 4 days)
+Escallonia sp,Escallonia,Escalloniaceae,escallonia,non-native,single flower,250.85,empirical,Tew et al. (this study),1 species in genus (Escallonia rubra); 20 flowers measured (2 sites on 2 days)
+Eschscholzia californica,Eschscholzia,Papaveraceae,"California poppy, golden poppy",non-native,single flower,10.32,empirical,Hicks et al. 2016,same species; 15 flowers measured (1 site on 1 day)
+Eucomis bicolor,Eucomis,Asparagaceae,variegated pineapple lily,non-native,single flower,1756.18,empirical,Tew et al. (this study),1 species in genus (Eucomis comosa); 10 flowers measured (1 site on 1 day)
+Euonymus japonica,Euonymus,Celastraceae,"evergreen spindle, Japanese spindle",non-native,single flower,146.23,empirical,Tew et al. (this study),1 species in genus (Euonymus fortunei); 10 flowers measured (1 site on 1 day)
+Eupatorium cannabinum,Eupatorium,Asteraceae,"hemp-agrimony, holy rope",native,single capitulum,81.70,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Euphorbia amygdaloides and hybrids,Euphorbia,Euphorbiaceae,wood spurge,native,single cyme,330.22,empirical,Tew et al. (this study),1 species in genus (Euphorbia characias); 34 flowers measured (2 sites on 2 days) and 10 FUs counted
+Euphorbia characias,Euphorbia,Euphorbiaceae,Mediterranean spurge,non-native,single cyme,330.22,empirical,Tew et al. (this study),same species; 34 flowers measured (2 sites on 2 days) and 10 FUs counted
+Euphorbia cyparissias,Euphorbia,Euphorbiaceae,Cypress spurge,non-native,single cyme,120.34,empirical,Tew et al. (this study),1 species in genus (Euphorbia helioscopia); 10 flowers measured (1 site on 1 day) and 6 FUs counted
+Euphorbia dulcis,Euphorbia,Euphorbiaceae,sweet spurge,non-native,single cyme,120.34,empirical,Tew et al. (this study),1 species in genus (Euphorbia helioscopia); 10 flowers measured (1 site on 1 day) and 6 FUs counted
+Euphorbia esula agg,Euphorbia,Euphorbiaceae,"green spurge, leafy spurge,",non-native,single cyme,330.22,empirical,Tew et al. (this study),1 species in genus (Euphorbia characias); 34 flowers measured (2 sites on 2 days) and 10 FUs counted
+Euphorbia helioscopia,Euphorbia,Euphorbiaceae,sun spurge,non-native,single cyme,120.34,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day) and 6 FUs counted
+Euphorbia myrsinites,Euphorbia,Euphorbiaceae,"myrtle spurge, blue spurge, broad-leaved glaucous-spurge",non-native,single cyme,330.22,empirical,Tew et al. (this study),1 species in genus (Euphorbia characias); 34 flowers measured (2 sites on 2 days) and 10 FUs counted
+Euphorbia peplus,Euphorbia,Euphorbiaceae,"petty spurge, milkweed",non-native,single cyme,0.92,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Euphorbia pulcherrima,Euphorbia,Euphorbiaceae,poinsettia,non-native,single cyme,120.34,empirical,Tew et al. (this study),1 species in genus (Euphorbia helioscopia); 10 flowers measured (1 site on 1 day) and 6 FUs counted
+Euphorbia stricta,Euphorbia,Euphorbiaceae,upright spurge,non-native,single cyme,120.34,empirical,Tew et al. (this study),1 species in genus (Euphorbia helioscopia); 10 flowers measured (1 site on 1 day) and 6 FUs counted
+Euphrasia officinalis agg,Euphrasia,Orobanchaceae,eyebright,native,single flower,17.83,empirical,Baude et al. 2016,same species (Euphrasia officinalis agg.); 20 flowers measured (2 sites on 2 days)
+Fallopia baldschuanica,Fallopia,Polygonaceae,"Russian-vine, Bukhara fleeceflower, Chinese fleecevine",non-native,single flower,65.08,empirical,Baude et al. 2016,1 species in genus (Fallopia convolvulus); 10 flowers measured (1 site on 1 day)
+Fallopia convolvulus,Fallopia,Polygonaceae,"black bindweed,  wild buckwheat",non-native,single flower,65.08,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Ficaria verna,Ficaria,Ranunculaceae,"lesser celandine, pilewort",native,single flower,13.20,empirical,Baude et al. 2016,same species (listed as Ranunculus ficaria); 20 flowers measured (2 sites on 2 days)
+Filipendula ulmaria,Filipendula,Rosaceae,"meadowsweet, mead wort",native,single flower,0.00,empirical,Baude et al. 2016,same species; 18 flowers measured (2 sites measured on 2 days)
+Foeniculum vulgare,Foeniculum,Apiaceae,fennel,non-native,secondary umbel,423.24,empirical,Tew et al. (this study),same species; 36 flowers measured (3 sites on 3 days) and 16 FUs counted
+Forsythia x intermedia,Forsythia,Oleaceae,border forsythia,non-native,single flower,4.77,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Fragaria ananassa,Fragaria,Rosaceae,strawberry,non-native,single flower,110.64,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Fragaria vesca,Fragaria,Rosaceae,wild strawberry,native,single flower,38.96,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Francoa sonchifolia,Francoa,Francoaceae,bridalwreath,non-native,single flower,228.22,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Fritillaria meleagris,Fritillaria,Liliaceae,Snake's head fritillary,native,single flower,869.51,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Fuchsia sp,Fuchsia,Onagraceae,fuchsia,non-native,single flower,8248.72,empirical,Tew et al. (this study),1 species in genus (Fuchsia magellanica and hyrbids hybrid); 20 flowers measured (2 sites on 2 days)
+Fumaria spp,Fumaria,Papaveraceae,"fumitory, fumewort",native,single flower,21.90,empirical,Hicks et al. 2016,1 species in genus (Fumaria officinalis); 7 flowers measured (1 site on 1 day)
+Galanthus nivalis,Galanthus,Amaryllidaceae,snowdrop,non-native,single flower,40.46,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Galeopsis tetrahit,Galeopsis,Lamiaceae,common hemp-nettle,native,single flower,173.48,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Galinsoga parviflora,Galinsoga,Asteraceae,"gallant soldier, quickweed, potato weed",non-native,single capitulum,177.09,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Galium aparine,Galium,Rubiaceae,"cleavers, goosegrass, stickyweed",native,single flower,9.48,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Galium odoratum,Galium,Rubiaceae,"sweetscented bedstraw, sweet woodruff",native,single flower,4.88,empirical,Timberlake et al. 2019,same species
+Galium palustre,Galium,Rubiaceae,common marsh bedstraw,native,single flower,0.94,empirical,Baude et al. 2016,1 species in genus (Galium saxatile); 10 flowers measured (1 site on 1 day)
+Galium saxatile,Galium,Rubiaceae,heath bedstraw,native,single flower,0.94,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Galium uliginosum,Galium,Rubiaceae,fen bedstraw,native,single flower,0.94,empirical,Baude et al. 2016,1 species in genus (Galium saxatile); 10 flowers measured (1 site on 1 day)
+Galium verum,Galium,Rubiaceae,"lady's bedstraw, yellow bedstraw",native,single flower,1.16,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 25 flowers measured (2 sites on 2 days); weighted mean across the two datasets used
+Gazania rigens and hybrids,Gazania,Asteraceae,treasure flower,non-native,single capitulum,3144.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Genista tinctoria,Genista,Fabaceae,"dyer’s greenweed, dyer's broom",native,single flower,33.96,empirical,Baude et al. 2016,1 species in genus (Cytisus scoparius used as Genista tinctoria is synonymous with Cytisus tinctoria); 10 flowers measured (1 site on 1 day)
+Geranium dissectum,Geranium,Geraniaceae,cut-leaved crane's-bill,non-native,single flower,2.69,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Geranium lucidum,Geranium,Geraniaceae,shining cranesbill,native,single flower,97.79,empirical,Baude et al. 2016,1 species in genus (Geranium robertianum); 15 flowers measured (2 sites on 2 days)
+Geranium molle/pusillum,Geranium,Geraniaceae,"dove's-foot crane's-bill, small-flowered crane's-bill",native,single flower,20.27,empirical,Baude et al. 2016; Hicks et al. 2016,same species (Geranium molle); 23 flowers measured (3 sites on 3 days); weighted mean across the two datasets used
+Geranium pratense,Geranium,Geraniaceae,meadow crane's-bill,native,single flower,16.43,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Geranium pyrenaicum,Geranium,Geraniaceae,hedgerow crane's-bill,non-native,single flower,82.31,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Geranium robertianum,Geranium,Geraniaceae,herb robert,native,single flower,97.79,empirical,Baude et al. 2016,same species; 15 flowers measured (2 sites on 2 days)
+Geranium spp (ornamental),Geranium,Geraniaceae,ornamental geranium/crane's-bill,non-native,single flower,291.52,empirical,Tew et al. (this study),1 species in genus (Geranium endressii); 20 flowers measured (2 sites on 2 days)
+Geum quellyon,Geum,Rosaceae," scarlet avens, Chilean avens",non-native,single flower,124.60,empirical,Tew et al. (this study),1 species in genus (Geum flore-plena); 10 flowers measured (1 site on 2 days)
+Geum urbanum,Geum,Rosaceae,"wood avens, herb Bennet",native,single flower,29.80,empirical,Baude et al. 2016,same species; 17 flowers measured (2 sites on 2 days)
+Gladiolus x hortulanus,Gladiolus,Iridaceae,"gladiolus, sword lily",non-native,single flower,888.33,empirical,Tew et al. (this study),1 species in genus (Gladiolus communis); 10 flowers measured (1 site on 1 day)
+Glebionis coronaria,Glebionis,Asteraceae,crown daisy,non-native,single capitulum,931.21,empirical,Hicks et al. 2016,same species; 11 FUs counted (1 site on 1 day)
+Glebionis segetum,Glebionis,Asteraceae,corn marigold/daisy,non-native,single capitulum,931.21,empirical,Hicks et al. 2016,same species; 11 FUs counted (1 site on 1 day)
+Glechoma hederacea,Glechoma,Lamiaceae,ground-ivy,native,single flower,94.37,empirical,Baude et al. 2016,same species; 30 flowers measured (3 sites on 3 days)
+Hedera helix,Hedera,Araliaceae,ivy,native,single flower,609.82,empirical,Baude et al. 2016,same species; 19 flowers measured (2 sites on 2 days)
+Helenium autumnale and hybrids,Helenium,Asteraceae,sneezeweeds,non-native,single capitulum,1089.29,empirical,Tew et al. (this study),same species; 36 flowers measured (2 sites on 3 days) and 13 FUs counted
+Helianthemum sp (ornamental),Helianthemum,Cistaceae,rock rose,non-native,single flower,0.00,empirical,Baude et al. 2016,one species in genus (Helianthemum nummularium); 7 flowers measured (1 site on 1 day)
+Helianthus annuus,Helianthus,Asteraceae,common sunflower,non-native,single capitulum,7107.12,empirical,Tew et al. (this study),same species; 12 flowers measured (1 site on 1 day) and 2 FUs counted
+Heliopsis helianthoides,Heliopsis,Asteraceae,"rough/smooth oxeye, false sunflower",non-native,single capitulum,3144.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Helleborus spp,Helleborus,Ranunculaceae,"hellebore, winter rose",non-native,single flower,4627.23,empirical,Tew et al. (this study),"3 species in genus (unweighted mean of Helleborus argifolius, Helleborus lividus, Helleborus × hybridus); 40 flowers measured (2 sites on 2 days)"
+Helminthotheca echioides,Helminthotheca,Asteraceae,bristly oxtongue,non-native,single capitulum,453.60,empirical,Baude et al. 2016,same species (Picris echioides); 8 flowers measured (1 site on 1 day) and 7 FUs counted
+Hemerocallis spp,Hemerocallis,Xanthorrhoeaceae,daylily,non-native,single flower,2178.17,empirical,Tew et al. (this study),1 or 2 species in genus (Hemerocallis sp.); 20 flowers measured (2 sites on 2 days)
+Heracleum sphondylium,Heracleum,Apiaceae,"hogweed, cow parsnip",native,secondary umbel,1440.15,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 3 days) and 15 FUs counted
+Hesperis matronalis,Hesperis,Brassicaceae,"dame's rocket, dame's-violet",non-native,single flower,65.09,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Heuchera sp,Heuchera,Saxifragaceae,"coral bells, alumroot",non-native,single flower,180.86,empirical,Tew et al. (this study),3 varieties in genus; 39 flowers measured (3 sites on 3 days); mean across all 39 flowers 
+Hibiscus syriacus,Hibiscus,Malvaceae,"hibiscus, Korean rose, rose of Sharon, rose mallow",non-native,single flower,2545.74,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Hieracium agg,Hieracium,Asteraceae,hawkweed,native,single capitulum,370.99,empirical,Baude et al. 2016,1 species in genus (Pilosella officinarum used as it is synoymous with Hieracium spp.); 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Hosta sp,Hosta,Asparagaceae,"hostas, plantain lilies",non-native,single flower,948.10,empirical,Tew et al. (this study),2 species in genus (unweighted mean of Hosta sp. (Tardiana Group) and Hosta sieboldiana); 24 flowers (2 sites on 2 days)
+Houttuynia cordata,Houttuynia,Sauruaceae,"chameleon plant, heart leaf",non-native,single flower,3.98,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Hyacinthoides non-scripta/hispanica and hybrids,Hyacinthoides,Asparagaceae,bluebell,native,single flower,113.44,empirical,Baude et al. 2016,same species (Hyacinthoides non-scripta); 30 flowers measured (3 sites on 3 days)
+Hyacinthus orientalis,Hyacinthus,Asparagaceae,common/garden hyacinth,non-native,single flower,36.70,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Hydrangea macrophylla,Hydrangea,Hydrangeaceae,French hydrangea,non-native,single flower,0.71,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Hydrangea petiolaris,Hydrangea,Hydrangeaceae,climbing hydrangea,non-native,single flower,34.30,empirical,Tew et al. (this study),1 species in genus (Hydrangea paniculata); 12 flowers measured (1 site on 1 day)
+Hypericum androsaemum,Hypericum,Hypericaceae,"Tutsan, Shrubby St. John's Wort",native,single flower,0.00,empirical,Baude et al. 2016,1 species in genus (Hypericum pulchrum); 10 flowers measured (1 site on 1 day)
+Hypericum perforatum,Hypericum,Hypericaceae,common/perforate St John's-wort,native,single flower,0.00,empirical,Baude et al. 2016,1 species in genus (Hypericum pulchrum); 10 flowers measured (1 site on 1 day)
+Hypericum pseudohenryi,Hypericum,Hypericaceae,Irish tutsan,non-native,single flower,0.00,empirical,Baude et al. 2016,1 species in genus (Hypericum pulchrum); 10 flowers measured (1 site on 1 day)
+Hypericum spp (ornamental),Hypericum,Hypericaceae,St John's-worts,non-native,single flower,0.00,empirical,Baude et al. 2016,1 species in genus (Hypericum pulchrum); 10 flowers measured (1 site on 1 day)
+Hypochaeris glabra,Hypochaeris,Asteraceae,smooth cat's ear,native,single capitulum,1171.61,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Hypochaeris radicata); 15 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Hypochaeris radicata,Hypochaeris,Asteraceae,"hairy cat's ear, flatweed",native,single capitulum,1171.61,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 15 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Iberis sempervirens,Iberis,Brassicaceae,perennial candytuft,non-native,single flower,2.57,empirical,Tew et al. (this study),same species; 22 flowers measured (2 sites on 2 days)
+Iberis umbellata,Iberis,Brassicaceae,"garden candytuft, globe candytuft",non-native,single flower,2.57,empirical,Tew et al. (this study),1 species in genus (Iberis sempervirens); 22 flowers measured (2 sites on 2 days)
+Ilex aquifolium,Ilex,Aquifoliaceae,holly,native,single flower,163.49,empirical,Timberlake et al. 2019,same species
+Impatiens balsamina,Impatiens,Balsaminaceae,garden balsam,non-native,single flower,68.90,empirical,Tew et al. (this study),1 species in genus (Impatiens neuguinea); 12 flowers measured (1 site on 1 day)
+Impatiens glandulifera,Impatiens,Balsaminaceae,Himalayan balsam,non-native,single flower,7667.84,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Impatiens neuguinea hybrid,Impatiens,Balsaminaceae,New Guinea impatiens,non-native,single flower,68.90,empirical,Tew et al. (this study),same species; 12 flowers measured (1 site on 1 day)
+Impatiens walleriana,Impatiens,Balsaminaceae,busy Lizzie,non-native,single flower,68.90,empirical,Tew et al. (this study),1 species in genus (Impatiens neuguinea); 12 flowers measured (1 site on 1 day)
+Inula conyzae,Inula,Asteraceae,ploughman's-spikenard,native,single capitulum,177.09,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Inula hirta,Inula,Asteraceae,inula,non-native,single capitulum,5746.58,empirical,Tew et al. (this study),1 species in genus (Inula hookeri); 9 flowers measured (1 site on 1 day) and 5 FUs counted
+Iris spp (ornamental),Iris,Iridaceae,iris,non-native,single flower,3231.34,empirical,Tew et al. (this study),1 species in genus (Iris sibirica); 13 flowers measured (2 sites on 4 days)
+Ixia sp,Ixia,Iridaceae,corn lily,non-native,single flower,218.32,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Jasminum nudiflorum,Jasminum,Oleaceae,winter jasmine,non-native,single flower,503.41,empirical,Tew et al. (this study),same species; 15 flowers measured (1 site on 1 day)
+Jasminum officinale,Jasminum,Oleaceae,common jasmine,non-native,single flower,1516.22,empirical,Tew et al. (this study),same species; 15 flowers measured (1 site on 1 day)
+Kalanchoe spp,Kalanchoe,Crassulaceae,kalanchoe,non-native,single flower,60.12,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Kerria japonica,Kerria,Rosaceae,Japanese kerria,non-native,single flower,30.58,empirical,Tew et al. (this study),same species; 21 flowers measured (2 sites on 2 days)
+Knautia macedonica,Knautia,Dipsacaceae,Macedonian scabious,non-native,single capitulum,1395.65,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 6 FUs counted
+Laburnum anagyroides,Laburnum,Fabaceae,"common laburnum, golden chain",non-native,single flower,94.60,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lactuca sativa,Lactuca,Asteraceae,lettuce,non-native,single capitulum,177.09,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lactuca serriola,Lactuca,Asteraceae,"prickly lettuce, milk thistle",non-native,single capitulum,177.09,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lactuca virrosa,Lactuca,Asteraceae,wild/bitter lettuce,native,single capitulum,177.09,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lamiastrum galeobdolon,Lamiastrum,Lamiaceae,yellow archangel,native,single flower,440.16,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Lamium album,Lamium,Lamiaceae,white dead-nettle,non-native,single flower,1043.99,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Lamium maculatum,Lamium,Lamiaceae,spotted dead-nettle,non-native,single flower,1043.99,empirical,Baude et al. 2016,1 species in genus (Lamium album); 20 flowers measured (2 sites on 2 days)
+Lamium purpureum,Lamium,Lamiaceae,red dead-nettle,non-native,single flower,58.01,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 31 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Lamprocapnos spectabilis,Lamprocapnos,Papaveraceae,Asian bleeding-heart,non-native,single flower,676.68,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lapsana communis,Lapsana,Asteraceae,nipplewort ,native,single capitulum,54.12,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 21 FUs counted (2 sites on 2 days); weighted mean used to combine datasets at FU level
+Lathyrus latifolius,Lathyrus,Fabaceae,broad-leaved everlasting-pea,non-native,single flower,1387.82,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Lathyrus odoratus,Lathyrus,Fabaceae,sweet pea,non-native,single flower,6.58,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Lathyrus pratensis,Lathyrus,Fabaceae,"meadow vetchling, meadow pea",native,single flower,952.69,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Laurentia sp,Laurentia,Campanulaceae,rock/showy isotome,non-native,single flower,568.70,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lavandula angustifolia/latifolia and hybrid,Lavandula,Lamiaceae,English/Portuguese lavander,non-native,single spike,2163.98,empirical,Tew et al. (this study),same species (Lavandula angustifolia); 22 flowers measured (2 sites on 2 days) and 15 FUs counted
+Lavandula stoechas,Lavandula,Lamiaceae,French lavander,non-native,single spike,2163.98,empirical,Tew et al. (this study),1 species in genus (Lavandula angustifolia); 22 flowers measured (2 sites on 2 days) and 15 FUs counted
+Leontodon hispidus,Leontodon,Asteraceae,rough/bristly hawkbit,native,single capitulum,1255.21,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 12 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Leontodon saxatilis,Leontodon,Asteraceae,"lesser hawkbit, rough hawkbit",native,single capitulum,1255.21,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Leontodon hispidus); 12 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Lepidium draba,Lepidium,Brassicaceae,"whitetop, hoary cress",non-native,single flower,14.21,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lepidium ruderale,Lepidium,Brassicaceae,"narrow-leaf pepperwort, roadside pepperweed, peppergrass",non-native,single flower,4.16,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lepidium sativum,Lepidium,Brassicaceae,garden cress,non-native,single flower,4.16,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Leucanthemum vulgare,Leucanthemum,Asteraceae,oxeye daisy,native,single capitulum,1416.49,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 18 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Leucanthemum x superbum,Leucanthemum,Asteraceae,Shasta daisy,non-native,single capitulum,3581.76,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 9 FUs counted
+Leucojum aestivum,Leucojum,Amaryllidaceae,summer snowflake,native,single flower,384.47,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Levisticum officinale,Levisticum,Apiaceae,lovage,non-native,secondary umbel,197.10,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lewisia cotyledon,Lewisia,Montiaceae,"Siskiyou lewisia, cliff maids",non-native,single flower,365.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Leycesteria formosa,Leycesteria,Caprifoliaceae,Himalayan honeysuckle,non-native,single flower,799.07,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ligustrum ovalifolium,Ligustrum,Oleaceae,garden privet,non-native,single flower,66.75,empirical,Baude et al. 2016,1 species in genus (Ligustrum vulgare); 9 flowers measured (1 site on 1 day)
+Ligustrum vulgare,Ligustrum,Oleaceae,common privet,native,single flower,66.75,empirical,Baude et al. 2016,same species; 9 flowers measured (1 site on 1 day)
+Lilium sp,Lilium,Liliaceae,lily,non-native,single flower,17.82,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Limnanthes douglasii,Limnanthes,Limnanthaceae,"poached egg plant, meadow foam",non-native,single flower,231.84,empirical,Tew et al. (this study),same species; 20 flowers (1 site on 2 days)
+Linaria bipartita hybrid,Linaria,Scrophulariaceae,"Moroccan toadflax, annual toadflax",non-native,single flower,180.13,empirical,Tew et al. (this study),1 species in genus (Linaria purpurea); 20 flowers measured (2 sites on 2 days)
+Linaria maroccana,Linaria,Scrophulariaceae,clovenlip toadflax,non-native,single flower,180.13,empirical,Tew et al. (this study),1 species in genus (Linaria purpurea); 20 flowers measured (2 sites on 2 days)
+Linaria purpurea,Linaria,Scrophulariaceae,purple toadflax,non-native,single flower,180.13,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Linum catharticum,Linum,Linaceae,"purging flax, fairy flax",native,single flower,143.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lithodora diffusa,Lithodora,Boraginaceae,purple gromwell,non-native,single flower,290.54,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lobelia erinus,Lobelia,Campanulaceae,garden lobelia,non-native,single flower,90.67,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Lobularia maritima,Lobularia,Brassicaceae,sweet alyssum,non-native,single corymb,75.44,empirical,Hicks et al. 2016,same species; 9 flowers measured (1 site on 1 day) and 12 FUs counted
+Lonicera caprifolium/periclymenum and hybrids,Lonicera,Caprifoliaceae,common/Italian honeysuckle,native,single flower,1726.84,empirical,Baude et al. 2016,same species (Lonicera periclymenum); 30 flowers measured (2 sites on 2 days)
+Lonicera japonica,Lonicera,Caprifoliaceae,Japanese honeysuckle,non-native,single flower,1726.84,empirical,Baude et al. 2016,1 species in genus (Lonicera periclymenum); 30 flowers measured (2 sites on 2 days)
+Lonicera nitida,Lonicera,Caprifoliaceae,"box honeysuckle, Wilson's honeysuckle",non-native,single flower,285.38,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Lotus corniculatus,Lotus,Fabaceae,bird's-foot-trefoil,native,single flower,60.91,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 32 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Lotus pedunculatus,Lotus,Fabaceae,"big trefoil, greater bird's-foot-trefoil",native,single flower,35.36,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Lunaria annua,Lunaria,Brassicaceae,honesty,non-native,single flower,97.48,empirical,Tew et al. (this study),1 species in genus (Lunaria rediviva); 10 flowers measured (1 site on 1 day)
+Lupinus sp,Lupinus,Fabaceae,lupin,non-native,single flower,5.83,empirical,Tew et al. (this study),1 species in genus (Lupinus hartwegii); 10 flowers measured (1 site on 1 day)
+Lychnis flos-cuculi,Lychnis,Caryophyllaceae,Ragged-Robin,native,single flower,97.45,empirical,Tew et al. (this study),1 species in genus (Silene coronaria used as it is synonymous with Lychnis coronaria and Lychnis flos-cuculi is synonymous with Silene flos-cuculi); 15 flowers measured (1 site on 2 days)
+Lysimachia ciliata,Lysimachia,Primulaceae,fringed loosestrife,non-native,single flower,0.00,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Lysimachia ephemerum,Lysimachia,Primulaceae,willow-leaved loosestrife,non-native,single flower,2773.13,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Lysimachia nemorum,Lysimachia,Primulaceae,yellow pimpernel,native,single flower,7.18,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Lysimachia nummularia,Lysimachia,Primulaceae,"creeping jenny, moneywort",native,single flower,7.18,empirical,Baude et al. 2016,1 species in genus (Lysimachia nemorum); 10 flowers measured (1 site on 1 day)
+Lysimachia punctata,Lysimachia,Primulaceae,"dotted loosestrife, large yellow loosestrife",non-native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Lysimachia ciliata); 10 flowers measured (1 site on 1 day)
+Lysimachia vulgaris,Lysimachia,Primulaceae,"yellow loosestrife, garden loosestrife",native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Lysimachia ciliata); 10 flowers measured (1 site on 1 day)
+Lythrum salicaria,Lythrum,Onagraceae,purple loosestrife,native,single flower,136.72,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Malcolmia maritima,Malcolmia,Brassicaceae,Virginia stock,non-native,single flower,46.35,empirical,Hicks et al. 2016,same species; 21 flowers measured (1 site on 1 day)
+Malus pumila,Malus,Rosaceae,apple,non-native,single flower,110.21,empirical,Baude et al. 2016,"same species (Malus domestica, which is a synonym of Malus pumila); 16 flowers sampled (2 sites on 2 days)"
+Malva spp,Malva,Malvaceae,mallow,native,single flower,540.65,empirical,Hicks et al. 2016,1 species in genus (Malva moschata); 11 flowers measured (1 site on 1 day)
+Matricaria chamomilla,Matricaria,Asteraceae,"wild chamomile, scented mayweed",non-native,single capitulum,84.48,empirical,Baude et al. 2016,same species (Matricaria recutita); 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Matricaria discoidea,Matricaria,Asteraceae,"pineappleweed, wild chamomile",non-native,single capitulum,62.85,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 13 FUs counted (2 sites on 2 days); weighted mean used to combine datasets at FU level
+Matthiola incana,Matthiola,Brassicaceae,hoary stock,non-native,single flower,343.72,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Meconopsis cambrica,Meconopsis,Papaveraceae,Welsh poppy,native,single flower,3.92,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Papaver rhoes used given Meconopsis cambrica is synonymous with Papaver cambricum); 20 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Medicago arabica,Medicago,Fabaceae,spotted medick,native,single raceme,29.67,empirical,Baude et al. 2016,1 species in genus (Medicago lupulina); 8 flowers measured (1 site on 1 day) and 5 FUs counted
+Medicago lupulina,Medicago,Fabaceae,black medick,native,single raceme,29.67,empirical,Baude et al. 2016,same species; 8 flowers measured (1 site on 1 day) and 5 FUs counted
+Medicago sativa,Medicago,Fabaceae,"alfalfa, lucerne",native,single raceme,2104.42,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day) and 10 FUs counted
+Melilotus altissimus,Melilotus,Fabaceae,"tall yellow sweetclover, tall melilot",non-native,single flower,20.17,empirical,Baude et al. 2016,1 species in genus (Melilotus officinalis); 10 flowers measured (1 site on 1 day)
+Melissa officinalis,Melissa,Lamiaceae,lemon balm,non-native,single flower,119.81,empirical,Tew et al. (this study),same species; 30 flowers measured (3 sites measured on 3 days)
+Mentha spp,Mentha,Lamiaceae,mint,non-native,single flower,16.83,empirical,Tew et al. (this study),1 species in genus (Mentha spicata and hybrids); 60 flowers measured (3 sites on 3 days); mean across all 60 flowers
+Mercurialis perennis,Mercurialis,Euphorbiaceae,dog's mercury,native,single flower,0.00,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Mimulus spp,Mimulus,Scrophulariaceae,monkey flower,non-native,single flower,454.70,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Misopates orontium,Misopates,Scrophulariaceae,"weasel's snout, lesser snapdragon",non-native,single flower,211.13,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Muscari armeniacum,Muscari,Asparagaceae,Armenian grape hyacinth,non-native,single flower,162.65,empirical,Tew et al. (this study),same species; 40 flowers measured (2 sites on 2 days)
+Muscari neglectum,Muscari,Asparagaceae,common grape hyacinth,non-native,single flower,162.65,empirical,Tew et al. (this study),1 species in genus (Muscari armeniacum); 40 flowers measured (2 sites on 2 days)
+Myosotis spp,Myosotis,Boraginaceae,forget-me-not,non-native,single flower,23.05,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Myosotis arvensis); 25 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Myrrhis odorata,Myrrhis,Apiaceae,sweet cicely,non-native,secondary umbel,197.10,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Narcissus spp,Narcissus,Amaryllidaceae,daffodill,non-native,single flower,915.82,empirical,Tew et al. (this study),2 varieties (large and small flowering cultivars); 40 flowers measured (2 sites on 3 days); mean of all 40 flowers taken
+Narthecium ossifragum,Narthecium,Nartheciaceae,bog asphodel,native,single flower,0.00,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Nectaroscordum siculum,Nectaroscordum,Amaryllidaceae,Sicilian honey garlic,non-native,single flower,701.93,empirical,Tew et al. (this study),1 species in genus (Allium roseum used given Nectaroscordum siculum is synonymous with Allium siculum); 10 flowers measured (1 site on 1 day)
+Nemesia x hybrida,Nemesia,Scrophulariaceae,nemesia,non-native,single flower,74.93,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Nepeta cataria,Nepeta,Lamiaceae,"catmint, catnip",non-native,single flower,328.90,empirical,Tew et al. (this study),1/2 varieties in genus (Nepeta sp.); 22 flowers measured (2 sites on 2 days)
+Nepeta x faassenii,Nepeta,Lamiaceae,"catmint, catnip",non-native,single flower,328.90,empirical,Tew et al. (this study),1/2 varieties in genus (Nepeta sp.); 22 flowers measured (2 sites on 2 days)
+Nicotiana alata/forgetiana and hybrids,Nicotiana,Solanaceae,tobacco,non-native,single flower,8283.00,empirical,Tew et al. (this study),same species (Nicotiana alata); 10 flowers measured (1 site on 1 day)
+Nigella damascena,Nigella,Ranunculaceae,love-in-a-mist,non-native,single flower,240.30,empirical,Hicks et al. 2016,same species; 4 flowers measured (1 site on 1 day)
+Ocimum basilicum,Ocimum,Lamiaceae,basil,non-native,single flower,173.48,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Odontites vernus,Odontites,Orobanchaceae,red bartsia,native,single flower,10.84,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Oenothera spp,Oenothera,Onagraceae,evening primrose,non-native,single flower,932.32,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Origanum majorana,Origanum,Lamiaceae,marjoram,non-native,single flower,83.28,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Origanum vulgare); 20 flowers measured (2 sites on 2 days); weighted mean used to combine datasets
+Origanum vulgare,Origanum,Lamiaceae,oregano,native,single flower,83.28,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 20 flowers measured (2 sites on 2 days); weighted mean used to combine datasets
+Ornithopus perpusillus,Ornithopus,Fabaceae,little white bird's-foot,native,single flower,10.61,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Osteospermum barberiae and hybrids,Osteospermum,Asteraceae,"African daisy, daisybush",non-native,single capitulum,1299.68,empirical,Tew et al. (this study),2 species/varieties in genus; 24 flowers measured (2 sites on 2 days) and 12 FUs counted
+Oxalis spp,Oxalis,Oxalidaceae,wood sorrels,non-native,single flower,55.61,empirical,Tew et al. (this study),1 species in genus (Oxalis articulata); 12 flowers measured (1 site on 1 day)
+Pachysandra terminalis ,Pachysandra,Buxaceae,"Japanese pachysandra, carpet box",non-native,single flower,0.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Papaver rhoeas,Papaver,Papaveraceae,common poppy,non-native,single flower,3.92,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 20 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Papaver somniferum,Papaver,Papaveraceae,opium poppy,non-native,single flower,3.92,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Papaver rhoes); 20 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Parahebe catarractae,Parahebe,Scrophulariaceae,parahebe,non-native,single flower,21.99,empirical,Tew et al. (this study),1 species in genus (Parahebe hookeriana); 12 flowers measured (1 site on 1 day)
+Passiflora caerulea,Passiflora,Passifloraceae,blue passionflower,non-native,single flower,2545.74,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Pastinaca sativa,Pastinaca,Apiaceae,parsnip,native,secondary umbel,0.42,empirical,Baude et al. 2016,same species; 20 flowers measured (1 site on 1 day) and 8 FUs counted
+Pelargonium spp,Pelargonium,Geraniaceae,geranium,non-native,single flower,8.49,empirical,Tew et al. (this study),1 species in genus (Pelargonium zonale); 20 flowers measured (2 sites on 2 days)
+Penstemon spp,Penstemon,Scrophulariaceae,beardtongue,non-native,single flower,3812.86,empirical,Tew et al. (this study),1 species in genus (Penstemon barbatus); 20 flowers measured (2 sites on 2 days)
+Pentaglottis sempervirens,Pentaglottis,Boraginaceae,"green alkanet, evergreen bugloss",non-native,single flower,539.46,empirical,Tew et al. (this study),same species; 45 flowers measured (3 sites on 3 days)
+Pericallis hybrida,Pericallis,Asteraceae,cineraria,non-native,single capitulum,1067.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Persicaria affinis,Persicaria,Polygonaceae,Himalayan bistort,non-native,single flower,36.26,empirical,Tew et al. (this study),same species; 30 flowers measured (3 sites on 3 days)
+Persicaria amplexicaulis,Persicaria,Polygonaceae,red bistort,non-native,single flower,21.48,empirical,Tew et al. (this study),same species; 10 flowers (1 site on 1 day)
+Persicaria bistorta,Persicaria,Polygonaceae,common bistort,native,single raceme,14335.74,empirical,Tew et al. (this study),same species; 24 flowers measured (2 sites on 2 days) and 9 FUs counted
+Persicaria maculosa,Persicaria,Polygonaceae,"lady's thumb, redshank",native,single flower,25.19,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 21 flowers (2 sites on 2 days); weighted mean used to combine datasets
+Petroselinum crispum,Petroselinum,Apiaceae,garden parsley,non-native,secondary umbel,69.91,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Petunia x hybrida,Petunia,Solanaceae,petunia,non-native,single flower,67.83,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Phacelia tanacetifolia,Phacelia,Boraginaceae,"lacy phacelia, blue tansy",non-native,single flower,469.27,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Phaseolus coccineus,Phaseolus,Fabaceae,runner bean,non-native,single flower,53.44,empirical,Baude et al. 2016,same species (Phaseolus coccineus/vulgaris); 20 flowers measured (2 sites on 2 days)
+Phaseolus vulgaris,Phaseolus,Fabaceae,"common bean, French bean",non-native,single flower,53.44,empirical,Baude et al. 2016,same species (Phaseolus coccineus/vulgaris); 20 flowers measured (2 sites on 2 days)
+Philadelphus spp,Philadelphus,Hydrangeaceae,mock-orange,non-native,single flower,2379.12,empirical,Tew et al. (this study),1 species in genus (Philadelphus x lemoinei); 10 flowers measured (1 site on 1 day)
+Phlox bifida,Phlox,Polemoniaceae,"cleft phlox, sand phlox",non-native,single flower,135.20,empirical,Tew et al. (this study),1 species in genus (Phlox paniculata); 27 flowers measured (2 sites on 2 days)
+Phlox paniculata,Phlox,Polemoniaceae,garden phlox,non-native,single flower,135.20,empirical,Tew et al. (this study),same species; 27 flowers measured (2 sites on 2 days)
+Phlox subulata,Phlox,Polemoniaceae,"creeping phlox, moss phlox",non-native,single flower,135.20,empirical,Tew et al. (this study),1 species in genus (Phlox paniculata); 27 flowers measured (2 sites on 2 days)
+Phygelius aequalis,Phygelius,Scrophulariaceae,"Cape fuchsia, Cape figwort",non-native,single flower,200.79,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Pieris spp,Pieris,Ericaceae,fetterbush,non-native,single flower,1161.19,empirical,Tew et al. (this study),1 species in genus (Pieris formosa); 30 flowers measured (1 site on 2 days)
+Pilosella aurantiaca,Pilosella,Asteraceae,"fox-and-cubs, orange hawk bit",non-native,single capitulum,370.99,empirical,Baude et al. 2016,1 species in genus (Pilosella officinarum); 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Pilosella officinarum,Pilosella,Asteraceae,mouse-ear hawkweed,native,single capitulum,370.99,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Pisum sativum,Pisum,Fabaceae,garden pea,non-native,single flower,20.20,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Plantago coronopus,Plantago,Plantaginaceae,buck's-horn plantain,native,single flower,0.00,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Plantago lanceolata,Plantago,Plantaginaceae,ribwort plantain,native,single flower,0.00,empirical,Hicks et al. 2016,same species; 3 flowers measured (1 site on 1 day)
+Plantago major,Plantago,Plantaginaceae,"broadleaf plantain, greater plantain",native,single flower,0.00,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Plantago media,Plantago,Plantaginaceae,hoary plantain,native,single flower,0.00,empirical,Hicks et al. 2016,1 species in genus (Plantago lanceolata); 3 flowers measured (1 site on 1 day)
+Polemonium caeruleum,Polemonium,Polemoniaceae,"Jacob's-ladder, Greek valerian",native,single flower,264.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Polygala serpyllifolia,Polygala,Polygalaceae,heath milkwort,native,single flower,143.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Polygonatum multiflorum/odoratum and hybrids,Polygonatum,Asparagaceae,Solomon's seal,native,single flower,2850.57,empirical,Tew et al. (this study),same species/hybrids; 20 flowers measured (2 sites on 2 days)
+Polygonum arenastrum,Polygonum,Polygonaceae,equal-leaved knotgrass,non-native,single flower,3.05,empirical,Baude et al. 2016,1 species in genus (Polygonum aviculare agg.); 20 flowers measured (2 sites on 2 days)
+Polygonum aviculare,Polygonum,Polygonaceae,"common knotgrass, prostrate knotweed",native,single flower,3.05,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Potentilla anserina,Potentilla,Rosaceae,"common silverweed, silver cinquefoil",native,single flower,5.62,empirical,Baude et al. 2016,same species; 19 flowers measured (2 sites on 2 days)
+Potentilla erecta,Potentilla,Rosaceae,"tormentil, erect cinquefoil",native,single flower,33.28,empirical,Baude et al. 2016,same species; 9 flowers measured (1 site on 1 day)
+Potentilla fruticosa,Potentilla,Rosaceae,shrubby cinquefoil,native,single flower,222.46,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Potentilla palustris,Potentilla,Rosaceae,marsh/swamp cinquefoil,native,single flower,30.85,empirical,Baude et al. 2016,1 species in genus (Potentilla reptans); 5 flowers measured (1 site on 1 day)
+Potentilla recta,Potentilla,Rosaceae,sulphur cinquefoil,non-native,single flower,30.85,empirical,Baude et al. 2016,1 species in genus (Potentilla reptans); 5 flowers measured (1 site on 1 day)
+Potentilla reptans,Potentilla,Rosaceae,creeping cinquefoil,native,single flower,30.85,empirical,Baude et al. 2016,same species; 5 flowers measured (1 site on 1 day)
+Potentilla sterilis,Potentilla,Rosaceae,"strawberryleaf cinquefoil, barren strawberry",native,single flower,33.28,empirical,Baude et al. 2016,1 species in genus (Potentilla erecta); 9 flowers measured (1 site on 1 day)
+Poterium sanguisorba,Poterium,Rosaceae,salad/garden/small burnet,native,single flower,0.11,empirical,Baude et al. 2016,"same species (Sanguisorba minor, which is synonymous with Poterium sanguisorba); 6 flowers measured (1 site on 1 day)"
+Pratia pedunculata,Pratia,Campanulaceae,"matted/trailing pratia, blue star creeper",non-native,single flower,568.70,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Primula auricula,Primula,Primulaceae,"mountain cowslip, bear's ear",non-native,single flower,158.68,empirical,Tew et al. (this study),1 species in genus (Primula bulleyana); 10 flowers measured (1 site on 1 day)
+Primula denticulata,Primula,Primulaceae,drumstick primrose,non-native,single flower,158.68,empirical,Tew et al. (this study),1 species in genus (Primula bulleyana); 10 flowers measured (1 site on 1 day)
+Primula florindae,Primula,Primulaceae,Tibetan/giant cowslip,non-native,single flower,158.68,empirical,Tew et al. (this study),1 species in genus (Primula bulleyana); 10 flowers measured (1 site on 1 day)
+Primula japonica,Primula,Primulaceae,"Japanese primrose, Japanese cowslip",non-native,single flower,158.68,empirical,Tew et al. (this study),1 species in genus (Primula bulleyana); 10 flowers measured (1 site on 1 day)
+Primula veris,Primula,Primulaceae,cowslip,native,single flower,158.68,empirical,Tew et al. (this study),1 species in genus (Primula bulleyana); 10 flowers measured (1 site on 1 day)
+Primula vulgaris and hybrids,Primula,Primulaceae,primrose,native,single flower,171.91,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Prunella vulgaris,Prunella,Lamiaceae,self-heal,native,single flower,182.75,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 27 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Prunus spp,Prunus,Rosaceae,"cherry, blackthorn, plum",native,single flower,325.36,empirical,Baude et al. 2016,2 species in genus (unweighted mean of Prunus avium and Prunus spinosa); 41 flowers measured (5 sites on 4 days)
+Pseudofumaria lutea,Pseudofumaria,Papaveraceae,"yellow corydalis, rock fumewort",non-native,single flower,433.55,empirical,Tew et al. (this study),same species; 22 flowers measured (2 sites on 2 days)
+Pulicaria dysenterica,Pulicaria,Asteraceae,common fleabane,native,single capitulum,30.87,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Pulmonaria spp,Pulmonaria,Boraginaceae,lungwort,non-native,single flower,1423.23,empirical,Tew et al. (this study),3 varieties in genus; 30 flowers measured (2 sites on 3 days)
+Pyracantha sp,Pyracantha,Rosaceae,firethorn,non-native,single flower,99.43,empirical,Tew et al. (this study),1 species in genus (Pyracantha coccinea); 45 flowers measured (3 sites on 3 days)
+Pyrus spp,Pyrus,Rosaceae,pear,non-native,single flower,38.96,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ranunculus acris,Ranunculus,Ranunculaceae,meadow buttercup,native,single flower,102.34,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 39 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Ranunculus bulbosus,Ranunculus,Ranunculaceae,bulbous buttercup,native,single flower,49.33,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Ranunculus flammula,Ranunculus,Ranunculaceae,lesser spearwort,native,single flower,11.84,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 1 days)
+Ranunculus repens,Ranunculus,Ranunculaceae,creeping buttercup,native,single flower,145.13,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 19 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Ranunculus sceleratus,Ranunculus,Ranunculaceae,celery-leaved buttercup,native,single flower,11.84,empirical,Baude et al. 2016,1 species in genus (Ranunculus flammula); 20 flowers measured (2 sites on 1 day)
+Raphanus sativus,Raphanus,Brassicaceae,radish,non-native,single flower,112.32,empirical,Baude et al. 2016,same species; 10 flowers (1 site on 1 day)
+Reseda lutea,Reseda,Resedaceae,yellow/wild mignonette,non-native,single flower,360.57,empirical,Hicks et al. 2016,same species; 8 flowers measured (1 site on 1 day)
+Rheum x rhabarbarum,Rheum,Polygonaceae,rhubarb,non-native,single flower,5.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Rhinanthus minor,Rhinanthus,Scrophulariaceae,yellow rattle,native,single flower,108.90,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Rhododendron sp,Rhododendron,Ericaceae,rhododendron,non-native,single flower,1256.86,empirical,Baude et al. 2016,1 species in genus (Rhododendron ponticum); 20 flowers measured (2 sites on 2 days)
+Ribes nigrum and hybrids,Ribes,Grossulariaceae,blackcurrant,non-native,single flower,600.26,empirical,Tew et al. (this study),same species; 15 flowers measured (1 site on 1 day)
+Ribes rubrum,Ribes,Grossulariaceae,redcurrant,non-native,single flower,600.26,empirical,Tew et al. (this study),1 species in genus (Ribes nigrum); 15 flowers measured (1 site on 1 day)
+Ribes sanguineum,Ribes,Grossulariaceae,flowering currant,non-native,single flower,933.81,empirical,Tew et al. (this study),same species; 40 flowers measured (2 sites on 2 days)
+Ribes uva-crispa,Ribes,Grossulariaceae,gooseberry,non-native,single flower,600.26,empirical,Tew et al. (this study),1 species in genus (Ribes nigrum); 15 flowers measured (1 site on 1 day)
+Romneya coulteri,Romneya,Papaveraceae,California tree poppy,non-native,single flower,30.47,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Rosa spp,Rosa,Rosaceae,rose,non-native,single flower,6.57,empirical,Tew et al. (this study),1 species in genus (Rosa sp. (ornamental); 10 flowers measured (1 site on 1 day)
+Rosmarinus officinalis,Rosmarinus,Lamiaceae,rosmary,non-native,single flower,209.77,empirical,Tew et al. (this study),same species; 33 flowers measured (2 sites on 2 days)
+Rubus fruticosus agg,Rubus,Rosaceae,"blackberry, bramble",native,single flower,1892.83,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Rubus idaeus and hybrids,Rubus,Rosaceae,raspberry,native,single flower,1892.83,empirical,Baude et al. 2016,1 species in genus (Rubus fruticosus agg); 20 flowers measured (2 sites on 2 days)
+Rudbeckia fulgida,Rudbeckia,Asteraceae,"orange coneflower, or perennial coneflower",non-native,single capitulum,451.22,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Rudbeckia hirta,Rudbeckia,Asteraceae,black-eyed Susan,non-native,single capitulum,451.22,empirical,Tew et al. (this study),1 species in genus (Rudbeckia fulgida); 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Sagina spp,Sagina,Caryophyllaceae,pearlwort,native,single flower,0.00,empirical,Baude et al. 2016,1 species in genus (Sagina sp.); 10 flowers measured (1 site on 1 day)
+Salix spp,Salix,Salicaceae,willow,native,single catkin,4330.81,empirical,Baude et al. 2016,1 species in genus (Salix cinerea); 9 flowers measured (1 site on 1 day) and 5 FUs counted
+Salvia nemorosa,Salvia,Lamiaceae,"woodland sage, Balkan clary",non-native,single flower,65.48,empirical,Tew et al. (this study),same species; 40 flowers measured (2 sites on 2 days)
+Salvia officinalis,Salvia,Lamiaceae,sage,non-native,single flower,2133.87,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Sambucus nigra,Sambucus,Caprifoliaceae,elder,native,single corymb,2070.41,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day) and 10 FUs counted
+Sanguisorba officinalis,Sanguisorba,Rosaceae,great burnet,native,single flower,0.11,empirical,Baude et al. 2016,1 species in genus (Poterium sanguisorba used as it is synonymous with Sanguisorba minor); 6 flowers measured (1 site on 1 day)
+Santolina chamaecyparissus,Santolina,Asteraceae,cotton lavander,non-native,single capitulum,603.29,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Saponaria officinalis,Saponaria,Caryophyllaceae,"common soapwort, wild sweet William",non-native,single flower,445.64,empirical,Baude et al. 2016,same species; 7 flowers measured (1 site on 1 day)
+Satureja montana,Satureja,Lamiaceae,winter/mountain savory),non-native,single flower,98.64,empirical,Tew et al. (this study),same species; 15 flowers measured (1 site on 1 day)
+Saxifraga spp,Saxifraga,Saxifragaceae,saxifrage,non-native,single flower,115.41,empirical,Tew et al. (this study),1 species in genus (Saxifraga × arendsii); 10 flowers measured (1 site on 1 day)
+Scabiosa spp,Scabiosa,Dipsacaceae,"scabious, pincushion flowers",non-native,single capitulum,2253.25,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Scilla siberica,Scilla,Asparagaceae,"Siberian squill, wood squill",non-native,single flower,298.09,empirical,Tew et al. (this study),1 species in genus (Chionodoxa luciliae used given it is synonymous with Scilla luciliae); 25 flowers measured (2 sites on 2 days)
+Scorzonera hispanica,Scorzonera,Asteraceae,black/Spanish salsify,non-native,single capitulum,1067.78,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Scorzoneroides autumnalis,Scorzoneroides,Asteraceae,autumn hawkbit,native,single capitulum,515.76,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 13 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Scutellaria galericulata,Scutellaria,Lamiaceae,common/marsh skullcap,native,single flower,173.48,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Sedum spp,Sedum,Crassulaceae,stonecrop,non-native,single flower,93.22,empirical,Tew et al. (this study),1 species in genus (Sedum telephium); 24 flowers measured (2 sites on 2 days)
+Sempervivum sp,Sempervivum,Crassulaceae,"houseleek, liveforever",non-native,single flower,169.74,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Senecio cineraria,Senecio,Asteraceae,silver ragwort,non-native,single capitulum,1527.32,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Senecio jacobaea); 13 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Senecio erucifolius,Senecio,Asteraceae,hoary ragwort,native,single capitulum,923.98,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Senecio jacobaea,Senecio,Asteraceae,common ragwort,native,single capitulum,1527.32,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 13 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Senecio squalidus,Senecio,Asteraceae,Oxford ragwort,non-native,single capitulum,1527.32,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Senecio jacobaea); 13 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Senecio sylvaticus,Senecio,Asteraceae,"woodland ragwort, heath groundsel",native,single capitulum,7.71,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Senecio vulgaris); 10 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Senecio vulgaris,Senecio,Asteraceae,groundsel,native,single capitulum,7.71,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 10 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Sherardia arvensis,Sherardia,Rubiaceae,field madder,native,single flower,0.94,empirical,Baude et al. 2016,1 species in genus (Galium saxatile used as Sherardia arvensis is synonymous with Galium sherardia); 10 flowers measured (1 site on 1 day)
+Silene coronaria,Silene,Caryophyllaceae,rose campion,non-native,single flower,97.45,empirical,Tew et al. (this study),same species; 15 flowers measured (1 site on 2 days)
+Silene dioica/latifolia and hybrid,Silene,Caryophyllaceae,red/white campion,native,single flower,389.52,empirical,Baude et al. 2016; Hicks et al. 2016,same species (Silene dioica and Silene dioica/latifolia); 25 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Sinapis spp,Sinapis,Brassicaceae,mustard,non-native,single flower,37.89,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Sinapsis arvensis); 31 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Sisymbrium officinale,Sisymbrium,Brassicaceae,hedge mustard,non-native,single flower,2.31,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 22 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Sisyrinchium striatum,Sisyrinchium,Iridaceae,pale yellow-eyed-grass,non-native,single flower,1.64,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Skimmia japonica,Skimmia,Rutaceae,Japanese skimmia,non-native,single flower,336.18,empirical,Tew et al. (this study),same species; 20 flowers measured (1 site on 1 day)
+Solanum crispum,Solanum,Solanaceae,Chilean potato tree,non-native,single flower,0.00,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Solanum jasminoides,Solanum,Solanaceae,potato vine,non-native,single flower,0.00,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Solanum lycopersicum,Solanum,Solanaceae,tomato,non-native,single flower,27.29,empirical,Baude et al. 2016,1 species in genus (Solanum tuberosum); 20 flowers measured (2 sites on 1 day)
+Solanum nigrum,Solanum,Solanaceae,black nightshade,native,single flower,0.00,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 2 days)
+Solanum tuberosum,Solanum,Solanaceae,potato,non-native,single flower,27.29,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 1 day)
+Solidago canadensis,Solidago,Asteraceae,Canada goldenrod,non-native,single branch of capitulas,415.72,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Solidago gigantea,Solidago,Asteraceae,giant goldenrod,non-native,single branch of capitulas,1034.81,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Solidago virgaurea/rugosa,Solidago,Asteraceae,European/wrinkleleaf goldenrod,native,single capitulum,413.36,empirical,Tew et al. (this study),same species (S. virgaurea); 10 flowers measured (1 site on 1 day) and 5 FUs counted
+Sonchus arvensis,Sonchus,Asteraceae,perennial/field sow-thistle,native,single capitulum,627.92,empirical,Baude et al. 2016,same species; 12 flowers measured (1 site on 2 days) and 4 FUs counted
+Sonchus asper,Sonchus,Asteraceae,prickly sow-thistle,native,single capitulum,271.37,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 25 FUs counted (4 sites on 4 days); weighted mean used to combine datasets at FU level
+Sonchus oleraceus,Sonchus,Asteraceae,"common sowthistle, smooth sowthistle",native,single capitulum,501.17,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 20 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Sorbus aucuparia,Sorbus,Rosaceae,"rowan, mountain ash",native,single flower,40.54,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Spiraea spp,Spiraea,Rosaceae,spiraea,non-native,part of panicle,727.33,empirical,Tew et al. (this study),2 species in genus (unweighted mean of Spiraea japonica and Spiraea sp. (white) combined at FU level); 40 flowers measured (3 sites on 4 days) and 56 FUs counted
+Stachys byzantina,Stachys,Lamiaceae,"lamb's ear, woolly hedgenettle",non-native,single flower,640.27,empirical,Tew et al. (this study),same species; 30 flowers measured (2 sites on 2 days)
+Stachys officinalis,Stachys,Lamiaceae,"common hedgenettle, betony",native,single flower,311.11,empirical,Baude et al. 2016,1 species in genus (Stachys sylvatica); 19 flowers measured (2 sites on 2 days)
+Stachys sylvatica and hybrids,Stachys,Lamiaceae,hedge woundwort,native,single flower,311.11,empirical,Baude et al. 2016,same species; 19 flowers measured (2 sites on 2 days)
+Stellaria alsine,Stellaria,Caryophyllaceae,bog stitchwort,native,single flower,9.25,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Stellaria media); 18 flowers measured (2 sites on 2 days); weighted mean used to combine datasets
+Stellaria graminea,Stellaria,Caryophyllaceae,"common starwort, grass-leaved stitchwort",native,single flower,24.96,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 21 flowers measured (2 sites on 2 days); weighted mean used to combine datasets
+Stellaria holostea,Stellaria,Caryophyllaceae,"greater stitchwort, addersmeat",native,single flower,5.54,empirical,Baude et al. 2016,same species; 5 flowers measured (1 site on 1 day)
+Stellaria media,Stellaria,Caryophyllaceae,chickweed,native,single flower,9.25,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 18 flowers measured (2 sites on 2 days); weighted mean used to combine datasets
+Streptocarpus sp,Streptocarpus,Gesneriaceae,"Cape primrose, nodding violet",non-native,single flower,568.70,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Succisa pratensis,Succisa,Dipsacaceae,devil's-bit scabious,native,single capitulum,2140.90,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Sutera cordata,Sutera,Scrophulariaceae,bacopa,non-native,single flower,200.79,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Symphoricarpos spp,Symphoricarpos,Caprifoliaceae,snowberry,non-native,single flower,1234.02,empirical,Tew et al. (this study),1 species in genus (Symphoricarpos albus); 30 flowers measured (2 sites on 2 days)
+Symphytum spp,Symphytum,Boraginaceae,comfrey,native,single flower,1969.46,empirical,Baude et al. 2016,1 species in genus (Symphytum officinale); 10 flowers measured (1 site on 1 day)
+Tagetes erecta,Tagetes,Asteraceae,Mexican marigold,non-native,single capitulum,1227.42,empirical,Tew et al. (this study),1 species in genus (Tagetes patula); 20 flowers measured (1 site on 2 days) and 10 FUs counted
+Tagetes patula,Tagetes,Asteraceae,French marigold,non-native,single capitulum,1227.42,empirical,Tew et al. (this study),same species; 20 flowers measured (1 site on 2 days) and 10 FUs counted
+Tamus communis,Tamus,Dioscoreaceae,black bryony,native,single flower,49.87,empirical,Timberlake et al. 2019,same species
+Tanacetum parthenium,Tanacetum,Asteraceae,feverfew,non-native,single capitulum,45.04,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days) and 10 FUs counted
+Taraxacum agg,Taraxacum,Asteraceae,dandelion,native,single capitulum,3337.80,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 21 FUs counted (3 sites on 3 days); weighted mean used to combine datasets at FU level
+Teucrium scorodonia,Teucrium,Lamiaceae,"woodland germander, wood sage",native,single flower,173.61,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Thalictrum aquilegifolium,Thalictrum,Ranunculaceae,greater meadow-rue,non-native,single flower,14.33,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Thalictrum speciosissimum,Thalictrum,Ranunculaceae,yellow meadow-rue,non-native,single flower,14.33,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Thlaspi arvense,Thlaspi,Brassicaceae,field pennycress,non-native,single flower,4.16,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Thymus serpyllum,Thymus,Lamiaceae,Breckland/creeping thyme,native,single flower,24.65,empirical,Baude et al. 2016,1 species in genus (Thymus polytrichus); 10 flowers measured (1 site on 1 day)
+Thymus vulgaris,Thymus,Lamiaceae,common/garden thyme,non-native,single flower,24.65,empirical,Baude et al. 2016,1 species in genus (Thymus polytrichus); 10 flowers measured (1 site on 1 day)
+Tiarella spp,Tiarella,Saxifragaceae,foamflower,non-native,single flower,60.12,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Tilia spp,Tilia,Malvaceae,"lime, linden",native,single flower,45.20,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Torilis japonica,Torilis,Apiaceae,erect/upright hedge-parsley,native,secondary umbel,69.91,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Tragopogon porrifolius,Tragopogon,Asteraceae,"salsify, goatsbeard",non-native,single capitulum,496.53,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Tragopogon pratensis,Tragopogon,Asteraceae,"meadow salsify, meadow goat's-beard",native,single capitulum,496.53,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Trifolium arvense,Trifolium,Fabaceae,hare's-foot clover,native,single raceme,134.40,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Trifolium campestre/dubium,Trifolium,Fabaceae,hop/lesser treffoil,native,single raceme,0.00,empirical,Baude et al. 2016,same species (Trifolium dubium); 20 flowers measured (2 sites on 2 days) and 5 FUs counted
+Trifolium pratense,Trifolium,Fabaceae,red clover,native,single raceme,2226.84,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 28 flowers measured (3 sites on 3 days) and 10 FUs counted; weighted mean used to combine datasets
+Trifolium repens,Trifolium,Fabaceae,white clover,native,single raceme,1015.14,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 26 flowers measured (3 sites on 3 days) and 10 FUs counted; weighted mean used to combine datasets
+Tripleurospermum inodorum,Tripleurospermum,Asteraceae,"scentless false mayweed, false chamomile",non-native,single capitulum,1415.79,empirical,Hicks et al. 2016,same species; 11 FUs counted (1 site on 1 day)
+Tropaeolum majus,Tropaeolum,Tropaeolaceae,garden nasturtium,non-native,single flower,1181.43,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Tulipa sp,Tulipa,Liliaceae,tulip,non-native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Tulipa gesneriana); 2 flowers measured (1 site on 1 day)
+Tussilago farfara,Tussilago,Asteraceae,coltsfoot,native,single capitulum,496.53,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Ulex europaeus,Ulex,Fabaceae,common gorse,native,single flower,1.98,empirical,Baude et al. 2016,same species; 20 flowers measured (2 sites on 2 days)
+Ulex minor,Ulex,Fabaceae,dwarf gorse,native,single flower,11.32,empirical,Baude et al. 2016,1 species in genus (Ulex gallii); 14 flowers measured (2 sites on 2 days)
+Valeriana officinalis,Valeriana,Caprifoliaceae,common valerian,native,single flower,271.42,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Valerianella spp,Valerianella,Caprifoliaceae,corn salad,native,single flower,91.45,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
+Verbascum phoeniceum and hybrids,Verbascum,Scrophulariaceae,purple mullein,non-native,single flower,0.00,empirical,Tew et al. (this study),1 species in genus (Verbascum thapsus); 10 flowers measured (1 site on 1 day)
+Verbena bonariensis,Verbena,Verbenaceae,Argentinian/purpletop vervain,non-native,single flower,18.57,empirical,Tew et al. (this study),same species; 30 flowers measured (2 sites on 2 days)
+Verbena x hybrida,Verbena,Verbenaceae,garden verbena,non-native,single flower,7.96,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Veronica agrestis/polita/persica,Veronica,Scrophulariaceae,field-speedwell,non-native,single flower,28.08,empirical,Baude et al. 2016; Hicks et al. 2016,same species (Veronica persica); 23 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Veronica arvensis,Veronica,Scrophulariaceae,"wall speedwell, corn speedwell",native,single flower,2.83,empirical,Baude et al. 2016,1 species in genus (Veronica serpyllifolia); 10 flowers measured (1 site on 1 day)
+Veronica chamaedrys,Veronica,Scrophulariaceae,germander speedwell,native,single flower,12.88,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 28 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Veronica filiformis,Veronica,Scrophulariaceae,slender speedwell,non-native,single flower,28.08,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Veronica persica); 23 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Veronica hederifolia,Veronica,Scrophulariaceae,Ivy-leaved Speedwell,non-native,single flower,2.83,empirical,Baude et al. 2016,1 species in genus (Veronica serpyllifolia); 10 flowers measured (1 site on 1 day)
+Veronica longifolia,Veronica,Scrophulariaceae,garden speedwell,non-native,single flower,282.14,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Veronica montana,Veronica,Scrophulariaceae,wood speedwell,native,single flower,2.83,empirical,Baude et al. 2016,1 species in genus (Veronica serpyllifolia); 10 flowers measured (1 site on 1 day)
+Veronica officinalis,Veronica,Scrophulariaceae,heath/common speedwell,native,single flower,2.83,empirical,Baude et al. 2016,1 species in genus (Veronica serpyllifolia); 10 flowers measured (1 site on 1 day)
+Veronica serpyllifolia,Veronica,Scrophulariaceae,thyme-leaved speedwell,native,single flower,2.83,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Veronica sp (subgenus PseudoVeronica),Veronica,Scrophulariaceae,"hebe, shrubby veronica",non-native,single raceme,1461.60,empirical,Tew et al. (this study),1 species in genus (Hebe buxifolia); 30 flowers measured (2 sites on 2 days) and 9 FUs counted
+Veronica spicata,Veronica,Scrophulariaceae,spiked speedwell,native,single flower,373.95,empirical,Tew et al. (this study),same species; 10 flowers measured (1 site on 1 day)
+Viburnum davidii,Viburnum,Caprifoliaceae,David viburnum,non-native,single flower,75.08,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Viburnum grandiflorum and hybrids,Viburnum,Caprifoliaceae,Himalayan/Bodnant viburnum,non-native,single flower,14.70,empirical,Tew et al. (this study),same species; 15 flowers measured (1 site on 1 day)
+Viburnum lantana,Viburnum,Caprifoliaceae,wayfaring tree,native,single flower,17.09,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Viburnum opulus,Viburnum,Caprifoliaceae,guelder-rose,native,single flower,17.09,empirical,Tew et al. (this study),1 species in genus (Viburnum lantana); 20 flowers measured (2 sites on 2 days)
+Viburnum plicatum,Viburnum,Caprifoliaceae,Japanese snowball,non-native,single flower,17.09,empirical,Tew et al. (this study),1 species in genus (Viburnum lantana); 20 flowers measured (2 sites on 2 days)
+Viburnum tinus,Viburnum,Caprifoliaceae,laurustinus,non-native,single flower,56.34,empirical,Tew et al. (this study),same species; 40 flowers measured (2 sites on 2 days)
+Vicia cracca,Vicia,Fabaceae,"tufted vetch, cow vetch",native,single flower,409.56,empirical,Baude et al. 2016; Hicks et al. 2016,same species; 25 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Vicia faba,Vicia,Fabaceae,broad bean,non-native,single flower,300.34,empirical,Baude et al. 2016,1 species in genus (Vicia sativa); 10 flowers measured (1 site on 1 day)
+Vicia hirsuta,Vicia,Fabaceae,hairy vetch,native,single flower,26.76,empirical,Hicks et al. 2016,same species; 11 flowers measured (1 site on 1 day)
+Vicia sativa,Vicia,Fabaceae,common vetch,native,single flower,300.34,empirical,Baude et al. 2016,same species; 10 flowers measured (1 site on 1 day)
+Vicia sepium,Vicia,Fabaceae,bush vetch,native,single flower,117.07,empirical,Baude et al. 2016,same species; 7 flowers measured (1 site on 1 day)
+Vicia sylvatica,Vicia,Fabaceae,wood vetch,native,single flower,409.56,empirical,Baude et al. 2016; Hicks et al. 2016,1 species in genus (Vicia cracca); 25 flowers measured (3 sites on 3 days); weighted mean used to combine datasets
+Vicia tetrasperma,Vicia,Fabaceae,"smooth vetch, lentil vetch",native,single flower,26.76,empirical,Hicks et al. 2016,1 species in genus (Vicia hirsuta); 11 flowers measured (1 site on 1 day)
+Vinca major,Vinca,Apocyaceae,greater/large periwinkle,non-native,single flower,854.00,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Vinca minor,Vinca,Apocyaceae,lesser/dwarf periwinkle,non-native,single flower,427.99,empirical,Tew et al. (this study),same species; 20 flowers measured (2 sites on 2 days)
+Viola spp,Viola,Violaceae,"violet, pansy",non-native,single flower,113.43,empirical,Baude et al. 2016,2 species in genus (unweighted mean of Viola arvensis and Viola riviniana/reichenbiana); 30 flowers measured (3 sites on 3 days)
+Weigela spp,Weigela,Caprifoliaceae,weigela,non-native,single flower,1084.87,empirical,Tew et al. (this study),1 species in genus (Weigela florida); 38 flowers measured (2 sites on 2 days)
+Wisteria spp,Wisteria,Fabaceae,wisteria,non-native,single flower,310.32,empirical,Tew et al. (this study),1 species in genus (Wisteria sinensis); 22 flowers measured (2 sites on 2 days)
+Zantedeschia aethiopica,Zantedeschia,Araceae,calla/arum lily,non-native,single spadix,73.46,modelled,Tew et al. (this study - modelled),Values estimated from predictive modelling
