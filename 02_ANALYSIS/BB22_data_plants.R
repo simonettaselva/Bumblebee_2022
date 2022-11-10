@@ -41,10 +41,31 @@ JC.plantspecies <- unique(JC_floral_traits$Sp.merge)
 shared.species <- intersect(JC.plantspecies,BB22.plantspecies)
 # 169 are shared
 
-species.not.covered <- setdiff(BB22.plantspecies, shared.species)
+species.not.covered <- setdiff(BB22.plantspecies, shared.species); species.not.covered
+# check names on "plants of the world online"; add the missing and adapt synonyms
 
-
-#neu
+# Phedimus spurius = Sedum spurium
+# Phedimus aizoon = Sedum aizoon
+# Clematis sp. YX-2018 = Clematis sp.
+# Salvia amplexicaulis = Salvia nemorosa
+# Phedimus kamtschaticus = Sedum aizoon
+# Tilia americana x Tilia x moltkei = Tilia americana
+# Hylotelephium telephium = Sedum telephium
+# Petunia sp. LR-2018 = Petunia sp.
+# Onopordum illyricum = Onopordum acanthium
+# Fabaceae spc = Fabaceae sp.
+# Potentilla glabra = Dasiphora fruticosa
+# Linaria spc = Linaria sp.
+# Begonia spc = Begonia sp.
+# Lamiaceae spc = Lamiaceae sp.
+# Allium spc = Allium sp.
+# Asteraceae spc= Asteraceae sp. 
+# Boraginaceae spc = Boraginaceae sp.
+# Betonica officinalis = Stachys officinalis
+# Cyclamen spc = Cyclamen sp.
+# Crepis spc = Crepis sp.
+# Eruca pinnatifida = Eruca vesicaria
+# Sedum montanum = Sempervivum montanum
 
 ###############
 plants <- read.csv2("phenology_pollen_nectar_sugar_database_copy.csv",sep = ",")
