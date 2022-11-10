@@ -241,7 +241,7 @@ Pa,Asphodelaceae,Asphodelus,macrocarpus,Asphodelus macrocarpus,N,biotic,2,4,herb
 Pa,Asteraceae,Aster,alpinus,Aster alpinus,E,biotic,3,6,herb,0.23,1,dish_bowl,actinomorph,1,1,0
 Zu,Asteraceae,Aster,bellidiastrum,Aster bellidiastrum,N,biotic,6,4,herb,0.15,1,dish_bowl,actinomorph,1,1,0
 An,Asteraceae,Aster,novae-angliae,Aster novae-angliae,E,biotic,2,8,herb,2.2,1,dish_bowl,actinomorph,1,1,0
-,Asteraceae,Asteraceae,sp.,Asteraceae sp. ,NA,NA,NA,NA,herb,NA,NA,dish_bowl,actinomorph,1,1,0
+,Asteraceae,Asteraceae,sp.,Asteraceae sp.,NA,NA,NA,NA,herb,NA,NA,dish_bowl,actinomorph,1,1,0
 Pa,Asteraceae,Aster,pyrenaeus,Aster pyrenaeus,N,biotic,3,8,herb,0.5,1,dish_bowl,actinomorph,1,1,0
 Zu,Saxifragaceae,Astilbe,Arendsii,Astilbe Arendsii,NA,biotic,3,7,herb,0.5,1,dish_bowl,actinomorph,1,1,0
 Pa,Saxifragaceae,Astilboides,tabularis,Astilboides tabularis,E,biotic,1,6,herb,1.5,1,dish_bowl,actinomorph,1,1,0
@@ -616,7 +616,7 @@ Pa,Asteraceae,Cyanus,segetum,Cyanus segetum,E,biotic,5,6,herb,0.5,1,dish_bowl,ac
 Pa,Primulaceae,Cyclamen,cilicium,Cyclamen cilicium,E,biotic,NA,NA,herb,0.1,0,NA,,1,1,0
 Zu,Primulaceae,Cyclamen,purpurascens,Cyclamen purpurascens,N,biotic,3,7,herb,0.1,0,NA,,1,1,0
 Pa,Primulaceae,Cyclamen,repandum,Cyclamen repandum,N,biotic,NA,NA,herb,0.1,0,NA,,1,1,0
-,Primulaceae,Cyclamen,sp.,Cyclamen sp. ,NA,biotic,NA,NA,herb,NA,NA,NA,NA,1,1,0
+,Primulaceae,Cyclamen,sp.,Cyclamen sp.,NA,biotic,NA,NA,herb,NA,NA,NA,NA,1,1,0
 Zu,Plantaginaceae,Cymbalaria,muralis,Cymbalaria muralis,N,biotic,7,4,herb,0.05,0,gullet,sigomorph,1,1,0
 Pa,Asteraceae,Cynara,cardunculus,Cynara cardunculus,E,biotic,2,7,herb,2,1,brush,no_symmetry,1,1,0
 Zu,Asteraceae,Cynara,scolymus,Cynara scolymus,E,biotic,2,7,herb,1.5,1,brush,no_symmetry,1,1,0
@@ -846,7 +846,7 @@ Zu,Euphorbiaceae,Euphorbia,verrucosa,Euphorbia verrucosa,N,biotic,2,5,herb,0.5,1
 An,Orobanchaceae,Euphrasia,stricta,Euphrasia stricta,N,biotic,6,5,herb,0.18,1,dish_bowl,actinomorph,1,1,0
 Pa,Asteraceae,Euryops,chrysanthemoides,Euryops chrysanthemoides,E,biotic,NA,NA,shrub,1.3,1,dish_bowl,actinomorph,1,1,0
 Zu,Rosaceae,Exochorda,racemosa,Exochorda racemosa,E,biotic,1,4,shrub,1.25,1,dish_bowl,actinomorph,1,1,0
-,Fabaceae,,,Fabaceae sp,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+,Fabaceae,,,Fabaceae sp.,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 Pa,Solanaceae,Fabiana,imbricata,Fabiana imbricata,E,biotic,NA,NA,shrub,2.5,1,dish_bowl,actinomorph,1,1,0
 Pa,Polygonaceae,Fagopyrum,acutatum,Fagopyrum acutatum,E,biotic,NA,NA,herb,0.7,1,dish_bowl,actinomorph,1,1,0
 Zu,Polygonaceae,Fagopyrum,esculentum,Fagopyrum esculentum,E,biotic,3,7,herb,1,1,dish_bowl,actinomorph,1,1,0
@@ -991,7 +991,7 @@ Zu,Asteraceae,Glebionis,coronaria,Glebionis coronaria,E,biotic,2,7,herb,0.55,1,d
 Pa,Asteraceae,Glebionis,segetum,Glebionis segetum,E,biotic,2,7,herb,0.6,1,dish_bowl,actinomorph,1,1,0
 Zu,Lamiaceae,Glechoma,hederacea,Glechoma hederacea,N,biotic,2,4,herb,0.5,1,gullet,sigomorph,1,1,0
 ,Lamiaceae,Nepeta,sp.,Nepeta sp.,NA,biotic,NA,NA,herb,NA,NA,gullet,sigomorph,1,1,1
-,Lamiaceae,Nepeta,saccharata,Nepeta saccharata ,E,biotic,NA,NA,herb,NA,NA,gullet,sigomorph,1,1,1
+,Lamiaceae,Nepeta,saccharata,Nepeta saccharata,E,biotic,NA,NA,herb,NA,NA,gullet,sigomorph,1,1,1
 Zu,Plantaginaceae,Globularia,bisnagarica,Globularia bisnagarica,N,biotic,2,5,herb,0.27,0,brush,no_symmetry,1,1,0
 Pa,Plantaginaceae,Globularia,cordifolia,Globularia cordifolia,N,biotic,3,5,herb,0.05,0,brush,no_symmetry,1,1,0
 Pa,Plantaginaceae,Globularia,trichosantha,Globularia trichosantha,E,biotic,3,5,herb,0.18,0,brush,no_symmetry,1,1,0
@@ -1286,7 +1286,7 @@ An,Plantaginaceae,Linaria,incarnata,Linaria incarnata,N,biotic,3,7,herb,,1,gulle
 Zu,Plantaginaceae,Linaria,maroccana,Linaria maroccana,E,biotic,4,6,herb,0.55,1,gullet,sigomorph,1,1,0
 Zu,Plantaginaceae,Linaria,purpurea,Linaria purpurea,N,biotic,5,6,herb,0.6,1,gullet,sigomorph,1,1,0
 Pa,Plantaginaceae,Linaria,repens,Linaria repens,N,biotic,2,7,herb,0.53,1,gullet,sigomorph,1,1,0
-,Plantaginaceae,Linaria,,Linaria sp ,NA,biotic,NA,NA,herb,NA,NA,gullet,sigomorph,1,1,0
+,Plantaginaceae,Linaria,,Linaria sp.,NA,biotic,NA,NA,herb,NA,NA,gullet,sigomorph,1,1,0
 Zu,Plantaginaceae,Linaria,vulgaris,Linaria vulgaris,N,biotic,4,6,herb,1.2,1,gullet,sigomorph,1,1,0
 Pa,Boraginaceae,Lindelofia,longiflora,Lindelofia longiflora,E,biotic,2,5,herb,0.4,1,gullet,sigomorph,,,
 Pa,Boraginaceae,Lindernia,grandiflora,Lindernia grandiflora,E,biotic,2,6,herb,0.05,1,gullet,sigomorph,,,
@@ -2041,7 +2041,7 @@ Pa,Apiaceae,Seseli,libanotis,Seseli libanotis,N,biotic,2,7,herb,0.8,1,dish_bowl,
 Pa,Apiaceae,Seseli,montanum,Seseli montanum,N,biotic,3,7,herb,0.4,1,dish_bowl,actinomorph,1,1,0
 Zu,Rubiaceae,Sherardia,arvensis,Sherardia arvensis,N,biotic,6,5,herb,0.4,1,stalk_disk,actinomorph,1,1,0
 Pa,NA,Sida,hermaphrodita,Sida hermaphrodita,E,biotic,5,6,herb,2.1,1,dish_bowl,actinomorph,1,1,0
-,Lamiaceae,Sideritis,glacialis,Sideritis glacialis ,E,biotic,NA,NA,herb,NA,2,dish_bowl,actinomorph,1,1,0
+,Lamiaceae,Sideritis,glacialis,Sideritis glacialis,E,biotic,NA,NA,herb,NA,2,dish_bowl,actinomorph,1,1,0
 An,Lamiaceae,Sideritis,hyssopifolia,Sideritis hyssopifolia,N,biotic,3,6,shrub,0.4,1,bell_trumpet,actinomorph,0,1,0
 Pa,Caryophyllaceae,Silene,alpestris,Silene alpestris,E,biotic,3,6,herb,0.18,1,stalk_disk,actinomorph,1,1,0
 Zu,Caryophyllaceae,Silene,armeria,Silene armeria,N,biotic,2,6,herb,0.4,1,stalk_disk,actinomorph,1,1,0
