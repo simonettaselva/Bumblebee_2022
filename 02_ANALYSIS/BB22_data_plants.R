@@ -46,7 +46,8 @@ species.not.covered <- setdiff(BB22.plantspecies, shared.species); species.not.c
 # check names on "plants of the world online"; add the missing and adapt synonyms
 
 JC_floral_traits <- read.csv2("floral_traits_ss.csv",sep = ",")%>% 
-  mutate(Sp.merge = as_factor(Sp.merge))
+  mutate(Sp.merge = as_factor(Sp.merge),
+         plant_height_m = as.numeric(plant_height_m))
 JC.plantspecies <- unique(JC_floral_traits$Sp.merge)
 
 BB22.plantspecies <- recode(BB22.plantspecies,
@@ -139,7 +140,28 @@ plants.nutri.filter <- plants.nutri.filter %>%
   distinct()
             
 BB22_plant_traits <- merge(plants_meta,plants.nutri.filter, by = "plant.species", all=TRUE)
-write_csv(BB22_plant_traits, "BB22_plant_traits.csv")
+# write_csv(BB22_plant_traits, "BB22_plant_traits.csv")
+# data frame has been changes manually -> do not write again
+names(BB22_plant_traits)
 
+BB22_plant_traits <- read.csv("BB22_plant_traits.csv", sep=",")
 
+### look at plant traits ###
+ggplot(BB22_plant_traits, aes(x = native_exotic)) +
+  geom_bar()
+ggplot(BB22_plant_traits, aes(x = pollination_mode)) +
+  geom_bar()
+ggplot(BB22_plant_traits, aes(x = growth_form_category)) +
+  geom_bar()
+ggplot(BB22_plant_traits, aes(x = nectar)) +
+  geom_bar()
+ggplot(BB22_plant_traits, aes(x = pollen)) +
+  geom_bar()
+ggplot(BB22_plant_traits, aes(x = oil)) +
+  geom_bar()
+ggplot(BB22_plant_traits, aes(x=plant_height_m)) + # 172 NAs
+  geom_histogram()
+ggplot(BB22_plant_traits, aes(x=sugar.concentration)) + # 172 NAs
+  geom_histogram()
 
+str(BB22_plant_traits)
