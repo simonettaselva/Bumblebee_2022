@@ -44,7 +44,6 @@ ggplot(BB.pasc, aes(x=landscape, y=Shannon)) +
   geom_boxplot(notch = T)+ theme_bw()
 
 # Wilcoxon-Test
-# w.test <- wilcox.test(Shannon~landscape, BB.pasc, alternative = "two.sided"); w.test
 library(rstatix)
 w.test <- wilcox_test(BB.pasc,Shannon~landscape); w.test
 qnorm(w.test$p/2) # z score = -9.000839
@@ -98,21 +97,19 @@ qqline(residuals(mod_lme1))
 hist(log(BB.pasc$Shannon+1))
 
 library(car)
-vif(mod_lme1)
+vif(mod_lme1) #cut-off of five (???) to check for collinearity among our explanatory variables
 
-mod_lme1.1<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length + proboscis_ratio 
-               + fore_wing_ratio  + corbicula_ratio + (1|landscape),
+mod_lme1.1<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length +
+               fore_wing_ratio  + corbicula_length + corbicula_ratio + (1|landscape),
                data=BB.pasc) # add constant???
 summary(mod_lme1.1)
 vif(mod_lme1.1)
 
 mod_lme1.2<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length
-                 + fore_wing_ratio  + corbicula_ratio + (1|landscape),
+                 + fore_wing_ratio  + corbicula_length + (1|landscape),
                  data=BB.pasc) # add constant???
 summary(mod_lme1.2)
 vif(mod_lme1.2) #looks ok
-
-
 
 
 
@@ -127,6 +124,8 @@ mod_lme2<-lme(log(Shannon+1)~prementum,data=BB.pasc,random=~prementum|site)
 summary(mod_lme2)
 
 BB.pasc$Shannon + 1
+
+
 
 #### B.lapidarius ####
 # look at data
