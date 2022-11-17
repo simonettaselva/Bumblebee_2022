@@ -2,7 +2,7 @@
 # R data preparation
 # by Simonetta Selva
 #
-# Created: October 17, 2022
+# Created: November 17, 2022
 # Project: Bumblebee 2022
 ################################################
 rm(list=ls())
@@ -80,18 +80,63 @@ BB22_full <- full_join(BB22, BB22_plant_traits, by = "plant.species")%>%
          growth_form_category = as_factor(growth_form_category),
          inflorescence = as_factor(inflorescence),
          structural_blossom_class = as_factor(structural_blossom_class),
-         symmetry = as_factor(symmetry))
+         symmetry = as_factor(symmetry),
+         Flowering_months_duration = as.numeric(Flowering_months_duration))
 BB22_full <- BB22_full[, c(1,2,4,5,6,7,8,9,10,11,12,13,16,3,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30)] # reorder columns
 
 # create numerical values for factors
 BB22_full$growth_form_numeric <- BB22_full$growth_form_category
 levels(BB22_full$growth_form_numeric) <- 1:5
+BB22_full$growth_form_numeric <- as.numeric(BB22_full$growth_form_numeric)
 # herb = 1, shrub = 2, climber = 3, tree = 4 , shrub/tree = 5
 
 BB22_full$structural_blossom_numeric <- BB22_full$structural_blossom_class
 levels(BB22_full$structural_blossom_numeric) <- 1:7
+BB22_full$structural_blossom_numeric <- as.numeric(BB22_full$structural_blossom_numeric)
 # flag = 1, gullet = 2, dish_bowl = 3, stalk_disk = 4, bell_trumpet = 5, tube = 6, brush = 7
 
 BB22_full$symmetry_numeric <- BB22_full$symmetry
 levels(BB22_full$symmetry_numeric) <- 1:3
+BB22_full$symmetry_numeric <- as.numeric(BB22_full$symmetry_numeric)
 # sigomorph = 1, actinomorph = 2, no_symmetry = 3
+
+# write.csv(BB22_full, "BB22_full.csv")
+
+# see how many NA in sugar concentration
+sum(is.na(BB22_full$sugar.concentration)) #around 1/5 of entries
+
+
+# summarize data COMMUNITY METRICS
+
+library(codyn)
+library(vegan)
+
+BB22.metrics <- BB22_full %>% 
+  group_by(ID) %>%
+  summarise(location = as.factor(location),
+            landscape = as.factor(landscape),
+            replicate = as.factor(replicate),
+            bbspecies = as.factor(bbspecies),
+            bborgan = as.factor(bborgan),
+            site = as.factor(paste(location, landscape, sep="_")),
+            Shannon = diversity(Abundance),
+            NrSpecies=n_distinct(species),
+            Flowering_duration_cwm = weighted.mean(Flowering_months_duration, Abundance, na.rm=T),
+            Flowering_start_cwm = weighted.mean(start_flowering, Abundance, na.rm=T),
+            growth_form_cwm = weighted.mean(growth_form_numeric, Abundance, na.rm=T),
+            structural_blossom_cwm = weighted.mean(structural_blossom_numeric, Abundance, na.rm=T),
+            sugar_concentration_cwm = weighted.mean(sugar.concentration, Abundance, na.rm=T),
+            plant_height_cwm = weighted.mean(plant_height_m, Abundance, na.rm=T)
+            ) %>%
+  mutate(replicate = fct_relevel(replicate,"A", "B", "C", "D", "E", "F"),
+         landscape = fct_relevel(landscape, "U", "R")) %>%
+  distinct()
+
+library(FD) 
+library(picante)
+
+
+
+
+
+
