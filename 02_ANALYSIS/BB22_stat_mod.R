@@ -16,7 +16,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
-
+library(glmmTMB)
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
@@ -77,6 +77,9 @@ ggbiplot(pca, groups=BB.pasc$location, ellipse = TRUE) + #PC1 and PC2
 ggbiplot(pca, groups=BB.pasc$site, ellipse = TRUE) + #PC1 and PC2
   ggtitle("PCA")+
   theme_minimal()+ theme(aspect.ratio=1)
+ggbiplot(pca, groups=BB.pasc$landscape, ellipse = TRUE) + #PC1 and PC2
+  ggtitle("PCA")+
+  theme_minimal()+ theme(aspect.ratio=1)
 
 #  fit GLMM
 #load the libraries
@@ -84,17 +87,17 @@ library(lme4)
 library(nlme)
 library(arm)
 
-
+# Question 1
 #first a random intercept model
-mod_lme1<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length + proboscis_ratio 
-              + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|landscape),
+mod_lme1<-lmer(Shannon~intertegular_distance + proboscis_length + proboscis_ratio 
+              + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|site),
               data=BB.pasc) # add constant???
 summary(mod_lme1)
 
 plot(mod_lme1)
 qqnorm(residuals(mod_lme1)) # Short-Tailed but ok??
 qqline(residuals(mod_lme1))
-hist(log(BB.pasc$Shannon+1))
+hist(residuals(mod_lme1))
 
 library(car)
 vif(mod_lme1) #cut-off of five (???) to check for collinearity among our explanatory variables

@@ -110,6 +110,7 @@ sum(is.na(BB22_full$sugar.concentration)) #around 1/5 of entries
 
 library(codyn)
 library(vegan)
+library(fundiversity)
 
 BB22.metrics <- BB22_full %>% 
   group_by(ID) %>%
@@ -132,8 +133,20 @@ BB22.metrics <- BB22_full %>%
          landscape = fct_relevel(landscape, "U", "R")) %>%
   distinct()
 
-library(FD) 
-library(picante)
+fd_fric(BB22.metrics)
+
+# look at distrivutions of the CWM variables
+par(mfrow = c(2, 3))
+hist(BB22.metrics$Flowering_duration_cwm, main = "Flowering Duration CWM")
+hist(BB22.metrics$Flowering_start_cwm, main = "Flowering Start CWM")
+hist(BB22.metrics$growth_form_cwm, main = "Growth Form CWM")
+hist(BB22.metrics$structural_blossom_cwm, main = "Blossom Structure CWM")
+hist(BB22.metrics$sugar_concentration_cwm, main = "Sugar concentration CWM")
+hist(BB22.metrics$plant_height_cwm, main = "Plant Height CWM")
+par(mfrow = c(1,1))
+
+
+
 
 
 
