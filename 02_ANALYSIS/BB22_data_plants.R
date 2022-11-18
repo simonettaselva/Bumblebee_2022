@@ -203,13 +203,11 @@ BB22_plants_abund  <- BB22_plants_abund %>%
 
 
 # see  on which of the most abundant species there is sugar data
-BB22_plants_abund[,"abund.sum"] <- NA
-BB22_plants_abund[,"abund.bin"] <- NA
-BB22_plants_abund[,"occ.sum"] <- NA
-BB22_plants_abund[,"occ.bin"] <- NA
-
 
 # ABUNDANCE
+BB22_plants_abund[,"abund.sum"] <- NA
+BB22_plants_abund[,"abund.bin"] <- NA
+
 BB22_plants_abund <- BB22_plants_abund%>%                                     
   arrange(desc(cum.rel.abundance))
 
@@ -237,7 +235,49 @@ ggplot(BB22_plants_abund, aes(x=reorder(OTU, -cum.rel.abundance), y=cum.rel.abun
 ggsave("plant_species_sum_abundance.png", width = 8, height = 22)
 setwd(input)
 
+#refine plot to contain useful information
+BB22_plants_abund_cut <- BB22_plants_abund %>%                                      # Top N highest values by group
+  arrange(desc(cum.rel.abundance)) %>% 
+  summarise(OTU = OTU,
+            cum.rel.abundance = cum.rel.abundance)%>% 
+  slice(1:29)
+BB22_plants_abund_cut <- rbind(BB22_plants_abund_cut, c("other (199 species)", 1))
+BB22_plants_abund_cut$cum.rel.abundance <- as.numeric(BB22_plants_abund_cut$cum.rel.abundance)
+
+# check if 29 most abundant have sugar data
+
+BB22_plant_sugar <- BB22_plant_traits%>%  
+  summarise(plant.species = plant.species,
+            sugar.concentration = sugar.concentration) %>%  
+  filter(plant.species %in% BB22_plants_abund_cut$OTU)
+
+BB22_plants_abund_cut[,"sugar.data"] <- NA
+BB22_plants_abund_cut <- BB22_plants_abund_cut%>%                                     
+  arrange(OTU)
+
+BB22_plant_sugar <- BB22_plant_sugar%>%                                     
+  arrange(plant.species)
+
+for (i in 1:30){
+  if (is.na(BB22_plant_sugar$sugar.concentration[i])) {
+    BB22_plants_abund_cut$sugar.data[i] <- 0
+  } else {
+    BB22_plants_abund_cut$sugar.data[i] <- 1
+  }}
+BB22_plants_abund_cut$sugar.data <- as.factor(BB22_plants_abund_cut$sugar.data)
+
+setwd(output)
+ggplot(BB22_plants_abund_cut, aes(x=reorder(OTU, -cum.rel.abundance), y=cum.rel.abundance, fill = sugar.data)) +
+  geom_bar(stat="identity") +
+  labs(title="Abundance",x ="plant species", y = "sum of relative abundance") +  
+  theme_bw() + theme(axis.text.x = element_text(angle = 90))
+ggsave("plant_species_abundance_sugar.png", width = 15, height =8)
+setwd(input)
+
+
 # OCCURANCE
+BB22_plants_abund[,"occ.sum"] <- NA
+BB22_plants_abund[,"occ.bin"] <- NA
 BB22_plants_abund <- BB22_plants_abund%>%                                     
   arrange(desc(sum.occurance))
 
