@@ -26,10 +26,38 @@ BB22 <- BB22%>%
   mutate(binom.abund = if_else(Abundance == 0, 0, 1),
          ID = substring(Sample, 2),
          site = paste(location, replicate, sep="_"),
-         bbspecies = as_factor(bbspecies),
-         OTU = as_factor(OTU))
-levels(BB22$bbspecies) <- c("B.lapidarius", "B.pascuorum")
-
+         bbspecies = as_factor(bbspecies))%>% 
+  select(-Sample, -X, -project, -xID)
+levels(BB22$bbspecies) <- c("B.lapidarius", "B.pascuorum") # rename BB species
+BB22 <- BB22[, c(15,16,1,3,4,5,6,7,8,9,10,11,12,13,2,14)] # reorder columns
+BB22$OTU <- recode(BB22$OTU, # match plant names
+                   "Phedimus spurius" = "Sedum spurium",
+                   "Phedimus aizoon" = "Sedum aizoon",
+                   "Clematis sp. YX-2018" = "Clematis sp.",
+                   "Salvia amplexicaulis" = "Salvia nemorosa",
+                   "Phedimus kamtschaticus" = "Sedum aizoon",
+                   "Tilia americana x Tilia x moltkei" = "Tilia americana",
+                   "Hylotelephium telephium" = "Sedum telephium",
+                   "Petunia sp. LR-2018" = "Petunia sp.",
+                   "Onopordum illyricum" = "Onopordum acanthium",
+                   "Fabaceae spc" = "Fabaceae sp.",
+                   "Potentilla glabra" = "Dasiphora fruticosa",
+                   "Linaria spc" = "Linaria sp.",
+                   "Begonia spc" = "Begonia sp.",
+                   "Lamiaceae spc" = "Lamiaceae sp.",
+                   "Allium spc" = "Allium sp.",
+                   "Asteraceae spc" = "Asteraceae sp.",
+                   "Boraginaceae spc" = "Boraginaceae sp.",
+                   "Betonica officinalis" = "Stachys officinalis",
+                   "Cyclamen spc" = "Cyclamen sp.",
+                   "Crepis spc" = "Crepis sp.",
+                   "Eruca pinnatifida" = "Eruca vesicaria",
+                   "Sedum montanum" = "Sempervivum montanum",
+                   "Trifolium spc" = "Trifolium sp.",
+                   "Lotus spc" = "Lotus sp.",
+                   "Hypochaeris spc" = "Hypochaeris sp.",
+                   "Nepeta spc" = "Nepeta sp.",
+                   "x Chitalpa tashkentensis" = "xChitalpa tashkentensis")
 BB22.plantspecies <- unique(BB22$OTU)
 
 
@@ -144,7 +172,7 @@ BB22_plant_traits <- merge(plants_meta,plants.nutri.filter, by = "plant.species"
 # data frame has been changes manually -> do not write again
 names(BB22_plant_traits)
 
-BB22_plant_traits <- read.csv("BB22_plant_traits.csv", sep=",")
+BB22_plant_traits <- read.csv("BB22_plant_traits_added.csv", sep=",")
 
 ### look at plant traits ###
 ggplot(BB22_plant_traits, aes(x = native_exotic)) +
@@ -164,4 +192,83 @@ ggplot(BB22_plant_traits, aes(x=plant_height_m)) + # 172 NAs
 ggplot(BB22_plant_traits, aes(x=sugar.concentration)) + # 172 NAs
   geom_histogram()
 
-str(BB22_plant_traits)
+
+### most abundant plants species to justify use of sugar data
+BB22_plants_abund <- BB22 %>%
+  filter(binom.abund != 0) 
+BB22_plants_abund  <- BB22_plants_abund %>%
+  group_by(OTU)%>%
+  summarise(cum.rel.abundance = sum(Abundance),
+            sum.occurance = sum(binom.abund))
+
+
+# see  on which of the most abundant species there is sugar data
+BB22_plants_abund[,"abund.sum"] <- NA
+BB22_plants_abund[,"abund.bin"] <- NA
+BB22_plants_abund[,"occ.sum"] <- NA
+BB22_plants_abund[,"occ.bin"] <- NA
+
+
+# ABUNDANCE
+BB22_plants_abund <- BB22_plants_abund%>%                                     
+  arrange(desc(cum.rel.abundance))
+
+#find the 95% of the distribution
+for (i in 1:228){
+  if (i == 1) {
+    BB22_plants_abund$abund.sum[i] <- BB22_plants_abund$cum.rel.abundance[i]
+  } else {
+    BB22_plants_abund$abund.sum[i] <- BB22_plants_abund$cum.rel.abundance[i] + BB22_plants_abund$abund.sum[i-1]
+  }}
+
+for (i in 1:228){
+  if (BB22_plants_abund$abund.sum[i] < sum(BB22_plants_abund$cum.rel.abundance)*0.95) {
+  BB22_plants_abund$abund.bin[i] <- 1
+  } else {
+  BB22_plants_abund$abund.bin[i] <- 0
+}}
+BB22_plants_abund$abund.bin <- as.factor(BB22_plants_abund$abund.bin)
+
+setwd(output)
+ggplot(BB22_plants_abund, aes(x=reorder(OTU, -cum.rel.abundance), y=cum.rel.abundance, fill=abund.bin)) +
+  geom_bar(stat="identity") +
+  labs(title="Abundance",x ="plant species", y = "sum of relative abundance") +  
+  theme_bw() + coord_flip() + scale_fill_manual(values=c("red", "black"))
+ggsave("plant_species_sum_abundance.png", width = 8, height = 22)
+setwd(input)
+
+# OCCURANCE
+BB22_plants_abund <- BB22_plants_abund%>%                                     
+  arrange(desc(sum.occurance))
+
+for (i in 1:228){
+  if (i == 1) {
+    BB22_plants_abund$occ.sum[i] <- BB22_plants_abund$sum.occurance[i]
+  } else {
+    BB22_plants_abund$occ.sum[i] <- BB22_plants_abund$sum.occurance[i] + BB22_plants_abund$occ.sum[i-1]
+  }}
+
+for (i in 1:228){
+  if (BB22_plants_abund$occ.sum[i] < sum(BB22_plants_abund$sum.occurance)*0.95) {
+    BB22_plants_abund$occ.bin[i] <- 1
+  } else {
+    BB22_plants_abund$occ.bin[i] <- 0
+  }}
+BB22_plants_abund$occ.bin <- as.factor(BB22_plants_abund$occ.bin)
+
+setwd(output)
+ggplot(BB22_plants_abund, aes(x=reorder(OTU, -sum.occurance), y=sum.occurance, fill=occ.bin)) +
+  geom_bar(stat="identity") +
+  labs(title="Ocuurance",x ="plant species", y = "sum of relative occurance") +  
+  theme_bw() + coord_flip() + scale_fill_manual(values=c("red","black"))
+ggsave("plant_species_sum_occurance.png", width = 8, height = 22)
+setwd(input)
+
+
+
+
+
+
+
+
+
