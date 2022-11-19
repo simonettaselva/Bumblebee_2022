@@ -17,6 +17,7 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(glmmTMB)
+
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
@@ -33,9 +34,8 @@ BB.lapi <- BBtot %>%
 
 #### B.pascuorum ####
 # look at data
-hist(BB.pasc$Shannon) #not normally distributed
-hist(BB.pasc$NrSpecies) #not normally distributed
-
+hist(BB.pasc$Shannon)
+hist(BB.pasc$NrSpecies)
 
 library(psych)
 describeBy(BB.pasc$Shannon, BB.pasc$landscape)
@@ -54,7 +54,6 @@ ggplot(BB.pasc, aes(x=landscape, y=Shannon)) +
 
 
 # correlation analysis
-
 pairs.panels(BB.pasc[,c(3,4,9:17)], 
              method = "pearson", # correlation method
              hist.col = "#00AFBB",
@@ -63,6 +62,31 @@ pairs.panels(BB.pasc[,c(3,4,9:17)],
              ) 
 library(ellipse)
 plotcorr(cor(BB.pasc[,c(3,4,9:17)]))
+library(corrplot)
+M<-cor(BB.pasc[,c(3,4,9:17)])
+corrplot(M, method="circle", type="lower")
+
+# calculate p values of correlations
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+# matrix of the p-value of the correlation
+p.mat <- cor.mtest(BB.pasc[,c(3,4,9:17)])
+head(p.mat[, 1:5])
+
+corrplot(M, type="upper", order="hclust", 
+         p.mat = p.mat, sig.level = 0.01)
 
 # glossa, prementum and fore wings lenght highly correlated to proboscis lenght --> removed from intial model
 
@@ -91,7 +115,7 @@ library(arm)
 #first a random intercept model
 mod_lme1<-lmer(Shannon~intertegular_distance + proboscis_length + proboscis_ratio 
               + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|site),
-              data=BB.pasc) # add constant???
+              data=BB.pasc) 
 summary(mod_lme1)
 
 plot(mod_lme1)
@@ -100,18 +124,30 @@ qqline(residuals(mod_lme1))
 hist(residuals(mod_lme1))
 
 library(car)
-vif(mod_lme1) #cut-off of five (???) to check for collinearity among our explanatory variables
+vif(mod_lme1) #cut-off of five (???) to check for colinearity among our explanatory variables
 
-mod_lme1.1<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length +
-               fore_wing_ratio  + corbicula_length + corbicula_ratio + (1|landscape),
-               data=BB.pasc) # add constant???
+# update model
+mod_lme1.1<-lmer(Shannon~intertegular_distance + proboscis_length +
+               fore_wing_ratio  + corbicula_length + corbicula_ratio + (1|site),
+               data=BB.pasc) 
 summary(mod_lme1.1)
+plot(mod_lme1.1)
+qqnorm(residuals(mod_lme1.1)) 
+qqline(residuals(mod_lme1.1))
+hist(residuals(mod_lme1.1))
+
 vif(mod_lme1.1)
 
-mod_lme1.2<-lmer(log(Shannon+1)~intertegular_distance + proboscis_length
-                 + fore_wing_ratio  + corbicula_length + (1|landscape),
-                 data=BB.pasc) # add constant???
+# update model
+mod_lme1.2<-lmer(Shannon~intertegular_distance + proboscis_length
+                 + fore_wing_ratio  + corbicula_length + (1|site),
+                 data=BB.pasc)
 summary(mod_lme1.2)
+plot(mod_lme1.2)
+qqnorm(residuals(mod_lme1.2))
+qqline(residuals(mod_lme1.2))
+hist(residuals(mod_lme1.2))
+
 vif(mod_lme1.2) #looks ok
 
 
