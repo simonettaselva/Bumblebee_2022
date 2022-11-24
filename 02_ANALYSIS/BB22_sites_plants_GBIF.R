@@ -137,7 +137,7 @@ ggplot(ratios.comparison, aes(fill=group, y=percentage, x=site)) +
   ggtitle("Comparison GBIF and InfoFlora species lists per site") + theme_classic()+
   theme(axis.text.x = element_text(angle = 90))
 ggsave("Comp_GBIF_InfoFlora.jpeg")
-
+setwd(input)
 
 
 

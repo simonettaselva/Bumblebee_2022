@@ -64,8 +64,6 @@ BB22$OTU <- recode(BB22$OTU, # match plant names
 setwd(input)
 BB22.abund <- BB22%>% 
   filter(binom.abund == 1)
-# write.csv(BB22.abund, "BB22.abund.csv")
-
 
 # add information on plants species (file BB22_data_plants.R)
 BB22_plant_traits <- read_csv("BB22_plant_traits_added.csv")
@@ -133,9 +131,11 @@ BB22.metrics <- BB22_full %>%
          landscape = fct_relevel(landscape, "U", "R")) %>%
   distinct()
 
-fd_fric(BB22.metrics)
+setwd(input)
+write_csv(BB22.metrics, "BB22.metrics.csv")
 
-# look at distrivutions of the CWM variables
+
+# look at distributions of the CWM variables
 par(mfrow = c(2, 3))
 hist(BB22.metrics$Flowering_duration_cwm, main = "Flowering Duration CWM")
 hist(BB22.metrics$Flowering_start_cwm, main = "Flowering Start CWM")

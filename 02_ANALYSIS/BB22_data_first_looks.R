@@ -93,12 +93,12 @@ setwd(output)
 plot1 <- ggarrange(sh1, sh2, sh3, nrow = 3, labels = c("A", "B", "C"), common.legend = TRUE, legend = "right")
 annotate_figure(plot1, top = text_grob("Alpha Diversity across Landscapes and Locations", 
                                        face = "bold", size = 14))
-ggsave("Shannon_Landscapes_Locations.png", width = 8, height = 14)
+##ggsave("Shannon_Landscapes_Locations.png", width = 8, height = 14)
 
 plot2 <- ggarrange(s1, s2, s3, nrow = 3, labels = c("A", "B", "C"), common.legend = TRUE, legend = "right")
 annotate_figure(plot2, top = text_grob("Number of Species across Landscapes and Locations", 
                                        face = "bold", size = 14))
-ggsave("NrSpecies_Landscapes_Locations.png", width = 8, height = 14)
+##ggsave("NrSpecies_Landscapes_Locations.png", width = 8, height = 14)
 setwd(input)
 
 #### SHANNON AND S in locations ####
@@ -127,7 +127,7 @@ setwd(output)
 plot1 <- ggarrange(bern1, bern2, nrow = 2, labels = c("A", "B"), common.legend = TRUE, legend = "right")
 annotate_figure(plot1, top = text_grob("Bern", 
                                        face = "bold", size = 14))
-ggsave("Bern_overview.png", width = 8, height = 14)
+##ggsave("Bern_overview.png", width = 8, height = 14)
 setwd(input)
 
 
@@ -149,7 +149,7 @@ setwd(output)
 plot1 <- ggarrange(basel1, basel2, nrow = 2, labels = c("A", "B"), common.legend = TRUE, legend = "right")
 annotate_figure(plot1, top = text_grob("Basel", 
                                        face = "bold", size = 14))
-ggsave("Basel_overview.png", width = 8, height = 14)
+##ggsave("Basel_overview.png", width = 8, height = 14)
 setwd(input)
 
 
@@ -172,7 +172,7 @@ setwd(output)
 plot1 <- ggarrange(zurich1, zurich2, nrow = 2, labels = c("A", "B"), common.legend = TRUE, legend = "right")
 annotate_figure(plot1, top = text_grob("Zurich", 
                                        face = "bold", size = 14))
-ggsave("Zurich_overview.png", width = 8, height = 14)
+##ggsave("Zurich_overview.png", width = 8, height = 14)
 setwd(input)
 
 
@@ -234,7 +234,7 @@ setwd(output)
 plot1 <- ggarrange(p1, p2, ncol = 2, labels = c("A", "B"))
 annotate_figure(plot1, top = text_grob("Comparison Body and Leg Pollen", 
                                        face = "bold", size = 14))
-ggsave("Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
+##ggsave("Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
 setwd(input)
 
 
@@ -359,7 +359,7 @@ setwd(output)
 plot1 <- ggarrange(p3, p4, ncol = 2, labels = c("A", "B"))
 annotate_figure(plot1, top = text_grob("Comparison Body and Leg Pollen across Landscapes", 
                                        face = "bold", size = 14))
-ggsave("Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
+##ggsave("Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
 setwd(input)
 
 
@@ -391,7 +391,7 @@ ggplot(df.ratio, aes(fill=plant_species, y=percent, x=bbspecies)) +
   ggtitle("Landscapes: Ratio of Shared Plant Species detected") + theme_classic(base_size=20)
 
 setwd(output)
-ggsave("Comparison_Landscpe_Pollen.png", width = 8, height = 8)
+##ggsave("Comparison_Landscpe_Pollen.png", width = 8, height = 8)
 setwd(input)
 
 #### Relationship Shannon/NrSpecies and phenotype traits BB #### 
@@ -400,7 +400,7 @@ BB22.shannon.body <- BB22.shannon %>%
   filter(str_detect(bborgan, "B"))%>%
   mutate(ID = substring(ID,1, nchar(ID)-1))
 
-BBtot <- merge(BB22.shannon.body,BB16, by ="ID") %>%
+BB22.bb.traits <- merge(BB22.shannon.body,BB16, by ="ID") %>%
   summarize(ID = ID,
             site = site,
             Shannon = Shannon,
@@ -418,35 +418,35 @@ BBtot <- merge(BB22.shannon.body,BB16, by ="ID") %>%
             fore_wing_ratio = fore_wing_ratio,
             corbicula_length = corbicula_length,
             corbicula_ratio = corbicula_ratio)
-names(BBtot)
-levels(BBtot$bbspecies) <- c("B.lapidarius", "B.pascuorum")
+names(BB22.bb.traits)
+levels(BB22.bb.traits$bbspecies) <- c("B.lapidarius", "B.pascuorum")
 
-write_csv(BBtot, "BBtot.csv")
+write_csv(BB22.bb.traits, "BB22.bb.traits.csv")
 
 # plot relation Shannon/NrSpecies and phenitypic traits BB
 #NrSpecies
-a1 <- ggplot(BBtot, aes(glossa, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a1 <- ggplot(BB22.bb.traits, aes(glossa, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a2 <- ggplot(BBtot, aes(prementum, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a2 <- ggplot(BB22.bb.traits, aes(prementum, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a3 <- ggplot(BBtot, aes(proboscis_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a3 <- ggplot(BB22.bb.traits, aes(proboscis_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a4 <- ggplot(BBtot, aes(proboscis_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a4 <- ggplot(BB22.bb.traits, aes(proboscis_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a5 <- ggplot(BBtot, aes(fore_wing_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a5 <- ggplot(BB22.bb.traits, aes(fore_wing_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a6 <- ggplot(BBtot, aes(fore_wing_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a6 <- ggplot(BB22.bb.traits, aes(fore_wing_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a7 <- ggplot(BBtot, aes(corbicula_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a7 <- ggplot(BB22.bb.traits, aes(corbicula_length, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a8 <- ggplot(BBtot, aes(corbicula_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a8 <- ggplot(BB22.bb.traits, aes(corbicula_ratio, NrSpecies, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
 
@@ -454,33 +454,33 @@ setwd(output)
 plot3 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
 annotate_figure(plot3, top = text_grob("Comparison Traits and Number of Species across Landscapes", 
                                        face = "bold", size = 14))
-ggsave("Comparison_Traits_NrSpecies_Landscapes.png", width = 16, height = 8)
+#ggsave("Comparison_Traits_NrSpecies_Landscapes.png", width = 16, height = 8)
 setwd(input)
 
 
 # SHANNON
-a1 <- ggplot(BBtot, aes(glossa, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a1 <- ggplot(BB22.bb.traits, aes(glossa, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a2 <- ggplot(BBtot, aes(prementum, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a2 <- ggplot(BB22.bb.traits, aes(prementum, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a3 <- ggplot(BBtot, aes(proboscis_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a3 <- ggplot(BB22.bb.traits, aes(proboscis_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a4 <- ggplot(BBtot, aes(proboscis_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a4 <- ggplot(BB22.bb.traits, aes(proboscis_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a5 <- ggplot(BBtot, aes(fore_wing_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a5 <- ggplot(BB22.bb.traits, aes(fore_wing_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a6 <- ggplot(BBtot, aes(fore_wing_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a6 <- ggplot(BB22.bb.traits, aes(fore_wing_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a7 <- ggplot(BBtot, aes(corbicula_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a7 <- ggplot(BB22.bb.traits, aes(corbicula_length, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
-a8 <- ggplot(BBtot, aes(corbicula_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+a8 <- ggplot(BB22.bb.traits, aes(corbicula_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
   geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
   scale_linetype_manual(values=c("solid", "dotted"))
 
@@ -488,12 +488,12 @@ setwd(output)
 plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
 annotate_figure(plot4, top = text_grob("Comparison Traits and Shannon across Landscapes", 
                                        face = "bold", size = 14))
-ggsave("Comparison_Traits_Shannon_Landscapes.png", width = 16, height = 8)
+#ggsave("Comparison_Traits_Shannon_Landscapes.png", width = 16, height = 8)
 setwd(input)
 
 
 ##### Species Abundance per site ####
-head(BB22)
+# head(BB22)
 
 # BB22.lapi <- BB22 %>%
 #   filter(bbspecies == "l")
@@ -519,6 +519,67 @@ head(BB22)
 #   distinct()
 
 #not really usfull...
+
+#### Look at metrics relationships ###
+rm(list=ls())
+# set working directory to main repository
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+
+setwd(input)
+BB22.metrics.body <- read_csv("BB22.metrics.csv")%>%
+  filter(bborgan == "B")%>%
+  mutate(ID = substring(ID,1, nchar(ID)-1))
+BB22.bb.traits <- read_csv("BB22.bb.traits.csv")
+
+BB22.metrics.traits <- merge(BB22.metrics.body, BB22.bb.traits[, -c(2:8)], by = "ID")
+
+
+traits <- colnames(BB22.metrics.traits[, 16:24])
+metrics <- colnames(BB22.metrics.traits[, 8:15])
+
+assign(paste("p", 1, sep=""),
+       ggplot(BB22.metrics.traits, aes(corbicula_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
+         geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+         scale_linetype_manual(values=c("solid", "dotted")))
+p1
+
+
+for (i in metrics) {
+  x <- 1
+  for (j in traits) {
+    assign(paste("a", x, sep=""),
+           ggplot(BB22.metrics.traits, aes_string(j, i, colour = "landscape", shape = "bbspecies", linetype = "bbspecies")) + 
+             geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
+             scale_linetype_manual(values=c("solid", "dotted")))
+    x <- x+1
+  }
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("Comparison of", i, "and traits across Landscapes", sep = ""),
+                                         face = "bold", size = 14))
+  ##ggsave(paste("Comparison of", i, "and traits across Landscapes.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+  
+}
+
+#with no differentiation of urban rural and species 
+for (i in metrics) {
+  x <- 1
+  for (j in traits) {
+    assign(paste("a", x, sep=""),
+           ggplot(BB22.metrics.traits, aes_string(j, i)) + 
+             geom_point() + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam"))
+    x <- x+1
+  }
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("Comparison of", i, "and traits", sep = ""),
+                                         face = "bold", size = 14))
+  ggsave(paste("Comparison of", i, "and traits.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+  
+}
 
 
 
