@@ -1,4 +1,4 @@
-﻿Taxon_Id,Species,?,Years (min),Years (max)
+﻿Taxon_Id,Species,occ,Years (min),Years (max)
 1001330,Alchemilla alpina superaggr.,1,1877,1877
 1001410,Alchemilla conjuncta superaggr.,5,1950,1998
 1003060,Alyssum simplex Rudolphi,3,1876,1892
