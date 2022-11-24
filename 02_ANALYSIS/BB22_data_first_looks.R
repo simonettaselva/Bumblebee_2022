@@ -538,13 +538,6 @@ BB22.metrics.traits <- merge(BB22.metrics.body, BB22.bb.traits[, -c(2:8)], by = 
 traits <- colnames(BB22.metrics.traits[, 16:24])
 metrics <- colnames(BB22.metrics.traits[, 8:15])
 
-assign(paste("p", 1, sep=""),
-       ggplot(BB22.metrics.traits, aes(corbicula_ratio, Shannon, colour = landscape, shape = bbspecies, linetype = bbspecies)) + 
-         geom_point(alpha = 0.4 ) + theme_bw() + theme(aspect.ratio=1) + geom_smooth(method="gam")+
-         scale_linetype_manual(values=c("solid", "dotted")))
-p1
-
-
 for (i in metrics) {
   x <- 1
   for (j in traits) {
@@ -558,9 +551,8 @@ for (i in metrics) {
   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("Comparison of", i, "and traits across Landscapes", sep = ""),
                                          face = "bold", size = 14))
-  ##ggsave(paste("Comparison of", i, "and traits across Landscapes.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("Correlation of", i, "and traits across Landscapes.png", sep = ""), width = 16, height = 8)
   setwd(input)
-  
 }
 
 #with no differentiation of urban rural and species 
@@ -576,10 +568,34 @@ for (i in metrics) {
   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("Comparison of", i, "and traits", sep = ""),
                                          face = "bold", size = 14))
-  ggsave(paste("Comparison of", i, "and traits.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("Correlation of", i, "and traits.png", sep = ""), width = 16, height = 8)
   setwd(input)
-  
 }
 
+#Linear regression R2 and slope
+for (i in metrics) {
+  x <- 1
+  for (j in traits) {
+    f <- (paste(i,"~", j))
+    fit <- lm(f, data = BB22.metrics.traits)
+    assign(paste("a", x, sep=""),
+           ggplot(BB22.metrics.traits, aes_string(j, i)) + 
+             geom_point() + theme_bw() + theme(aspect.ratio=1) + 
+             geom_smooth(method="lm", col = "red")+
+             labs(subtitle = paste(
+               paste("Adj R2 = ",signif(summary(fit)$adj.r.squared, 5),
+                     "P =",signif(summary(fit)$coef[2,4], 5)),
+               paste("Intercept =",signif(fit$coef[[1]],5 ),
+                     "Slope =",signif(fit$coef[[2]], 5)), sep="\n"))
+           )
+    x <- x+1
+  }
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("Comparison of", i, "and traits", sep = ""),
+                                         face = "bold", size = 14))
+  ggsave(paste("Correlation of", i, "and traits.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+}
 
 
