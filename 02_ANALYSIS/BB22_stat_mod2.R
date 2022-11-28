@@ -1,10 +1,11 @@
 ################################################
-# Statistical Models
+# Statistical Models script 2
 # by Simonetta Selva
 #
-# Created: October 20, 2022
+# Created: November 28, 2022
 # Project: Bumblebee 2022
 ################################################
+
 
 rm(list=ls())
 
@@ -25,11 +26,29 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 
 # load data
 setwd(input)
-BBtot <- read.csv("BBtot.csv")
+BB22.metrics.body <- read_csv("BB22.metrics.csv")%>%
+  filter(bborgan == "B")%>%
+  mutate(ID = substring(ID,1, nchar(ID)-1))
+BB22.bb.traits <- read_csv("BB22.bb.traits.csv")
 
-BB.pasc <- BBtot %>% 
+BB22.metrics.traits <- merge(BB22.metrics.body, BB22.bb.traits[, -c(2:8)], by = "ID")
+
+#rename site variable
+for (i in c(1:nrow(BB22.metrics.traits))) {
+  BB22.metrics.traits$site[i] <- paste(BB22.metrics.traits$location[i], BB22.metrics.traits$replicate[i], sep = "_")
+}
+BB22.metrics.traits$site <- as.factor(BB22.metrics.traits$site)
+
+# import data on sites
+BB22.sites.meta <- read_csv("BB22_sites_2016.csv")%>%
+  mutate(site = as_factor(site))
+
+# add coordinates to the dataframe (in LV95)
+BB22.metrics.traits <- merge(BB22.metrics.traits,BB22.sites.meta[, c(1,3,4)], by  = "site", all.x=TRUE) 
+
+BB.pasc <- BB22.metrics.traits %>% 
   filter(bbspecies == "B.pascuorum")
-BB.lapi <- BBtot %>% 
+BB.lapi <- BB22.metrics.traits %>% 
   filter(bbspecies == "B.lapidarius")
 
 
@@ -60,7 +79,7 @@ pairs.panels(BB.pasc[,c(3,4,9:17)],
              hist.col = "#00AFBB",
              density = TRUE,  # show density plots
              ellipses = TRUE # show correlation ellipses
-             ) 
+) 
 library(ellipse)
 plotcorr(cor(BB.pasc[,c(3,4,9:17)]))
 library(corrplot)
@@ -115,8 +134,8 @@ library(arm)
 # Question 1
 #first a random intercept model
 mod_lme1<-lmer(Shannon~intertegular_distance + proboscis_length + proboscis_ratio 
-              + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|site),
-              data=BB.pasc) 
+               + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|site),
+               data=BB.pasc) 
 summary(mod_lme1)
 
 plot(mod_lme1)
@@ -135,8 +154,8 @@ vif(mod_lme1) #cut-off of five (???) to check for colinearity among our explanat
 
 # update model
 mod_lme1.1<-lmer(Shannon~intertegular_distance + proboscis_length +
-               fore_wing_ratio  + corbicula_length + corbicula_ratio + (1|site),
-               data=BB.pasc) 
+                   fore_wing_ratio  + corbicula_length + corbicula_ratio + (1|site),
+                 data=BB.pasc) 
 summary(mod_lme1.1)
 plot(mod_lme1.1)
 qqnorm(residuals(mod_lme1.1)) 
@@ -173,26 +192,17 @@ BB.pasc$Shannon + 1
 
 
 
-#### B.lapidarius ####
-# look at data
-hist(BB.lapi$Shannon) #not normally distributed
-hist(BB.lapi$NrSpecies) #not normally distributed
 
 
-library(psych)
-describeBy(BB.lapi$Shannon, BB.lapi$landscape)
 
-ggplot(BB.lapi, aes(x=landscape, y=Shannon)) + 
-  geom_boxplot(notch = T)+ theme_bw()
 
-# Wilcoxon-Test
-# w.test <- wilcox.test(Shannon~landscape, BB.lapi, alternative = "two.sided"); w.test
-library(rstatix)
-w.test <- wilcox_test(BB.lapi,Shannon~landscape); w.test
-qnorm(w.test$p/2) # z score = -6.909606
-w.test$p # p value = 4.86e-12
 
-ggplot(BB.lapi, aes(x=landscape, y=Shannon)) + 
-  geom_boxplot(notch = T)+ theme_bw() + labs(subtitle = get_test_label(w.test, detailed = TRUE))
+
+
+
+
+
+
+
 
 
