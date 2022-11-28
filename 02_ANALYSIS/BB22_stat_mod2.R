@@ -47,7 +47,7 @@ BB22.sites.meta <- read_csv("BB22_sites_2016.csv")%>%
 BB22.metrics.traits <- merge(BB22.metrics.traits,BB22.sites.meta[, c(1,3,4)], by  = "site", all.x=TRUE) 
 
 BB.pasc <- BB22.metrics.traits %>% 
-  filter(bbspecies == "B.pascuorum")
+  filter(bbspecies == "B.pascuorum") %>% na.omit
 BB.lapi <- BB22.metrics.traits %>% 
   filter(bbspecies == "B.lapidarius")
 
@@ -74,17 +74,19 @@ ggplot(BB.pasc, aes(x=landscape, y=Shannon)) +
 
 
 # correlation analysis
-pairs.panels(BB.pasc[,c(3,4,9:17)], 
+pairs.panels(BB.pasc[,c(8:24)], 
              method = "pearson", # correlation method
              hist.col = "#00AFBB",
              density = TRUE,  # show density plots
              ellipses = TRUE # show correlation ellipses
 ) 
+
 library(ellipse)
-plotcorr(cor(BB.pasc[,c(3,4,9:17)]))
+plotcorr(cor(BB.pasc[,c(8:24)], use = "complete.obs"))
+
 library(corrplot)
-M<-cor(BB.pasc[,c(3,4,9:17)])
-corrplot(M, method="circle", type="lower")
+M<-cor(BB.pasc[,c(8:24)], use = "complete.obs")
+corrplot::corrplot(M, method="circle", type="lower")
 
 # calculate p values of correlations
 cor.mtest <- function(mat, ...) {
@@ -101,18 +103,19 @@ cor.mtest <- function(mat, ...) {
   colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
   p.mat
 }
-# matrix of the p-value of the correlation
-p.mat <- cor.mtest(BB.pasc[,c(3,4,9:17)])
-head(p.mat[, 1:5])
 
-corrplot(M, type="upper", order="hclust", 
-         p.mat = p.mat, sig.level = 0.01)
+# matrix of the p-value of the correlation
+p.mat <- cor.mtest(BB.pasc[,c(8:24)])
+head(p.mat[, 1:5])
+corrplot::corrplot(M, type="upper", order="hclust", p.mat = p.mat, sig.level = 0.01)
+
 
 # glossa, prementum and fore wings lenght highly correlated to proboscis lenght --> removed from intial model
 
 # PCA for finding correlations
 library(ggbiplot)
-pca <- prcomp(BB.pasc[,c(3,4,9:17)], center = TRUE, scale. = TRUE)
+
+pca <- prcomp(BB.pasc[,c(8:24)], center = TRUE, scale. = TRUE)
 summary(pca)
 ggbiplot(pca, groups=BB.pasc$location, ellipse = TRUE) + #PC1 and PC2
   ggtitle("PCA")+
@@ -147,7 +150,7 @@ hist(residuals(mod_lme1))
 sims <- simulateResiduals(mod_lme1)
 BB.pasc$site <- as.factor(BB.pasc$site)
 simulationOutput = recalculateResiduals(sims, group = BB.pasc$site)
-testSpatialAutocorrelation(sims, x = dat$x, y = dat$y, plot = FALSE)
+testSpatialAutocorrelation(sims, x = BB.pasc$LV95_x, y = BB.pasc$LV95_y, plot = FALSE)
 
 library(car)
 vif(mod_lme1) #cut-off of five (???) to check for colinearity among our explanatory variables
