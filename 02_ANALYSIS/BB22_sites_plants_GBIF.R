@@ -67,7 +67,7 @@ ggplot(ratios, aes(fill=group, y=percentage, x=site)) +
   geom_bar(position="fill", stat="identity") + xlab("sites") +
   ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
   theme(axis.text.x = element_text(angle = 90))
-ggsave("Comp_GBIF_visited_per_site.jpeg")
+# ggsave("Comp_GBIF_visited_per_site.jpeg")
 
 
 #### INFO FLORA ####
@@ -112,7 +112,7 @@ ggplot(ratios.InfoFlora, aes(fill=group, y=percentage, x=site)) +
   geom_bar(position="fill", stat="identity") + xlab("sites") +
   ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
   theme(axis.text.x = element_text(angle = 90))
-ggsave("Comp_InfoFlora_visited_per_site.jpeg")
+# ggsave("Comp_InfoFlora_visited_per_site.jpeg")
 
 
 
@@ -134,29 +134,76 @@ for (i in sitenames) {
 setwd(output)
 ggplot(ratios.comparison, aes(fill=group, y=percentage, x=site)) + 
   geom_bar(position="fill", stat="identity") + xlab("sites") +
-  ggtitle("Comparison GBIF and InfoFlora species lists per site") + theme_classic()+
+  ggtitle("Comparison GBIF and InfoFlora 5x5 species lists per site") + theme_classic()+
   theme(axis.text.x = element_text(angle = 90))
-ggsave("Comp_GBIF_InfoFlora.jpeg")
+# ggsave("Comp_GBIF_InfoFlora.jpeg")
 setwd(input)
 
 
+#### MORE EXACT INFOFLORA DATA ####
+sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+site.list.InfoFlora.ex <- list()
+
+for (i in sitenames) {
+  site.data.InfoFlora.ex  <- read_csv(paste("./sites_plant_list/02_InfoFlora_exact/",i , "_IF.csv", sep = "")) 
+  site.data.InfoFlora.ex <- site.data.InfoFlora.ex %>%
+    summarise(Species = Taxon,
+              site = rep(i, nrow(site.data.InfoFlora.ex)))
+  j <- 0
+  site.data.InfoFlora.ex$species <- c()
+  for (j in 1:nrow(site.data.InfoFlora.ex)){
+    site.data.InfoFlora.ex$species[j] <- paste(unlist(strsplit(site.data.InfoFlora.ex$Species[j], split=' ', fixed=TRUE))[1],
+                                            unlist(strsplit(site.data.InfoFlora.ex$Species[j], split=' ', fixed=TRUE))[2])
+  }
+  site.list.InfoFlora.ex [[i]] <- unique(site.data.InfoFlora.ex$species)
+}
+
+#### Intersection of the two InfoFlora data sets per site ####
+ratios.comparison <- c()
+
+for (i in sitenames) {
+  shared <- length(intersect(site.list.InfoFlora [[i]], site.list.InfoFlora.ex[[i]]))
+  comparison.occured <- length(site.list.InfoFlora [[i]])
+  first <- c(i, shared/comparison.occured, "shared by more precise species lists")
+  # hoi <- rbind(ratios, first)
+  second<- c(i, (comparison.occured-shared)/comparison.occured, "InfoFlora 5x5")
+  ratios.comparison <- rbind(ratios.comparison, first, second)
+  colnames(ratios.comparison)<- c("site", "percentage", "group")
+  ratios.comparison <- as.data.frame(ratios.comparison)%>% 
+    mutate(percentage = as.numeric(percentage))
+}
+
+setwd(output)
+ggplot(ratios.comparison, aes(fill=group, y=percentage, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison InfoFlora 5x5 and exact species lists per site") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_both_InfoFlora.jpeg")
+setwd(input)
 
 
+#### Intersection of InfoFlora more exact and GBIF per site ####
+ratios.comparison <- c()
 
+for (i in sitenames) {
+  shared <- length(intersect(site.list.gbif[[i]], site.list.InfoFlora.ex[[i]]))
+  comparison.occured <- length(site.list.InfoFlora.ex[[i]])
+  first <- c(i, shared/comparison.occured, "shared by GBIF")
+  # hoi <- rbind(ratios, first)
+  second<- c(i, (comparison.occured-shared)/comparison.occured, "InfoFlora exact")
+  ratios.comparison <- rbind(ratios.comparison, first, second)
+  colnames(ratios.comparison)<- c("site", "percentage", "group")
+  ratios.comparison <- as.data.frame(ratios.comparison)%>% 
+    mutate(percentage = as.numeric(percentage))
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+setwd(output)
+ggplot(ratios.comparison, aes(fill=group, y=percentage, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison GBIF and InfoFlora species lists per site") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_GBIF_InfoFlora.jpeg")
+setwd(input)
 
 
 

@@ -60,6 +60,10 @@ BB22$OTU <- recode(BB22$OTU, # match plant names
                    "Nepeta spc" = "Nepeta sp.",
                    "x Chitalpa tashkentensis" = "xChitalpa tashkentensis")
 
+
+# 230 species
+# 47 famillies
+
 #remove entries with abundance = 0
 setwd(input)
 BB22.abund <- BB22%>% 

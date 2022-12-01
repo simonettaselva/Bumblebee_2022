@@ -50,6 +50,9 @@ w.test <- wilcox_test(BB.pasc,Shannon~landscape); w.test
 qnorm(w.test$p/2) # z score = -9.000839
 w.test$p # p value = 2.24e-19
 
+# effect site
+# 
+
 ggplot(BB.pasc, aes(x=landscape, y=Shannon)) + 
   geom_boxplot(notch = T)+ theme_bw() + labs(subtitle = get_test_label(w.test, detailed = TRUE))
 
