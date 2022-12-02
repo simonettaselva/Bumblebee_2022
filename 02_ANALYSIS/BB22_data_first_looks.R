@@ -492,34 +492,6 @@ annotate_figure(plot4, top = text_grob("Comparison Traits and Shannon across Lan
 setwd(input)
 
 
-##### Species Abundance per site ####
-# head(BB22)
-
-# BB22.lapi <- BB22 %>%
-#   filter(bbspecies == "l")
-# BB22.lapi <- BB22 %>%
-#   filter(BB22$bbspecies == "B.lapidarius" & binom.abund == 1) 
-# BB22.lapi.site <- BB22.lapi %>%
-#   group_by(OTU) %>%
-#   summarise(bbspecies = bbspecies,
-#             Abundance.sum = sum(Abundance))
-
-# plot plant abundances for lapi - not really aussagekräftig
-# ggplot(BB22.lapi.site, aes(Abundance.sum, reorder(OTU, -Abundance.sum))) + 
-#   geom_bar(stat="identity")
-# 
-# BB22.pasc <- BB22 %>%
-#   filter(BB22$bbspecies == "B.pascuorum" & binom.abund == 1) 
-# BB22.pasc.site <- BB22.pasc %>%
-#   group_by(OTU) %>%
-#   summarise(bbspecies = bbspecies,
-#             Abundance.sum = sum(Abundance))
-# 
-# BB22.site <- merge(BB22.lapi.site,BB22.pasc.site, by ="OTU") %>%
-#   distinct()
-
-#not really usfull...
-
 #### Look at metrics relationships ###
 rm(list=ls())
 # set working directory to main repository
@@ -594,8 +566,53 @@ for (i in metrics) {
   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, ncol = 4, nrow=2, labels = c(LETTERS[1:8]),   common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("Comparison of", i, "and traits", sep = ""),
                                          face = "bold", size = 14))
-  ggsave(paste("Correlation of", i, "and traits.png", sep = ""), width = 16, height = 8)
+  # ggsave(paste("Correlation of", i, "and traits.png", sep = ""), width = 16, height = 8)
   setwd(input)
 }
+
+#### reproduce Joans plots ####
+
+BB22.full <- read_csv("BB22_full.csv")
+for (i in 1:nrow(BB22.full)) {
+  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
+}
+
+#### plot plant families per site and species
+setwd(output)
+ggplot(BB22.full, aes(fill=family, y=Abundance, x=site)) + 
+  geom_bar(position="stack", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Plant Families per Site") +
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8)
+setwd(input)
+
+#### plot plant growth form per site and species
+setwd(output)
+ggplot(BB22.full, aes(fill=native_exotic, y=binom.abund, x=site)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Origin status") + ylab("Proportion of species in the pollen")+
+  theme(axis.text.x = element_text(angle = 90))
+ggsave(paste("OriginStatus_per_Site.png", sep = ""), width = 16, height = 8)
+setwd(input)
+
+#### growth type per site and species
+setwd(output)
+ggplot(BB22.full, aes(fill=growth_form_category, y=binom.abund, x=site)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Growth Form") + ylab("Proportion of species in the pollen")+
+  theme(axis.text.x = element_text(angle = 90))
+ggsave(paste("GrowthForm__per_Site.png", sep = ""), width = 16, height = 8)
+setwd(input)
+
+
+#### blossom class per site and species
+setwd(output)
+ggplot(BB22.full, aes(fill=structural_blossom_class, y=binom.abund, x=site)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Blossom Class") + ylab("Proportion of species in the pollen")+
+  theme(axis.text.x = element_text(angle = 90))
+ggsave(paste("BlossonClass__per_Site.png", sep = ""), width = 16, height = 8)
+setwd(input)
+
 
 
