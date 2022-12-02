@@ -20,6 +20,7 @@ setwd(input)
 
 # my data: create species lists for each site and save in list()
 sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+locationnames <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
 
 BB22.abund <- read_csv("BB22.abund.csv") %>%
   mutate(site = as_factor(site),
@@ -27,13 +28,25 @@ BB22.abund <- read_csv("BB22.abund.csv") %>%
 BB22.abund <- BB22.abund%>%
   mutate(site = fct_recode(site,"ZHUA" = "ZH_A","ZHUB" = "ZH_B","ZHUC" = "ZH_C","ZHRD" = "ZH_D","ZHRE" = "ZH_E","ZHRF" = "ZH_F","BEUA" = "BE_A",
                            "BEUB" = "BE_B","BEUC" = "BE_C","BERD" = "BE_D","BSUA" = "BS_A","BSUB" = "BS_B","BSUC" = "BS_C","BSRD" = "BS_D",
-                           "BSRE" = "BS_E","BSRF" = "BS_F"))
-site.list <- list()
+                           "BSRE" = "BS_E","BSRF" = "BS_F")) 
+BB22.abund <- BB22.abund%>%
+  mutate(locationnames = substr(site, 1, 3))
 
+# create species lists per site
+site.list <- list()
 for (i in sitenames) {
-  site.list[[i]]  <- unique(BB22.abund$species[BB22.abund$site == i]) %>% 
+  site.list[[i]]  <- unique(BB22.abund$species[BB22.abund$site == i]) %>%
     droplevels()
 }
+
+# create species lists per location
+location.list <- list()
+for (i in locationnames) {
+  location.list[[i]]  <- unique(BB22.abund$species[BB22.abund$locationnames == i]) %>%
+    droplevels()
+}
+
+
 
 #### GBIF ####
 
@@ -41,7 +54,7 @@ for (i in sitenames) {
 site.list.gbif <- list()
 
 for (i in sitenames) {
-  site.data.gbif  <- read_csv(paste("./sites_plant_list/BB22_", i, ".csv", sep = "")) %>%
+  site.data.gbif  <- read_csv(paste("./sites_plant_list/03_GBIF/BB22_", i, ".csv", sep = "")) %>%
     mutate(species = as_factor(species)) %>%
     filter(class == "Magnoliopsida" | class == "Liliopsida")
   site.list.gbif [[i]] <- unique(site.data.gbif$species)
@@ -204,6 +217,79 @@ ggplot(ratios.comparison, aes(fill=group, y=percentage, x=site)) +
   theme(axis.text.x = element_text(angle = 90))
 # ggsave("Comp_GBIF_InfoFlora.jpeg")
 setwd(input)
+
+
+# how many species of total occurred species by InfoFlora exact are visited by BB per site
+ratios.InfoFlora <- c()
+
+for (i in sitenames) {
+  shared <- length(intersect(site.list[[i]], site.list.InfoFlora.ex [[i]]))
+  InfoFlora.occured <- length(site.list.InfoFlora.ex [[i]])
+  first <- c(i, shared/InfoFlora.occured, "visited by bumblebees")
+  # hoi <- rbind(ratios, first)
+  second<- c(i, (InfoFlora.occured-shared)/InfoFlora.occured, "InfoFlora exact")
+  ratios.InfoFlora <- rbind(ratios.InfoFlora, first, second)
+  colnames(ratios.InfoFlora)<- c("site", "percentage", "group")
+  ratios.InfoFlora <- as.data.frame(ratios.InfoFlora)%>% 
+    mutate(percentage = as.numeric(percentage))
+}
+
+setwd(output)
+ggplot(ratios.InfoFlora, aes(fill=group, y=percentage, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_InfoFloraEx_visited_per_site.jpeg")
+setwd(input)
+
+
+
+#### TRY EVERYTHING ON LOCATION LEVEL (not on site level) ####
+locationnames <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
+
+location.list.InfoFlora.ex <- list()
+# temp <- c()
+for (i in locationnames) {
+  location.data.InfoFlora.ex  <- read_csv(paste("./sites_plant_list/02_InfoFlora_exact/",i, "_comb_IF.csv", sep = "")) 
+  location.data.InfoFlora.ex <- location.data.InfoFlora.ex %>%
+    summarise(Species = Taxon,
+              location = rep(i , nrow(location.data.InfoFlora.ex)))
+  j <- 0
+  location.data.InfoFlora.ex$species <- NA
+  for (j in 1:nrow(location.data.InfoFlora.ex)){
+    location.data.InfoFlora.ex$species[j] <- paste(unlist(strsplit(location.data.InfoFlora.ex$Species[j], split=' ', fixed=TRUE))[1],
+                                               unlist(strsplit(location.data.InfoFlora.ex$Species[j], split=' ', fixed=TRUE))[2])
+  }
+  location.list.InfoFlora.ex [[i]] <- unique(location.data.InfoFlora.ex$species)
+  
+}
+
+
+# how many species of total occurred species by InfoFlora exact are visited by BB per location
+ratios.InfoFlora <- c()
+
+for (i in locationnames) {
+  shared <- length(intersect(location.list[[i]], location.list.InfoFlora.ex [[i]]))
+  InfoFlora.occured <- length(location.list.InfoFlora.ex [[i]])
+  first <- c(i, shared/InfoFlora.occured, "visited by bumblebees")
+  # hoi <- rbind(ratios, first)
+  second<- c(i, (InfoFlora.occured-shared)/InfoFlora.occured, "InfoFlora exact")
+  ratios.InfoFlora <- rbind(ratios.InfoFlora, first, second)
+  colnames(ratios.InfoFlora)<- c("location", "percentage", "group")
+  ratios.InfoFlora <- as.data.frame(ratios.InfoFlora)%>% 
+    mutate(percentage = as.numeric(percentage))
+}
+
+setwd(output)
+ggplot(ratios.InfoFlora, aes(fill=group, y=percentage, x=location)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_InfoFloraEx_visited_per_location.jpeg")
+setwd(input)
+
+
+
 
 
 
