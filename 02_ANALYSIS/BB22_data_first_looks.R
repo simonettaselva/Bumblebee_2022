@@ -618,7 +618,8 @@ setwd(input)
 ### phylogenetic tree
 
 library(V.PhyloMaker)
-phylo <- data.frame(species = BB22.full$species, genus = BB22.full$genus, family = BB22.full$family)
+species <- BB22.full$plant.species
+phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
 
 ### run the function (load data since it takes a long time)
 result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
@@ -633,9 +634,33 @@ library(ape)
 # nodelabels(round(branching.times(result$scenario.1), 1), cex = 1)
 # plot.phylo(result$scenario.2[[1]], cex = 1.5, main = "scenario.2")
 # nodelabels(round(branching.times(result$scenario.2[[1]]), 1), cex = 1)
-tree <- plot.phylo(result$scenario.3, cex = 1.5, main = "Phylogenetic tree of Species in Pollen") #Joan used S3
+tree <- plot.phylo(result$scenario.3, cex = 0.5, main = "Phylogenetic tree of Species in Pollen") #Joan used S3
 # nodelabels(round(branching.times(result$scenario.3), 1), cex = 1)
-tree$y.lim
+tree
+# write.tree(result$scenario.3, "tree.tre")
+
+ # bubble plot relative abundances
+BB22.full.site <- BB22.full%>%
+  group_by(site, plant.species, bbspecies)%>%
+  summarise(Abundance = sum(Abundance))
+p2 <- ggplot(BB22.full.site, aes(x = site, y =BB22.full.site$plant.species, color = site)) + 
+  geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + facet_wrap(~bbspecies) +theme_classic()
+
+
+
+library(patchwork)
+library(ggtree)
+
+atree | p2
+
+p2 %>% insert_left(tree)
+
+
+
+
+p <- ggtree(result)
+
+
 
 
 
