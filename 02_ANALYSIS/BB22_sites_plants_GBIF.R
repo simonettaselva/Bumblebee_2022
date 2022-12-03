@@ -87,10 +87,7 @@ ggplot(ratios, aes(fill=group, y=percentage, x=site)) +
 
 setwd(input)
 site.list.InfoFlora <- list()
-# site.data.InfoFlora <- read_csv(paste("./sites_plant_list/01_InfoFlora/BB22_ZHUA_InfoFlora.csv", sep = ""))%>% 
-# mutate(species = as_factor(Species)) %>% 
-#   filter(occ != 0)
-# rename(site.data.InfoFlora, occ = ?)
+
 
 for (i in sitenames) {
   site.data.InfoFlora  <- read_csv(paste("./sites_plant_list/01_InfoFlora/BB22_", i, "_InfoFlora.csv", sep = "")) %>%
@@ -272,7 +269,6 @@ for (i in locationnames) {
   shared <- length(intersect(location.list[[i]], location.list.InfoFlora.ex [[i]]))
   InfoFlora.occured <- length(location.list.InfoFlora.ex [[i]])
   first <- c(i, shared/InfoFlora.occured, "visited by bumblebees")
-  # hoi <- rbind(ratios, first)
   second<- c(i, (InfoFlora.occured-shared)/InfoFlora.occured, "InfoFlora exact")
   ratios.InfoFlora <- rbind(ratios.InfoFlora, first, second)
   colnames(ratios.InfoFlora)<- c("location", "percentage", "group")
@@ -288,7 +284,70 @@ ggplot(ratios.InfoFlora, aes(fill=group, y=percentage, x=location)) +
 # ggsave("Comp_InfoFloraEx_visited_per_location.jpeg")
 setwd(input)
 
+# see also if there are plants in pollen not listed in data bases
+# on site level INFOFLORA
+p <- data.frame()
+plot <- data.frame()
+for (i in sitenames) {
+  intersection <- length(intersect(site.list[[i]], site.list.InfoFlora.ex [[i]]))
+  notshared.1 <- length(site.list[[i]][!(site.list[[i]] %in% intersection)])
+  notshared.2 <- length(site.list.InfoFlora.ex[[i]][!(site.list.InfoFlora.ex[[i]] %in% intersection)])
+  p <- data.frame(value = c(notshared.1, intersection, notshared.2),
+                  shared = factor(c("not shared BB", "shared", "not shared InfoFlora"), levels = c("not shared BB", "shared", "not shared InfoFlora")),
+                  site = rep(i, 3))
+  plot <- rbind(plot,p)
+}
 
+setwd(output)
+ggplot(plot, aes(fill=shared, y=value, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_InfoFloraEx_visited_per_site_2.jpeg")
+setwd(input)
+
+# on site level GBIF
+p <- data.frame()
+plot <- data.frame()
+for (i in sitenames) {
+  intersection <- length(intersect(site.list[[i]], site.list.gbif [[i]]))
+  notshared.1 <- length(site.list[[i]][!(site.list[[i]] %in% intersection)])
+  notshared.2 <- length(site.list.gbif[[i]][!(site.list.gbif[[i]] %in% intersection)])
+  p <- data.frame(value = c(notshared.1, intersection, notshared.2),
+                  shared = factor(c("not shared BB", "shared", "not shared GBIF"), levels = c("not shared BB", "shared", "not shared GBIF")),
+                  site = rep(i, 3))
+  plot <- rbind(plot,p)
+}
+
+setwd(output)
+ggplot(plot, aes(fill=shared, y=value, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_GBIF_visited_per_site_2.jpeg")
+setwd(input)
+
+
+# on location level
+p <- data.frame()
+plot <- data.frame()
+for (i in locationnames) {
+  intersection <- length(intersect(location.list[[i]], location.list.InfoFlora.ex [[i]]))
+  notshared.1 <- length(location.list[[i]][!(location.list[[i]] %in% intersection)])
+  notshared.2 <- length(location.list.InfoFlora.ex[[i]][!(location.list.InfoFlora.ex[[i]] %in% intersection)])
+  p <- data.frame(value = c(notshared.1, intersection, notshared.2),
+                     shared = factor(c("not shared BB", "shared", "not shared InfoFlora"), levels = c("not shared BB", "shared", "not shared InfoFlora")),
+                     site = rep(i, 3))
+  plot <- rbind(plot,p)
+}
+
+setwd(output)
+ggplot(plot, aes(fill=shared, y=value, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("location") +
+  ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+# ggsave("Comp_InfoFloraEx_visited_per_location_2.jpeg")
+setwd(input)
 
 
 

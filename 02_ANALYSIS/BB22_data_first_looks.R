@@ -621,21 +621,14 @@ library(V.PhyloMaker)
 species <- BB22.full$plant.species
 phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
 
-### run the function (load data since it takes a long time)
+# run the function (load data since it takes a long time)
 result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
 # saveRDS(example, file="phylo.RData")
-# 
 # result <- readRDS("phylo.RData")
 
-### plot the phylogenies with node ages displayed.
+# plot the phylogenies with node ages displayed.
 library(ape)
-# par(mfrow = c(1, 3))
-# plot.phylo(result$scenario.1, cex = 1.5, main = "scenario.1")
-# nodelabels(round(branching.times(result$scenario.1), 1), cex = 1)
-# plot.phylo(result$scenario.2[[1]], cex = 1.5, main = "scenario.2")
-# nodelabels(round(branching.times(result$scenario.2[[1]]), 1), cex = 1)
 tree <- plot.phylo(result$scenario.3, cex = 0.5, main = "Phylogenetic tree of Species in Pollen") #Joan used S3
-# nodelabels(round(branching.times(result$scenario.3), 1), cex = 1)
 tree
 # write.tree(result$scenario.3, "tree.tre")
 
