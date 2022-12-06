@@ -350,5 +350,12 @@ ggplot(plot, aes(fill=shared, y=value, x=site)) +
 setwd(input)
 
 
+## see which plant species are shared
+intersection <- list()
 
+for (i in sitenames) {
+  intersection[[i]] <- intersect(site.list[[i]], site.list.InfoFlora.ex [[i]])
+}
 
+intersection$ZHRF
+intersection$ZHRD

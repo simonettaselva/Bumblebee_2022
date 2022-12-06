@@ -26,7 +26,7 @@ BB22 <- read.csv("BB22_data_tres_0.01.csv")
 BB22 <- BB22%>% 
   mutate(binom.abund = if_else(Abundance == 0, 0, 1),
          ID = substring(Sample, 2),
-         site = paste(location, replicate, sep="_"),
+         site = paste(location, landscape, replicate, sep=""),
          bbspecies = as_factor(bbspecies))%>% 
   select(-Sample, -X, -project, -xID)
 levels(BB22$bbspecies) <- c("B.lapidarius", "B.pascuorum") # rename BB species
@@ -113,7 +113,21 @@ sum(is.na(BB22_full$sugar.concentration)) #around 1/5 of entries
 library(codyn)
 library(vegan)
 library(fundiversity)
+BB22_full.numeric <- BB22_full %>% 
+  summarise(location = as.factor(location),
+            landscape = as.factor(landscape),
+            replicate = as.factor(replicate),
+            bbspecies = as.factor(bbspecies),
+            bborgan = as.factor(bborgan),
+            site = as.factor(paste(location, landscape, replicate, sep="")),
+            Flowering_duration = Flowering_months_duration,
+            Flowering_start = start_flowering,
+            growth_form_numeric = growth_form_numeric,
+            structural_blossom_numeric = structural_blossom_numeric,
+            sugar.concentration = sugar.concentration,
+            plant_height_m = plant_height_m)
 
+## CWM
 BB22.metrics <- BB22_full %>% 
   group_by(ID) %>%
   summarise(location = as.factor(location),
@@ -121,7 +135,7 @@ BB22.metrics <- BB22_full %>%
             replicate = as.factor(replicate),
             bbspecies = as.factor(bbspecies),
             bborgan = as.factor(bborgan),
-            site = as.factor(paste(location, landscape, sep="_")),
+            site = as.factor(paste(location, landscape, replicate, sep="")),
             Shannon = diversity(Abundance),
             NrSpecies=n_distinct(species),
             Flowering_duration_cwm = weighted.mean(Flowering_months_duration, Abundance, na.rm=T),
@@ -136,18 +150,35 @@ BB22.metrics <- BB22_full %>%
   distinct()
 
 setwd(input)
-write_csv(BB22.metrics, "BB22.metrics.csv")
-
+# write_csv(BB22.metrics, "BB22.metrics.csv")
 
 # look at distributions of the CWM variables
+CWM <- colnames(BB22.metrics)[str_detect(colnames(BB22.metrics), "_cwm", negate = FALSE)]
 par(mfrow = c(2, 3))
-hist(BB22.metrics$Flowering_duration_cwm, main = "Flowering Duration CWM")
-hist(BB22.metrics$Flowering_start_cwm, main = "Flowering Start CWM")
-hist(BB22.metrics$growth_form_cwm, main = "Growth Form CWM")
-hist(BB22.metrics$structural_blossom_cwm, main = "Blossom Structure CWM")
-hist(BB22.metrics$sugar_concentration_cwm, main = "Sugar concentration CWM")
-hist(BB22.metrics$plant_height_cwm, main = "Plant Height CWM")
+for (i in CWM){
+  hist(BB22.metrics[[i]], main = i)
+}
 par(mfrow = c(1,1))
+
+
+### Hahs and Fournier et al. 2022 - Compute functional diversity indices ------------
+### Script to calculate various functional diversity metrics
+### load useful function ("Toolkit") -------------------------------------------
+source("Bertrand_Function_ToolKit.R")
+
+# Imput missing values and reduce data dimensionality using PCA 
+# -> enable to calculate FD metrics for sites with low diversity
+require(caret)
+require(vegan)
+BB22_full.mis.model = preProcess(BB22_full.numeric, "knnImpute")
+BB22_full.mis.model = predict(BB22_full.mis.model, BB22_full.numeric); head(BB22_full.mis.model)
+#SS: does not work
+
+
+# PCA -> reduce dimensionality
+BB22_full.pca <- prcomp(BB22_full.mis.model, scale. = T, center = T)
+cumsum(trt.pca$sdev/sum(BB22_full.pca$sdev))
+trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 
 
 
