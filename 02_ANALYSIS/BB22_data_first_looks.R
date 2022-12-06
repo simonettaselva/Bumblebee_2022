@@ -590,10 +590,20 @@ setwd(input)
 families.overview <- BB22.full%>%
   group_by(family)%>%
   summarise(cum.abund = sum(Abundance))
+tot <- sum(families.overview$cum.abund)
+families.overview <- families.overview %>%
+  summarise(family = family,
+            cum.abund = cum.abund,
+            rel.abund = cum.abund/tot)
+
 ggplot(families.overview, aes(y=reorder(family, -cum.abund), x=cum.abund)) + 
   geom_bar(stat="identity")+ theme_classic()
 
+#use relative or cummatlive abundances???
 rare.families <- families.overview %>% top_n(nrow(families.overview)-30, -cum.abund)
+rare.families <- families.overview %>% 
+  filter(rel.abund > 0.02)
+
 BB22.full$family.agg <- BB22.full$family
 for(h in rare.families$family){
   for(i in 1:nrow(BB22.full)){
