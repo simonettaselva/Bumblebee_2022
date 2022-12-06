@@ -571,6 +571,7 @@ for (i in metrics) {
 }
 
 #### reproduce Joans plots ####
+rm(list=ls())
 
 BB22.full <- read_csv("BB22_full.csv")
 for (i in 1:nrow(BB22.full)) {
@@ -580,11 +581,33 @@ for (i in 1:nrow(BB22.full)) {
 #### plot plant families per site and species
 setwd(output)
 ggplot(BB22.full, aes(fill=family, y=Abundance, x=site)) + 
-  geom_bar(position="stack", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
   ggtitle("Plant Families per Site") +
   theme(axis.text.x = element_text(angle = 90))
 # ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8)
 setwd(input)
+
+families.overview <- BB22.full%>%
+  group_by(family)%>%
+  summarise(cum.abund = sum(Abundance))
+ggplot(families.overview, aes(y=reorder(family, -cum.abund), x=cum.abund)) + 
+  geom_bar(stat="identity")+ theme_classic()
+
+rare.families <- families.overview %>% top_n(nrow(families.overview)-30, -cum.abund)
+BB22.full$family.agg <- BB22.full$family
+for(h in rare.families$family){
+  for(i in 1:nrow(BB22.full)){
+    if(BB22.full$family.agg[i] == h){
+      BB22.full$family.agg[i] <- "Other families"
+    }
+  }
+}
+
+ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=site)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Plant Families per Site") +
+  theme(axis.text.x = element_text(angle = 90))
+                                                                           
 
 #### plot plant growth form per site and species
 setwd(output)
