@@ -572,20 +572,16 @@ for (i in metrics) {
 
 #### reproduce Joans plots ####
 rm(list=ls())
-
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+setwd(input)
 BB22.full <- read_csv("BB22_full.csv")
 for (i in 1:nrow(BB22.full)) {
   BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
+  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
 }
 
 #### plot plant families per site and species
-setwd(output)
-ggplot(BB22.full, aes(fill=family, y=Abundance, x=site)) + 
-  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
-  ggtitle("Plant Families per Site") +
-  theme(axis.text.x = element_text(angle = 90))
-# ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8)
-setwd(input)
 
 families.overview <- BB22.full%>%
   group_by(family)%>%
@@ -623,8 +619,15 @@ ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=site)) +
   ggtitle("Plant Families per Site") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
-ggsave(paste("PlantFamilies_Sites.png", sep = ""), width = 16, height = 8)
-setwd(input)                                                                          
+# ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8)
+
+ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=region)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Plant Families per Site") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
+# ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8)
+setwd(input) 
 
 
 #### plot plant growth form per site and species
@@ -636,9 +639,16 @@ ggplot(BB22.full, aes(fill=native_exotic, y=binom.abund, x=site)) +
   ggtitle("Origin status") + ylab("Proportion of species in the pollen")+
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'))
-
 # ggsave(paste("OriginStatus_per_Site.png", sep = ""), width = 16, height = 8)
+
+ggplot(BB22.full, aes(fill=native_exotic, y=binom.abund, x=region)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Origin status") + ylab("Proportion of species in the pollen")+
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'))
+# ggsave(paste("OriginStatus_per_Region.png", sep = ""), width = 16, height = 8)
 setwd(input)
+
 
 #### growth type per site and species
 setwd(output)
@@ -649,8 +659,15 @@ ggplot(BB22.full, aes(fill=growth_form_category, y=binom.abund, x=site)) +
   ggtitle("Growth Form") + ylab("Proportion of species in the pollen")+
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.growth)
+# ggsave(paste("GrowthForm_per_Site.png", sep = ""), width = 16, height = 8)
 
-# ggsave(paste("GrowthForm__per_Site.png", sep = ""), width = 16, height = 8)
+ggplot(BB22.full, aes(fill=growth_form_category, y=binom.abund, x=region)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Growth Form") + ylab("Proportion of species in the pollen")+
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_fill_manual(values=palette.growth)
+# ggsave(paste("GrowthForm_per_Region.png", sep = ""), width = 16, height = 8)
+
 setwd(input)
 
 
@@ -663,7 +680,15 @@ ggplot(BB22.full, aes(fill=structural_blossom_class, y=binom.abund, x=site)) +
   ggtitle("Blossom Class") + ylab("Proportion of species in the pollen")+
   theme(axis.text.x = element_text(angle = 90))+
   scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"))
-ggsave(paste("BlossonClass__per_Site.png", sep = ""), width = 16, height = 8)
+# ggsave(paste("BlossonClass_per_Site.png", sep = ""), width = 16, height = 8)
+
+ggplot(BB22.full, aes(fill=structural_blossom_class, y=binom.abund, x=region)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Blossom Class") + ylab("Proportion of species in the pollen")+
+  theme(axis.text.x = element_text(angle = 90))+
+  scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"))
+# ggsave(paste("BlossonClass_per_Region.png", sep = ""), width = 16, height = 8)
+
 setwd(input)
 
 
