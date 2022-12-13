@@ -228,28 +228,30 @@ for (i in resolution) {
 chisq.summary <- as.data.frame(chisq.summary)
 colnames(chisq.summary) <- c("formula", "X-squared", "df", "p")
 rownames(chisq.summary) <- NULL
-chisq.summary %>%
+chisq.summary <- chisq.summary %>%
   mutate(p = format_p(p, stars = TRUE)) %>%
   format_table()
-
+# write.table(chisq.summary, file = "chisq_Bpascuorum.txt", sep = "\t",
+#             row.names = TRUE, col.names = NA)
 
 #B. lapidarius
 chisq.summary.1 <- NULL
 for (i in resolution) {
   for (j in fun.trait) {
     chisq <- chisq.test(BB.lapi[[i]], BB.lapi[[j]]); chisq
-    summary <- c(paste(i, j, sep ="~"), chisq$statistic,chisq$parameter,chisq$p.value)
+    summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3),chisq$parameter,chisq$p.value)
     chisq.summary.1 <- rbind(chisq.summary.1, summary)
   }
 }
 chisq.summary.1 <- as.data.frame(chisq.summary.1)
 colnames(chisq.summary.1) <- c("formula", "X-squared", "df", "p")
 rownames(chisq.summary.1) <- NULL
-chisq.summary.1 %>%
+chisq.summary.1 <- chisq.summary.1 %>%
   mutate(p = format_p(p, stars = TRUE)) %>%
   format_table()
-
-
+# 
+# write.table(chisq.summary.1, file = "chisq_Blapidarius.txt", sep = "\t",
+#             row.names = TRUE, col.names = NA)
 
 
 
