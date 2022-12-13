@@ -113,19 +113,6 @@ sum(is.na(BB22_full$sugar.concentration)) #around 1/5 of entries
 library(codyn)
 library(vegan)
 library(fundiversity)
-BB22_full.numeric <- BB22_full %>% 
-  summarise(location = as.factor(location),
-            landscape = as.factor(landscape),
-            replicate = as.factor(replicate),
-            bbspecies = as.factor(bbspecies),
-            bborgan = as.factor(bborgan),
-            site = as.factor(paste(location, landscape, replicate, sep="")),
-            Flowering_duration = Flowering_months_duration,
-            Flowering_start = start_flowering,
-            growth_form_numeric = growth_form_numeric,
-            structural_blossom_numeric = structural_blossom_numeric,
-            sugar.concentration = sugar.concentration,
-            plant_height_m = plant_height_m)
 
 ## CWM
 BB22.metrics <- BB22_full %>% 
@@ -164,23 +151,57 @@ par(mfrow = c(1,1))
 ### Hahs and Fournier et al. 2022 - Compute functional diversity indices ------------
 ### Script to calculate various functional diversity metrics
 ### load useful function ("Toolkit") -------------------------------------------
+BB22_full.numeric <- BB22_full %>% 
+  summarise(ID = ID,
+            location = as.factor(location),
+            landscape = as.factor(landscape),
+            replicate = as.factor(replicate),
+            bbspecies = as.factor(bbspecies),
+            bborgan = as.factor(bborgan),
+            site = as.factor(paste(location, landscape, replicate, sep="")),
+            plant.species = plant.species,
+            Flowering_duration = Flowering_months_duration,
+            Flowering_start = start_flowering,
+            growth_form_numeric = growth_form_numeric,
+            structural_blossom_numeric = structural_blossom_numeric,
+            sugar.concentration = sugar.concentration,
+            symmetry_numeric = symmetry_numeric,
+            plant_height_m = plant_height_m)
+
 source("Bertrand_Function_ToolKit.R")
 
 # Imput missing values and reduce data dimensionality using PCA 
 # -> enable to calculate FD metrics for sites with low diversity
 require(caret)
 require(vegan)
-BB22_full.mis.model = preProcess(BB22_full.numeric, "knnImpute")
-BB22_full.mis.model = predict(BB22_full.mis.model, BB22_full.numeric); head(BB22_full.mis.model)
+BB22_full.mis.model = preProcess(BB22_full.numeric[,8:13], "knnImpute")
+# preProcess not possible since to much missing data -> either delete rows aor use different approach
+BB22_full.mis.model = predict(BB22_full.mis.model, BB22_full.numeric[,8:13]); head(BB22_full.mis.model)
 #SS: does not work
 
+### imputing Simos style (not correct probably)
+impute <- function(x){
+  x[is.na(x)] <- mean (x, na.rm = TRUE)
+  return(x)
+}
+df = NULL
+for (column in colnames(BB22_full.numeric[,9:15])) {
+  imputed <- impute(BB22_full.numeric[[column]])
+  df <- cbind(df, imputed)
+}
+colnames(df) <- colnames(BB22_full.numeric[,9:15])
+# trt.mis.pred <- cbind(BB22_full.numeric[, 1:8], df)
+trt.mis.pred <- df
 
 # PCA -> reduce dimensionality
-BB22_full.pca <- prcomp(BB22_full.mis.model, scale. = T, center = T)
-cumsum(trt.pca$sdev/sum(BB22_full.pca$sdev))
+trt.pca <- prcomp(trt.mis.pred, scale. = T, center = T)
+cumsum(trt.pca$sdev/sum(trt.pca$sdev))
 trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 
-
+### FD incices from mFD package of Magneville et al. 2022 ------------------------
+### mFD
+library(mFD)
+FD_mFD <- calc_mFD(trt=trt.mis.pred)
 
 
 
