@@ -608,6 +608,8 @@ for(h in rare.families$family){
   }
 }
 
+# write_csv(BB22.full, "BB22.full.family")
+
 BB22.full$family.agg <- as.factor(BB22.full$family.agg)
 palette.fams=c("#375E97", "#80BD9E", "#FA812F", "#F34A4A", "#07575B", "#66A5AD", "#C4DFE6", "#FAAF08", 
                  "#336B87", "#5D535E", "#DFE166", "#1995AD", "#258039", "#73605B", "#4897D8", "#DDBC95",
