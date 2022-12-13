@@ -199,3 +199,58 @@ ggplot(BB.lapi, aes(x=landscape, y=Shannon)) +
   geom_boxplot(notch = T)+ theme_bw() + labs(subtitle = get_test_label(w.test, detailed = TRUE))
 
 
+
+
+
+
+#### URBAN RURAL COMPARISONS FAMILY, FLOWER, GRWOTH FORM, EXOTIC/NATIVE ####
+library(insight)
+setwd(input)
+BB22.full.family <- read_csv("BB22.full.family")
+
+BB.pasc <- BB22.full.family %>% 
+  filter(bbspecies == "B.pascuorum")
+BB.lapi <- BB22.full.family %>% 
+  filter(bbspecies == "B.lapidarius")
+
+resolution <- c("landscape", "region", "site")
+fun.trait <- c("family.agg", "native_exotic", "growth_form_category", "structural_blossom_class")
+
+# B. pascuorum
+chisq.summary <- NULL
+for (i in resolution) {
+  for (j in fun.trait) {
+    chisq <- chisq.test(BB.pasc[[i]], BB.pasc[[j]]); chisq
+    summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3), chisq$parameter, chisq$p.value)
+    chisq.summary <- rbind(chisq.summary, summary)
+  }
+}
+chisq.summary <- as.data.frame(chisq.summary)
+colnames(chisq.summary) <- c("formula", "X-squared", "df", "p")
+rownames(chisq.summary) <- NULL
+chisq.summary %>%
+  mutate(p = format_p(p, stars = TRUE)) %>%
+  format_table()
+
+
+#B. lapidarius
+chisq.summary.1 <- NULL
+for (i in resolution) {
+  for (j in fun.trait) {
+    chisq <- chisq.test(BB.lapi[[i]], BB.lapi[[j]]); chisq
+    summary <- c(paste(i, j, sep ="~"), chisq$statistic,chisq$parameter,chisq$p.value)
+    chisq.summary.1 <- rbind(chisq.summary.1, summary)
+  }
+}
+chisq.summary.1 <- as.data.frame(chisq.summary.1)
+colnames(chisq.summary.1) <- c("formula", "X-squared", "df", "p")
+rownames(chisq.summary.1) <- NULL
+chisq.summary.1 %>%
+  mutate(p = format_p(p, stars = TRUE)) %>%
+  format_table()
+
+
+
+
+
+
