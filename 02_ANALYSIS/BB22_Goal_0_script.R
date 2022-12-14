@@ -209,7 +209,7 @@ BB22.full$region <- c()
       labs(fill='Blossom Class') +
       theme(axis.text.x = element_text(angle = 90))+
       scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"))
-    ggsave(paste("./proportion in pollen/./proportion in pollen/BlossomClass_per_Site.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./proportion in pollen/BlossomClass_per_Site.png", sep = ""), width = 16, height = 8)
     
 # 3. produce data frame with blossom class per region
     blossom.region <- BB22.full %>%
@@ -226,7 +226,7 @@ BB22.full$region <- c()
       labs(fill='Blossom Class') +
       theme(axis.text.x = element_text(angle = 90))+
       scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"))
-    ggsave(paste("./proportion in pollen/./proportion in pollen/./proportion in pollen/BlossomClass_per_Region.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./proportion in pollen/BlossomClass_per_Region.png", sep = ""), width = 16, height = 8)
     
     setwd(input)
 
@@ -238,6 +238,19 @@ BB22.full$region <- c()
 library(V.PhyloMaker)
 library(ape)
 
+# load data
+setwd(input) # set working directory
+BB22.full <- read_csv("BB22_full.csv") # import data set with 
+    
+# initialize region as column
+BB22.full$region <- c() 
+    
+# add site and region as columns
+for (i in 1:nrow(BB22.full)) {
+  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
+  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
+}
+
 # make a list of all occurring species
 # species <- BB22.full$plant.species
 
@@ -247,17 +260,79 @@ phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, 
 # run the phylo-function (load data since it takes a long time)
 tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
 
+
 # plot the phylogenies with node ages displayed with sceanario 3
-tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen")
-tree
-# write.tree(result$scenario.3, "tree.tre")
+tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen"); tree
+ 
+# get order of species in tree
+phylo.order <- data.frame(sps=tree.result$scenario.3$tip.label)
+phylo.order$order <- seq(1, length(phylo.order$sps))
+colnames(phylo.order) <- c("plant.species", " order")
 
-# bubble plot relative abundances
-
-# add: on region level
-# add:on landscape level
-BB22.full.site <- BB22.full%>%
+# create new data frame with needed variables
+BB22.full.bubble <- BB22.full%>%
   dplyr::group_by(site, plant.species, bbspecies)%>%
-  dplyr::summarise(Abundance = sum(Abundance))
-p2 <- ggplot(BB22.full.site, aes(x = site, y =BB22.full.site$plant.species, color = site)) + 
- geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + facet_wrap(~bbspecies) +theme_classic()
+  dplyr::summarise(Abundance = sum(Abundance),
+                   region = region,
+                   landscape = landscape)
+
+# merge two data frames and order along plant species in phylo-tree
+BB22.full.bubble_ordered <- merge(x = BB22.full.bubble,y =  phylo.order, by.x = "plant.species")%>%
+  mutate(plant.species = as_factor(plant.species))
+BB22.full.bubble_ordered <- BB22.full.bubble_ordered[order(BB22.full.bubble_ordered$` order`),]
+BB22.full.bubble_ordered$plant.species <- factor(BB22.full.bubble_ordered$plant.species, levels = unique(BB22.full.bubble_ordered$plant.species[order(BB22.full.site_ordered$` order`)]))
+
+# plot bubble plot with relative abundances along order of species in tree
+setwd(output)
+  # site level
+  library(pals)
+  palette.site <- kelly(18)[3:18] #create color palette for sites
+  ggplot(BB22.full.bubble_ordered, aes(x = site, y =BB22.full.bubble_ordered$plant.species, color = site)) + 
+   geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + 
+    facet_wrap(~bbspecies) +
+    labs(y = "plant species") +
+    theme(axis.text.x = element_text(angle = 90))+
+    theme_classic(base_size = 20) + guides(alpha = "none") +
+    scale_color_manual(values = palette.site, guide = "none")+ #no legend
+    scale_fill_manual(values = palette.site, guide = "none") #no legend
+  ggsave(paste("./proportion in pollen/Phylo_Bubble_Site.png", sep = ""), width = 16, height = 16)
+  
+  # region level
+  palette.region <- kelly(18)[10:16] #create color palette for region
+  ggplot(BB22.full.bubble_ordered, aes(x = region, y =BB22.full.bubble_ordered$plant.species, color = region)) + 
+    geom_point(aes(size = Abundance, fill = region, alpha=0.5)) + 
+    facet_wrap(~bbspecies) +
+    labs(y = "plant species")+    
+    theme_classic(base_size = 20) + guides(alpha = "none") +
+    scale_color_manual(values = palette.region, guide = "none")+ #no legend
+    scale_fill_manual(values = palette.region, guide = "none") #no legend
+  ggsave(paste("./proportion in pollen/Phylo_Bubble_Region.png", sep = ""), width = 16, height = 16)
+  
+  # landscape level
+  palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+  ggplot(BB22.full.bubble_ordered, aes(x = landscape, y =BB22.full.bubble_ordered$plant.species, color = landscape)) + 
+    geom_point(aes(size = Abundance, fill = landscape, alpha=0.5)) + 
+    facet_wrap(~bbspecies) +
+    labs(y = "plant species")+ 
+    scale_x_discrete(labels=c('rural', 'urban'))+
+    theme_classic(base_size = 20) + guides(alpha = "none") +
+    scale_color_manual(values = palette.landscape, guide = "none") +
+    scale_fill_manual(values = palette.landscape, guide = "none")
+  ggsave(paste("./proportion in pollen/Phylo_Bubble_Landscape.png", sep = ""), width = 16, height = 16)
+  setwd(input)
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

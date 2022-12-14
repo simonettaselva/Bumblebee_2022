@@ -67,17 +67,17 @@ BB22$OTU <- recode(BB22$OTU, # match plant names
 #remove entries with abundance = 0
 setwd(input)
 BB22.abund <- BB22%>% 
-  filter(binom.abund == 1)
+  dplyr::filter(binom.abund == 1)
 
 # add information on plants species (file BB22_data_plants.R)
 BB22_plant_traits <- read_csv("BB22_plant_traits_added.csv")
 BB22 <- BB22 %>% rename(plant.species = OTU)
 
 BB22_full <- full_join(BB22, BB22_plant_traits, by = "plant.species")%>%
-  select(-Family, -Genus, -species)%>% 
-  rename(species = Sp2) %>% 
-  filter(binom.abund == 1)%>% 
-  mutate(native_exotic = as_factor(native_exotic),
+  dplyr::select(-Family, -Genus, -species)%>% 
+  dplyr::rename(species = Sp2) %>% 
+  dplyr::filter(binom.abund == 1)%>% 
+  dplyr::mutate(native_exotic = as_factor(native_exotic),
          pollination_mode = as_factor(pollination_mode),
          growth_form_category = as_factor(growth_form_category),
          inflorescence = as_factor(inflorescence),
@@ -160,6 +160,7 @@ BB22_full.numeric <- BB22_full %>%
             bborgan = as.factor(bborgan),
             site = as.factor(paste(location, landscape, replicate, sep="")),
             plant.species = plant.species,
+            binom.abund = binom.abund,
             Flowering_duration = Flowering_months_duration,
             Flowering_start = start_flowering,
             growth_form_numeric = growth_form_numeric,
@@ -168,18 +169,23 @@ BB22_full.numeric <- BB22_full %>%
             symmetry_numeric = symmetry_numeric,
             plant_height_m = plant_height_m)
 
+library(reshape2)
+pascuroum <- BB22_full.numeric[BB22_full.numeric$bbspecies == "B.pascuorum",]
+BB22.full_wide.pasc <- dcast(pascuroum ,site ~ plant.species, value.var="binom.abund")
+# sp.pa <- decostand(BB22.full_wide[, -c(1,2)], "pa")
+sp.pa.pascuroum <- decostand(BB22.full_wide.pasc[,-1], "pa")
 source("Bertrand_Function_ToolKit.R")
-
 # Imput missing values and reduce data dimensionality using PCA 
 # -> enable to calculate FD metrics for sites with low diversity
 require(caret)
 require(vegan)
+BB22_full.numeric=BB22_full.numeric[BB22_full.numeric$plant.species!="Fabaceae sp.",] ## Remove this uninteresting entry, where no traits are found
 BB22_full.mis.model = preProcess(BB22_full.numeric[,8:13], "knnImpute")
 # preProcess not possible since to much missing data -> either delete rows aor use different approach
 BB22_full.mis.model = predict(BB22_full.mis.model, BB22_full.numeric[,8:13]); head(BB22_full.mis.model)
 #SS: does not work
 
-### imputing Simos style (not correct probably)
+{### imputing Simos style (not correct probably)
 impute <- function(x){
   x[is.na(x)] <- mean (x, na.rm = TRUE)
   return(x)
@@ -192,19 +198,35 @@ for (column in colnames(BB22_full.numeric[,9:15])) {
 colnames(df) <- colnames(BB22_full.numeric[,9:15])
 # trt.mis.pred <- cbind(BB22_full.numeric[, 1:8], df)
 trt.mis.pred <- df
+}
 
 # PCA -> reduce dimensionality
-trt.pca <- prcomp(trt.mis.pred, scale. = T, center = T)
+trt.pca <- prcomp(BB22_full.mis.model[, -1], scale. = T, center = T)
 cumsum(trt.pca$sdev/sum(trt.pca$sdev))
-trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
+trt.scaled <- scores(trt.pca) # adjust number of axes for each group
 
 ### FD incices from mFD package of Magneville et al. 2022 ------------------------
 ### mFD
 library(mFD)
-FD_mFD <- calc_mFD(trt=trt.mis.pred)
+
+fspaces_quality_fruits <- mFD::quality.fspaces(
+  sp_dist             = sp_dist_fruits,
+  maxdim_pcoa         = 10,
+  deviation_weighting = "absolute",
+  fdist_scaling       = FALSE,
+  fdendro             = "average")
 
 
+rownames(sp.pa.pascuroum)  = BB22.full_wide.pasc$site
 
+alpha_fd_indices_fruits <- mFD::alpha.fd.multidim(
+  sp_faxes_coord   = trt.scaled[ , c("PC1", "PC2", "PC3", "PC4", "PC5")],
+  asb_sp_w         = sp.pa.pascuroum,
+  ind_vect         = c("fdis", "fmpd", "fnnd", "feve", "fric", "fdiv", "fori", 
+                       "fspe", "fide"),
+  scaling          = TRUE,
+  check_input      = TRUE,
+  details_returned = TRUE)
 
 
 
