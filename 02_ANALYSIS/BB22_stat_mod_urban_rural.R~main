@@ -1,0 +1,256 @@
+################################################
+# Statistical Models
+# by Simonetta Selva
+#
+# Created: October 20, 2022
+# Project: Bumblebee 2022
+################################################
+
+rm(list=ls())
+
+#  !!!!!!!!!!!!!!!!!!!!! BODY POLLEN ONLY !!!!!!!!!!!!!!!!!!!!!
+
+
+#load libraries
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(glmmTMB)
+library(DHARMa)
+
+# set working directory to main repository
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+
+# load data
+setwd(input)
+BBtot <- read.csv("BBtot.csv")
+
+BB.pasc <- BBtot %>% 
+  filter(bbspecies == "B.pascuorum")
+BB.lapi <- BBtot %>% 
+  filter(bbspecies == "B.lapidarius")
+
+
+#### B.pascuorum ####
+# look at data
+hist(BB.pasc$Shannon)
+hist(BB.pasc$NrSpecies)
+
+library(psych)
+describeBy(BB.pasc$Shannon, BB.pasc$landscape)
+
+ggplot(BB.pasc, aes(x=landscape, y=Shannon)) + 
+  geom_boxplot(notch = T)+ theme_bw()
+
+# Wilcoxon-Test
+library(rstatix)
+w.test <- wilcox_test(BB.pasc,Shannon~landscape); w.test
+qnorm(w.test$p/2) # z score = -9.000839
+w.test$p # p value = 2.24e-19
+
+# effect site
+# 
+
+ggplot(BB.pasc, aes(x=landscape, y=Shannon)) + 
+  geom_boxplot(notch = T)+ theme_bw() + labs(subtitle = get_test_label(w.test, detailed = TRUE))
+
+
+# correlation analysis
+pairs.panels(BB.pasc[,c(3,4,9:17)], 
+             method = "pearson", # correlation method
+             hist.col = "#00AFBB",
+             density = TRUE,  # show density plots
+             ellipses = TRUE # show correlation ellipses
+             ) 
+library(ellipse)
+plotcorr(cor(BB.pasc[,c(3,4,9:17)]))
+library(corrplot)
+M<-cor(BB.pasc[,c(3,4,9:17)])
+corrplot(M, method="circle", type="lower")
+
+# calculate p values of correlations
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+# matrix of the p-value of the correlation
+p.mat <- cor.mtest(BB.pasc[,c(3,4,9:17)])
+head(p.mat[, 1:5])
+
+corrplot(M, type="upper", order="hclust", 
+         p.mat = p.mat, sig.level = 0.01)
+
+# glossa, prementum and fore wings lenght highly correlated to proboscis lenght --> removed from intial model
+
+# PCA for finding correlations
+library(ggbiplot)
+pca <- prcomp(BB.pasc[,c(3,4,9:17)], center = TRUE, scale. = TRUE)
+summary(pca)
+ggbiplot(pca, groups=BB.pasc$location, ellipse = TRUE) + #PC1 and PC2
+  ggtitle("PCA")+
+  theme_minimal()+ theme(aspect.ratio=1)
+#  first 2 axis explain 0.6684 of variance
+ggbiplot(pca, groups=BB.pasc$site, ellipse = TRUE) + #PC1 and PC2
+  ggtitle("PCA")+
+  theme_minimal()+ theme(aspect.ratio=1)
+ggbiplot(pca, groups=BB.pasc$landscape, ellipse = TRUE) + #PC1 and PC2
+  ggtitle("PCA")+
+  theme_minimal()+ theme(aspect.ratio=1)
+
+#  fit GLMM
+#load the libraries
+library(lme4)
+library(nlme)
+library(arm)
+
+# Question 1
+#first a random intercept model
+mod_lme1<-lmer(Shannon~intertegular_distance + proboscis_length + proboscis_ratio 
+              + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|site),
+              data=BB.pasc) 
+summary(mod_lme1)
+
+plot(mod_lme1)
+qqnorm(residuals(mod_lme1)) # Short-Tailed but ok??
+qqline(residuals(mod_lme1))
+hist(residuals(mod_lme1))
+
+# formal test for spatial correlation
+sims <- simulateResiduals(mod_lme1)
+BB.pasc$site <- as.factor(BB.pasc$site)
+simulationOutput = recalculateResiduals(sims, group = BB.pasc$site)
+testSpatialAutocorrelation(sims, x = dat$x, y = dat$y, plot = FALSE)
+
+library(car)
+vif(mod_lme1) #cut-off of five (???) to check for colinearity among our explanatory variables
+
+# update model
+mod_lme1.1<-lmer(Shannon~intertegular_distance + proboscis_length +
+               fore_wing_ratio  + corbicula_length + corbicula_ratio + (1|site),
+               data=BB.pasc) 
+summary(mod_lme1.1)
+plot(mod_lme1.1)
+qqnorm(residuals(mod_lme1.1)) 
+qqline(residuals(mod_lme1.1))
+hist(residuals(mod_lme1.1))
+
+vif(mod_lme1.1)
+
+# update model
+mod_lme1.2<-lmer(Shannon~intertegular_distance + proboscis_length
+                 + fore_wing_ratio  + corbicula_length + (1|site),
+                 data=BB.pasc)
+summary(mod_lme1.2)
+plot(mod_lme1.2)
+qqnorm(residuals(mod_lme1.2))
+qqline(residuals(mod_lme1.2))
+hist(residuals(mod_lme1.2))
+
+vif(mod_lme1.2) #looks ok
+
+
+
+# Variable selection: Stepwise regression model
+library(lmerTest)
+
+step.model <- drop1(mod_lme1, test="Chisq")
+summary(step.model)
+
+#then a random slope plus intercept model
+mod_lme2<-lme(log(Shannon+1)~prementum,data=BB.pasc,random=~prementum|site)
+summary(mod_lme2)
+
+BB.pasc$Shannon + 1
+
+
+
+#### B.lapidarius ####
+# look at data
+hist(BB.lapi$Shannon) #not normally distributed
+hist(BB.lapi$NrSpecies) #not normally distributed
+
+
+library(psych)
+describeBy(BB.lapi$Shannon, BB.lapi$landscape)
+
+ggplot(BB.lapi, aes(x=landscape, y=Shannon)) + 
+  geom_boxplot(notch = T)+ theme_bw()
+
+# Wilcoxon-Test
+# w.test <- wilcox.test(Shannon~landscape, BB.lapi, alternative = "two.sided"); w.test
+library(rstatix)
+w.test <- wilcox_test(BB.lapi,Shannon~landscape); w.test
+qnorm(w.test$p/2) # z score = -6.909606
+w.test$p # p value = 4.86e-12
+
+ggplot(BB.lapi, aes(x=landscape, y=Shannon)) + 
+  geom_boxplot(notch = T)+ theme_bw() + labs(subtitle = get_test_label(w.test, detailed = TRUE))
+
+
+
+
+
+
+#### URBAN RURAL COMPARISONS FAMILY, FLOWER, GRWOTH FORM, EXOTIC/NATIVE ####
+library(insight)
+setwd(input)
+BB22.full.family <- read_csv("BB22.full.family")
+
+BB.pasc <- BB22.full.family %>% 
+  filter(bbspecies == "B.pascuorum")
+BB.lapi <- BB22.full.family %>% 
+  filter(bbspecies == "B.lapidarius")
+
+resolution <- c("landscape", "region", "site")
+fun.trait <- c("family.agg", "native_exotic", "growth_form_category", "structural_blossom_class")
+
+# B. pascuorum
+chisq.summary <- NULL
+for (i in resolution) {
+  for (j in fun.trait) {
+    chisq <- chisq.test(BB.pasc[[i]], BB.pasc[[j]]); chisq
+    summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3), chisq$parameter, chisq$p.value)
+    chisq.summary <- rbind(chisq.summary, summary)
+  }
+}
+chisq.summary <- as.data.frame(chisq.summary)
+colnames(chisq.summary) <- c("formula", "X-squared", "df", "p")
+rownames(chisq.summary) <- NULL
+chisq.summary %>%
+  mutate(p = format_p(p, stars = TRUE)) %>%
+  format_table()
+
+
+#B. lapidarius
+chisq.summary.1 <- NULL
+for (i in resolution) {
+  for (j in fun.trait) {
+    chisq <- chisq.test(BB.lapi[[i]], BB.lapi[[j]]); chisq
+    summary <- c(paste(i, j, sep ="~"), chisq$statistic,chisq$parameter,chisq$p.value)
+    chisq.summary.1 <- rbind(chisq.summary.1, summary)
+  }
+}
+chisq.summary.1 <- as.data.frame(chisq.summary.1)
+colnames(chisq.summary.1) <- c("formula", "X-squared", "df", "p")
+rownames(chisq.summary.1) <- NULL
+chisq.summary.1 %>%
+  mutate(p = format_p(p, stars = TRUE)) %>%
+  format_table()
+
+
+
+
+
+

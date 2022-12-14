@@ -613,11 +613,14 @@ for(h in rare.families$family){
 
 # write_csv(BB22.full, "BB22.full.family")
 
+<<<<<<< HEAD
 # ACHTUNG neuer Datensatz mit Familien --> schönere Darstellung
 families.site <- BB22.full%>%
   dplyr::group_by(family.agg, site)%>%
   dplyr::summarise(cum.abund = sum(Abundance))
 
+=======
+>>>>>>> main
 BB22.full$family.agg <- as.factor(BB22.full$family.agg)
 palette.fams=c("#375E97", "#80BD9E", "#FA812F", "#F34A4A", "#07575B", "#66A5AD", "#C4DFE6", "#FAAF08", 
                  "#336B87", "#5D535E", "#DFE166", "#1995AD", "#258039", "#73605B", "#4897D8", "#DDBC95",
@@ -638,7 +641,18 @@ ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=region)) +
   ggtitle("Plant Families per Site") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
+<<<<<<< HEAD
 # ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8, device = "png", )
+=======
+# ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8)
+
+ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=region)) + 
+  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  ggtitle("Plant Families per Site") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
+# ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8)
+>>>>>>> main
 setwd(input) 
 
 
