@@ -638,7 +638,7 @@ ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=region)) +
   ggtitle("Plant Families per Site") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
-ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8, device = "png", )
+# ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8, device = "png", )
 setwd(input) 
 
 
