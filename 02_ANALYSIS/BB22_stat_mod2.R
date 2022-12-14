@@ -139,6 +139,7 @@ library(arm)
 mod_lme1<-lmer(Shannon~intertegular_distance + proboscis_length + proboscis_ratio 
                + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|site),
                data=BB.pasc) 
+BB.pasc.coord=unique(BB.pasc[,c(1,25:26)])
 summary(mod_lme1)
 
 plot(mod_lme1)
@@ -149,8 +150,10 @@ hist(residuals(mod_lme1))
 # formal test for spatial correlation
 sims <- simulateResiduals(mod_lme1)
 BB.pasc$site <- as.factor(BB.pasc$site)
-simulationOutput = recalculateResiduals(sims, group = BB.pasc$site)
-testSpatialAutocorrelation(sims, x = BB.pasc$LV95_x, y = BB.pasc$LV95_y, plot = FALSE)
+res.rec.mod_lme1 = recalculateResiduals(sims, group = BB.pasc.coord$site)
+auto.cor=testSpatialAutocorrelation(res.rec.mod_lme1, x = BB.pasc.coord$LV95_x, y = BB.pasc.coord$LV95_y, plot = FALSE)
+
+plot(sims)
 
 library(car)
 vif(mod_lme1) #cut-off of five (???) to check for colinearity among our explanatory variables

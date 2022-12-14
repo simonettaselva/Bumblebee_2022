@@ -7,6 +7,8 @@
 ################################################
 rm(list=ls())
 
+#####################
+
 #load libraries
 library(dplyr)
 library(tidyverse)
@@ -576,6 +578,7 @@ input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Ma
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
 setwd(input)
 BB22.full <- read_csv("BB22_full.csv")
+BB22.full$region
 for (i in 1:nrow(BB22.full)) {
   BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
   BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
@@ -584,11 +587,11 @@ for (i in 1:nrow(BB22.full)) {
 #### plot plant families per site and species
 
 families.overview <- BB22.full%>%
-  group_by(family)%>%
-  summarise(cum.abund = sum(Abundance))
+  dplyr::group_by(family)%>%
+  dplyr::summarise(cum.abund = sum(Abundance))
 tot <- sum(families.overview$cum.abund)
 families.overview <- families.overview %>%
-  summarise(family = family,
+  dplyr::summarise(family = family,
             cum.abund = cum.abund,
             rel.abund = cum.abund/tot)
 
@@ -610,6 +613,11 @@ for(h in rare.families$family){
 
 # write_csv(BB22.full, "BB22.full.family")
 
+# ACHTUNG neuer Datensatz mit Familien --> schönere Darstellung
+families.site <- BB22.full%>%
+  dplyr::group_by(family.agg, site)%>%
+  dplyr::summarise(cum.abund = sum(Abundance))
+
 BB22.full$family.agg <- as.factor(BB22.full$family.agg)
 palette.fams=c("#375E97", "#80BD9E", "#FA812F", "#F34A4A", "#07575B", "#66A5AD", "#C4DFE6", "#FAAF08", 
                  "#336B87", "#5D535E", "#DFE166", "#1995AD", "#258039", "#73605B", "#4897D8", "#DDBC95",
@@ -617,18 +625,20 @@ palette.fams=c("#375E97", "#80BD9E", "#FA812F", "#F34A4A", "#07575B", "#66A5AD",
                  "#F7EFE2", "#D09683", "#A1BE95", "#F62A00", "#20948B", "#9B4F0F", "#CB0000")
 setwd(output)
 ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=site)) + 
-  geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
+  geom_bar(stat="identity")+ 
+  theme_classic(base_size = 25) +
+  facet_wrap(~bbspecies)+ 
   ggtitle("Plant Families per Site") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
-# ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8)
+# ggsave(paste("PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8, device = "png")
 
 ggplot(BB22.full, aes(fill=family.agg, y=Abundance, x=region)) + 
   geom_bar(position="fill", stat="identity")+ theme_classic() + facet_wrap(~bbspecies)+ 
   ggtitle("Plant Families per Site") +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, limits = unique(BB22.full$family.agg))
-# ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8)
+ggsave(paste("PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8, device = "png", )
 setwd(input) 
 
 
