@@ -42,38 +42,48 @@ BB22_full.numeric <- BB22_full %>%
             plant_height_m = plant_height_m)
 BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_duration)
 
+for (i in BB22_full.numeric$bbspecies) { #loop trough bumblebee species
+  for (j in c("site", "ID", "landscape")) {
+    
+    j <- "site"
+    i <- "B.lapidarius"
+    
+
 # Impute missing values and reduce data dimensionality using PCA 
 require(caret)
 require(vegan)
-BB22_full.pascuroum <- BB22_full.numeric[BB22_full.numeric$bbspecies == "B.pascuorum",]%>%
+BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
   filter(plant.species!="Fabaceae sp.")  # Remove this uninteresting entry, where no traits are found
   
-BB22_full.pascuroum.species <- BB22_full.pascuroum %>% 
+BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, Flowering_start, growth_form_numeric, 
          structural_blossom_numeric, sugar.concentration, symmetry_numeric, plant_height_m) %>% 
   distinct() # remove duplicates
 
-trt.mis.pred <- preProcess(as.data.frame(BB22_full.pascuroum.species[,-c(1)]), "knnImpute")
-traits <- predict(trt.mis.pred, BB22_full.pascuroum.species[,-c(1)]); head(trt.mis.pred)
+trt.mis.pred <- preProcess(as.data.frame(BB22_full.loop.species[,-c(1)]), "knnImpute")
+traits <- predict(trt.mis.pred, BB22_full.loop.species[,-c(1)]); head(trt.mis.pred)
 traits <- as.data.frame(traits)
-rownames(traits)  <- BB22_full.pascuroum.species$plant.species
+rownames(traits)  <- BB22_full.loop.species$plant.species
 
 # PCA -> reduce dimensionality
 trt.pca <- prcomp(traits, scale. = T, center = T)
 cumsum(trt.pca$sdev/sum(trt.pca$sdev))
 trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 
-# bring into wide format (for each BB species) on site level
+# bring into wide format (for each BB species)
 library(reshape2)
-wide.pascuroum <- dcast(BB22_full.pascuroum, site ~ plant.species, value.var="binom.abund")
-sp.pa.pascuroum <- decostand(wide.pascuroum[,-1], "pa")
-rownames(sp.pa.pascuroum)  = wide.pascuroum$site #re-introduce rownames
+wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")
+sp.pa <- decostand(wide[,-1], "pa")
+rownames(sp.pa)  = wide[[j]] #re-introduce rownames
+sp.pa <- as.matrix(sp.pa) #turn into matrix
 
+# rownames(sp.pa) <- 
+  
 # Summarize my assemblages
-asb_sp_summ <- mFD::asb.sp.summary(asb_sp_w = sp.pa.pascuroum)
+asb_sp_summ <- mFD::asb.sp.summary(asb_sp_w = sp.pa)
 asb_sp_occ <- asb_sp_summ$"asb_sp_occ"
 
-# baskets_fruits_weights = sp.pa.pascuroum
+# baskets_fruits_weights = sp.pa
 # fruits_traits = traits
 # fruits_traits_cat = traits_cat
 
@@ -137,6 +147,7 @@ tr_faxes <- mFD::traits.faxes.cor(
   sp_tr          = traits, 
   sp_faxes_coord = sp_faxes_coord[ , c("PC1", "PC2", "PC3", "PC4")], 
   plot           = TRUE)
+
 # Print traits with significant effect:
 tr_faxes$"tr_faxes_stat"[which(tr_faxes$"tr_faxes_stat"$"p.value" < 0.05), ]
 tr_faxes$"tr_faxes_plot"
@@ -177,10 +188,10 @@ big_plot$patchwork
 
 # 7. Compute functional diversity indices & plot them
 # 7.1. Functional alpha diversity indices in a multidimensional space
-sp.pa.pascuroum <- as.matrix(sp.pa.pascuroum)
+sp.pa <- as.matrix(sp.pa)
 alpha_fd_indices <- mFD::alpha.fd.multidim(
   sp_faxes_coord   = sp_faxes_coord[ , c("PC1", "PC2", "PC3", "PC4")],
-  asb_sp_w         = sp.pa.pascuroum,
+  asb_sp_w         = sp.pa,
   ind_vect         = c("fdis", "fmpd", "fnnd", "feve", "fric", "fdiv", "fori", 
                        "fspe", "fide"),
   scaling          = TRUE,
@@ -188,7 +199,7 @@ alpha_fd_indices <- mFD::alpha.fd.multidim(
   details_returned = TRUE)
 
 fd_ind_values <- alpha_fd_indices$"functional_diversity_indices"
-fd_ind_values
+return(assign(paste("fd",i,j, sep = "_"), fd_ind_values)) #return FD data frame
 
 # FDis Functional Dispersion: the biomass weighted deviation of species traits values from the center of the functional space filled by the assemblage 
 #   i.e. the biomass-weighted mean distance to the biomass-weighted mean trait values of the assemblage.
@@ -215,3 +226,9 @@ beta_fd_indices <- mFD::beta.fd.multidim(
   details_returned = TRUE)
 
 beta_fd_indices$pairasb_fbd_indices
+
+} #end of loop j
+} #end of lopp i
+
+
+
