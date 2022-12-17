@@ -29,7 +29,7 @@ BB22 <- BB22%>%
          site = paste(location, landscape, replicate, sep=""),
          bbspecies = as_factor(bbspecies))%>% 
   select(-Sample, -X, -project, -xID)
-levels(BB22$bbspecies) <- c("B.lapidarius", "B.pascuorum") # rename BB species
+levels(BB22$bbspecies) <- c("B.pascuorum","B.lapidarius") # rename BB species
 BB22 <- BB22[, c(15,16,1,3,4,5,6,7,8,9,10,11,12,13,2,14)] # reorder columns
 BB22$OTU <- recode(BB22$OTU, # match plant names
                    "Phedimus spurius" = "Sedum spurium",

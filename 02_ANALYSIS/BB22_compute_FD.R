@@ -24,7 +24,7 @@ BB22_full <- read_csv("BB22_full.csv")
 
 # choose only to numeric data
 BB22_full.numeric <- BB22_full %>% 
-  summarise(ID = ID,
+  summarise(ID = as.factor(ID),
             location = as.factor(location),
             landscape = as.factor(landscape),
             replicate = as.factor(replicate),
@@ -42,11 +42,11 @@ BB22_full.numeric <- BB22_full %>%
             plant_height_m = plant_height_m)
 BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_duration)
 
-for (i in levels(BB22_full.numeric$bbspecies)) { #loop trough bumblebee species
-  for (j in c("ID", "site", "landscape")) {
+# for (i in levels(BB22_full.numeric$bbspecies)) { #loop trough bumblebee species
+#   for (j in c("ID", "site", "landscape")) {
     
-    # j <- "site"
-    # i <- "B.lapidarius"
+    j <- "ID"
+    i <- "B.lapidarius"
     
 
 # Impute missing values and reduce data dimensionality using PCA 
@@ -54,7 +54,8 @@ require(caret)
 require(vegan)
   BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
     filter(plant.species!="Fabaceae sp.")%>% # Remove this uninteresting entry, where no traits are found
-    mutate(Flowering_duration = as.numeric(Flowering_duration))
+    mutate(Flowering_duration = as.numeric(Flowering_duration))%>% 
+    droplevels()
   
 BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, Flowering_start, growth_form_numeric, 
@@ -194,7 +195,7 @@ big_plot$patchwork
 # 7. Compute functional diversity indices & plot them
 # 7.1. Functional alpha diversity indices in a multidimensional space
 sp.pa <- as.matrix(sp.pa)
-alpha_fd_indices <- mFD::alpha.fd.multidim(
+alpha_fd_indices <-mFD::alpha.fd.multidim(
   sp_faxes_coord   = sp_faxes_coord[ , c("PC1", "PC2", "PC3", "PC4")],
   asb_sp_w         = sp.pa,
   ind_vect         = c("fdis", "fmpd", "fnnd", "feve", "fric", "fdiv", "fori", 
