@@ -42,18 +42,19 @@ BB22_full.numeric <- BB22_full %>%
             plant_height_m = plant_height_m)
 BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_duration)
 
-for (i in BB22_full.numeric$bbspecies) { #loop trough bumblebee species
-  for (j in c("site", "ID", "landscape")) {
+for (i in levels(BB22_full.numeric$bbspecies)) { #loop trough bumblebee species
+  for (j in c("ID", "site", "landscape")) {
     
-    j <- "site"
-    i <- "B.lapidarius"
+    # j <- "site"
+    # i <- "B.lapidarius"
     
 
 # Impute missing values and reduce data dimensionality using PCA 
 require(caret)
 require(vegan)
-BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
-  filter(plant.species!="Fabaceae sp.")  # Remove this uninteresting entry, where no traits are found
+  BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
+    filter(plant.species!="Fabaceae sp.")%>% # Remove this uninteresting entry, where no traits are found
+    mutate(Flowering_duration = as.numeric(Flowering_duration))
   
 BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, Flowering_start, growth_form_numeric, 
@@ -64,6 +65,8 @@ trt.mis.pred <- preProcess(as.data.frame(BB22_full.loop.species[,-c(1)]), "knnIm
 traits <- predict(trt.mis.pred, BB22_full.loop.species[,-c(1)]); head(trt.mis.pred)
 traits <- as.data.frame(traits)
 rownames(traits)  <- BB22_full.loop.species$plant.species
+# traits$Flowering_duration <- as.numeric(traits$Flowering_duration)
+
 
 # PCA -> reduce dimensionality
 trt.pca <- prcomp(traits, scale. = T, center = T)
@@ -73,8 +76,10 @@ trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 # bring into wide format (for each BB species)
 library(reshape2)
 wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")
+rownames(wide)  <- levels(BB22_full.loop[[j]])
+
 sp.pa <- decostand(wide[,-1], "pa")
-rownames(sp.pa)  = wide[[j]] #re-introduce rownames
+# rownames(sp.pa)  = wide[[j]] #re-introduce rownames
 sp.pa <- as.matrix(sp.pa) #turn into matrix
 
 # rownames(sp.pa) <- 
@@ -228,7 +233,5 @@ beta_fd_indices <- mFD::beta.fd.multidim(
 beta_fd_indices$pairasb_fbd_indices
 
 } #end of loop j
-} #end of lopp i
-
-
+} #end of loop i
 
