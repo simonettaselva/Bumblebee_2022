@@ -53,7 +53,9 @@ BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_d
 require(caret)
 require(vegan)
   BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
-    filter(plant.species!="Fabaceae sp.")%>% # Remove this uninteresting entry, where no traits are found
+    filter(plant.species!="Fabaceae sp.", # Remove this uninteresting entry, where no traits are found
+           ID != "01_1_BERD_lB",
+           ID != "01_2_BERD_lB")%>% # Remove entry with no information
     mutate(Flowering_duration = as.numeric(Flowering_duration))%>% 
     droplevels()
   
@@ -195,8 +197,12 @@ big_plot$patchwork
 # 7. Compute functional diversity indices & plot them
 # 7.1. Functional alpha diversity indices in a multidimensional space
 sp.pa <- as.matrix(sp.pa)
+sp_faxes_coord <- as.matrix(sp_faxes_coord)
+
+
+
 alpha_fd_indices <-mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_faxes_coord[ , c("PC1", "PC2", "PC3", "PC4")],
+  sp_faxes_coord   = sp_faxes_coord[ , c("PC1")],
   asb_sp_w         = sp.pa,
   ind_vect         = c("fdis", "fmpd", "fnnd", "feve", "fric", "fdiv", "fori", 
                        "fspe", "fide"),
