@@ -28,7 +28,7 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 
 # load data
 setwd(input) # set working directory
-BB22.full <- read_csv("BB22_full.csv") # import data set with 
+BB22.full <- read_csv("BB22_full.csv") # import data set 
 
 # initialize region as column
 BB22.full$region <- c() 
@@ -534,16 +534,217 @@ setwd(output)
   setwd(input)
   
 
+############################
+#### LEG/BODY POLLEN DIFFERENCES ####
+  
+  #reset environment
+  rm(list=ls())
+  
+  # set working directory to main repository
+  input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+  output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+  
+  # load data
+  setwd(input) # set working directory
+  BB22.full <- read_csv("BB22_full.csv") # import data set with
+  
+  # filter for entries only on body pollen per bumblebee species
+  # for B.lapidarius
+  BB22.lapi.body <- BB22.full %>% 
+    filter(str_detect(bborgan, "B") & bbspecies == "B.lapidarius") 
+  # for B.pascuorum
+  BB22.pasc.body <- BB22.full %>% 
+    filter(str_detect(bborgan, "B") & bbspecies == "B.pascuorum")
+  
+  # create data frame with cumulative abundance per plant species per bumblebee species
+  # for B.lapidarius
+  BB22.lapi.body <- BB22.lapi.body %>% 
+    group_by(plant.species) %>%
+    summarise(cum.abund = sum(Abundance))
+  # for B.pascuorum
+  BB22.pasc.body <- BB22.pasc.body %>% 
+    group_by(plant.species) %>%
+    summarise(cum.abund = sum(Abundance))
+  
+  # filter for entries only on leg pollen per bumblebee species
+  # for B.lapidarius
+  BB22.lapi.leg <- BB22.full %>% 
+    filter(str_detect(bborgan, "L") & bbspecies == "B.lapidarius") 
+  # for B.pascuorum
+  BB22.pasc.leg <- BB22.full %>% 
+    filter(str_detect(bborgan, "L") & bbspecies == "B.pascuorum")
+  
+  # create data frame with cumulative abundance per plant species per bumblebee species
+  # for B.lapidarius
+  BB22.lapi.leg <- BB22.lapi.leg %>% 
+    group_by(plant.species) %>%
+    summarise(cum.abund = sum(Abundance))
+  # for B.pascuorum
+  BB22.pasc.leg <- BB22.pasc.leg %>% 
+    group_by(plant.species) %>%
+    summarise(cum.abund = sum(Abundance))
+  
+  # find common visited plant species body
+  intersection.pasc <- length(intersect(BB22.pasc.leg$plant.species, BB22.pasc.body$plant.species))
+  notshared.1.pasc <- length(BB22.pasc.leg$plant.species[!(BB22.pasc.leg$plant.species %in% intersection.pasc)])
+  notshared.2.pasc <- length(BB22.pasc.body$plant.species[!(BB22.pasc.body$plant.species %in% intersection.pasc)])
+  
+  intersection.lapi <- length(intersect(BB22.lapi.leg$plant.species, BB22.lapi.body$plant.species))
+  notshared.1.lapi <- length(BB22.lapi.leg$plant.species[!(BB22.lapi.leg$plant.species %in% intersection.lapi)])
+  notshared.2.lapi <- length(BB22.lapi.body$plant.species[!(BB22.lapi.body$plant.species %in% intersection.lapi)])
 
+  # summarize in data frame for plotting
+  p_1 <- data.frame(value = c(notshared.1.pasc, intersection.pasc, notshared.2.pasc,
+                            notshared.1.lapi, intersection.lapi, notshared.2.lapi),
+                  shared = rep(factor(c("only on corbicula", "shared", "only on body"), 
+                                  levels = c("only on corbicula", "shared", "only on body")),2),
+                  bbspecies = c(rep("B.pascuorum", 3), rep("B.lapidarius", 3)))
+  # plotting
+  palette.p1 <- c("#FA812F", "#A1BE95", "#88A550")
+  p1 <- ggplot(p_1, aes(fill=shared, y=value, x=bbspecies)) + 
+    geom_bar(position="fill", stat="identity") + 
+    xlab("Bumblebee species") + ylab("percent")+
+    theme_classic(base_size=20) +
+    guides(fill=guide_legend(title=""))+
+    scale_fill_manual(values=palette.p1, name = ""); p1
 
+  # sum of plant species visited: compute and summarize in data frame 
+  p_2 <- data.frame(sum = c(length(BB22.lapi.body$plant.species), length(BB22.lapi.leg$plant.species),
+                            length(BB22.pasc.body$plant.species), length(BB22.pasc.leg$plant.species)),
+                    bborgan = rep(factor(c("body", "corbicula"), levels = c("body", "corbicula")),2),
+                    bbspecies = c(rep("B.pascuorum", 2), rep("B.lapidarius", 2)))
+  
+  palette.p2 <- c("#88A550","#FA812F")
+  p2 <- ggplot(p_2, aes(x=bbspecies, y=sum, fill = bborgan)) +
+    geom_bar(stat="identity", position=position_dodge()) +
+    ylab("Sum of Plant Species detected") + xlab("Bumblebee species")+
+    theme_classic(base_size=20)+
+    scale_fill_manual(values=palette.p2, name = ""); p2
+  
+  setwd(output)
+  plot1 <- ggarrange(p1, p2, ncol = 2, labels = c("A", "B")); plot1
+  annotate_figure(plot1, top = text_grob("Comparison of corbicula and body pollen", 
+                                         face = "bold", size = 22))
+  # ggsave("./proportion in pollen/Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
+  setwd(input)
 
-
-
-
-
-
-
-
-
+############################
+#### LEG/BODY POLLEN DIFFERENCES IN LANDSCAPE ####
+  #reset environment
+  rm(list=ls())
+  
+  # set working directory to main repository
+  input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+  output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+  
+  # load data
+  setwd(input) # set working directory
+  BB22.full <- read_csv("BB22_full.csv") # import data set with
+  
+  # define vectors for loops
+  landscape <- c("U", "R")
+  organ <- c("B", "L")
+  species <- c("B.lapidarius", "B.pascuorum")
+  bb <- c()
+  # produce data frame per landscape, per species, and per body part
+  for (i in landscape) {
+    BB22.full.loop <- BB22.full %>%
+      filter(landscape == i) #filter for landscape
+    for (j in organ) {
+      BB22.full.loop.2 <- BB22.full.loop %>%
+        filter(str_detect(bborgan, j)) #filter for body part
+      for (k in species) {
+        BB22.full.loop.3 <- BB22.full.loop.2 %>%
+          filter(bbspecies == k) #filter for bumblebee species
+        df <- BB22.full.loop.3 %>%
+          group_by(plant.species, landscape) %>%
+          summarise(cum.abund = sum(Abundance)) # calculate cumulative abundance per plant species per data frame
+        if (k == "B.lapidarius") { #for naming the data frames more concise replace name with abbreviation
+          bb <- "lapi"
+        } else {
+          bb <- "pasc"
+        }
+        assign(paste("BB22", bb, j, i, sep = "."), df) # return named data frame
+      } #end loop k
+    } #end loop j
+  }#end loop i
+  
+  # find common visited plant species body per landscape
+  # urban
+  intersection.pasc <- length(intersect(BB22.pasc.L.U$plant.species, BB22.pasc.B.U$plant.species))
+  notshared.1.pasc <- length(BB22.pasc.L.U$plant.species[!(BB22.pasc.L.U$plant.species %in% intersection.pasc)])
+  notshared.2.pasc <- length(BB22.pasc.B.U$plant.species[!(BB22.pasc.B.U$plant.species %in% intersection.pasc)])
+  
+  intersection.lapi <- length(intersect(BB22.lapi.L.U$plant.species, BB22.lapi.B.U$plant.species))
+  notshared.1.lapi <- length(BB22.lapi.L.U$plant.species[!(BB22.lapi.L.U$plant.species %in% intersection.lapi)])
+  notshared.2.lapi <- length(BB22.lapi.B.U$plant.species[!(BB22.lapi.B.U$plant.species %in% intersection.lapi)])
+  
+  # summarize in data frame for plotting
+  df.ratio.U <- data.frame(percent = c(notshared.1.pasc, intersection.pasc, notshared.2.pasc,
+                              notshared.1.lapi, intersection.lapi, notshared.2.lapi),
+                           plant_species = rep(factor(c("only on corbicula", "shared", "only on body"), 
+                                        levels = c("only on corbicula", "shared", "only on body")),2),
+                           bbspecies = c(rep("B.pascuorum", 3), rep("B.lapidarius", 3)),
+                           landscape = rep("urban",6))
+  
+  # rural
+  intersection.pasc <- length(intersect(BB22.pasc.L.R$plant.species, BB22.pasc.B.R$plant.species))
+  notshared.1.pasc <- length(BB22.pasc.L.R$plant.species[!(BB22.pasc.L.R$plant.species %in% intersection.pasc)])
+  notshared.2.pasc <- length(BB22.pasc.B.R$plant.species[!(BB22.pasc.B.R$plant.species %in% intersection.pasc)])
+  
+  intersection.lapi <- length(intersect(BB22.lapi.L.R$plant.species, BB22.lapi.B.R$plant.species))
+  notshared.1.lapi <- length(BB22.lapi.L.R$plant.species[!(BB22.lapi.L.R$plant.species %in% intersection.lapi)])
+  notshared.2.lapi <- length(BB22.lapi.B.R$plant.species[!(BB22.lapi.B.R$plant.species %in% intersection.lapi)])
+  
+  # summarize in data frame for plotting
+  df.ratio.R <- data.frame(percent = c(notshared.1.pasc, intersection.pasc, notshared.2.pasc,
+                                       notshared.1.lapi, intersection.lapi, notshared.2.lapi),
+                           plant_species = rep(factor(c("only on corbicula", "shared", "only on body"), 
+                                                      levels = c("only on corbicula", "shared", "only on body")),2),
+                           bbspecies = c(rep("B.pascuorum", 3), rep("B.lapidarius", 3)),
+                           landscape = rep("rural",6))
+  
+  df.ratio <- rbind(df.ratio.U, df.ratio.R)
+  
+  # plotting
+  palette.p1 <- c("#FA812F", "#A1BE95", "#88A550")
+  p3 <- ggplot(df.ratio, aes(fill=plant_species, y=percent, x=landscape)) + 
+    geom_bar(position="fill", stat="identity") + xlab("") +
+    facet_wrap(~bbspecies)+ 
+    theme_classic(base_size=20)+
+    scale_fill_manual(values=palette.p1, name = ""); p3
+  
+  
+  # sum of plant species visited per landscape: compute and summarize in data frame 
+  df.sum.urban <- data.frame(sum = c(length(BB22.pasc.L.U$plant.species), length(BB22.pasc.B.U$plant.species), 
+                                     length(BB22.lapi.L.U$plant.species), length(BB22.lapi.B.U$plant.species)),
+                             bbspecies = c(rep("B.pascuorum", 2), rep("B.lapidarius", 2)),
+                             bborgan = rep(factor(c("body", "corbicula"), levels = c("body", "corbicula")),2),
+                             landscape = rep("urban",4))
+  df.sum.rural <- data.frame(sum = c(length(BB22.pasc.L.R$plant.species), length(BB22.pasc.B.R$plant.species), 
+                                     length(BB22.lapi.L.R$plant.species), length(BB22.lapi.B.R$plant.species)),
+                             bbspecies = c(rep("B.pascuorum", 2), rep("B.lapidarius", 2)),
+                             bborgan = rep(factor(c("body", "corbicula"), levels = c("body", "corbicula")),2),
+                             landscape = rep("rural",4))
+  df.sum <- rbind(df.sum.urban, df.sum.rural)
+  
+  # plotting
+  palette.p2 <- c("#88A550","#FA812F")
+  
+  p4 <- ggplot(df.sum, aes(x=landscape, y=sum, fill = bborgan)) +
+    geom_bar(stat="identity", position=position_dodge()) +
+    ylab("Sum of Plant Species detected") + xlab("")+ 
+    facet_wrap(~bbspecies)+ 
+    theme_classic(base_size=20)+
+    scale_fill_manual(values=palette.p2, name = ""); p4
+  
+  setwd(output)
+  plot1 <- ggarrange(p3, p4, ncol = 2, labels = c("A", "B"))
+  annotate_figure(plot1, top = text_grob("Comparison Body and Leg Pollen across Landscapes", 
+                                         face = "bold", size = 22))
+  ggsave("./proportion in pollen/Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
+  setwd(input)
+  
+  
 
 
