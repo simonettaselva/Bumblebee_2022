@@ -9,6 +9,10 @@
 # AIM: Characterize the diet compositional and structural (taxonomic, functional, and phylogenetic diversity) 
 # and chemical properties of the two bumblebee species in both urban and rural landscapes.
 
+
+############################
+#### POLLEN COMPOSITION ####
+
 #reset environment
 rm(list=ls())
 
@@ -21,10 +25,6 @@ library(ggpubr)
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
-
-############################
-#### POLLEN COMPOSITION ####
-
 
 # load data
 setwd(input) # set working directory
@@ -93,7 +93,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       labs(fill='Plant families') +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.fams, name = "Plant families")
-    ggsave(paste("./proportion in pollen/PlantFamilies_per_Site_leg.png", sep = ""), width = 16, height = 8, device = "png")
+    ggsave(paste("./01_Goal 0/PlantFamilies_per_Site_leg.png", sep = ""), width = 16, height = 8, device = "png")
     
 # 4. produce data frame with families' abundances per region
     families.region <- BB22.full.leg %>%
@@ -110,7 +110,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       labs(fill='Plant families') +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.fams, name = "Plant families")
-    ggsave(paste("./proportion in pollen/PlantFamilies_per_Region_leg.png", sep = ""), width = 16, height = 8, device = "png", )
+    ggsave(paste("./01_Goal 0/PlantFamilies_per_Region_leg.png", sep = ""), width = 16, height = 8, device = "png", )
     setwd(input) 
 
 #### plot plant growth form per site, region and species
@@ -133,7 +133,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       labs(fill='Origin status') +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'), name = "")
-    ggsave(paste("./proportion in pollen/OriginStatus_per_Site_leg.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./01_Goal 0/OriginStatus_per_Site_leg.png", sep = ""), width = 16, height = 8)
 
 # 3. produce data frame with exotic/native per region
     ex.nat.region <- BB22.full.leg %>%
@@ -150,7 +150,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       labs(fill='Origin status') +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'), name="")
-    ggsave(paste("./proportion in pollen/OriginStatus_per_Region_leg.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./01_Goal 0/OriginStatus_per_Region_leg.png", sep = ""), width = 16, height = 8)
     setwd(input)
     
 
@@ -174,7 +174,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       labs(fill='Growth form') +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.growth, name="")
-    ggsave(paste("./proportion in pollen/GrowthForm_per_Site_leg.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./01_Goal 0/GrowthForm_per_Site_leg.png", sep = ""), width = 16, height = 8)
     
 # 3. produce data frame with growth form per region
     growth.region <- BB22.full.leg %>%
@@ -191,7 +191,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       labs(fill='Growth form') +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.growth, name="")
-    ggsave(paste("./proportion in pollen/GrowthForm_per_Region_leg.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./01_Goal 0/GrowthForm_per_Region_leg.png", sep = ""), width = 16, height = 8)
     setwd(input)
     
 #### blossom class per site and species
@@ -215,7 +215,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       theme(axis.text.x = element_text(angle = 90))+
       scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"),
                         name = "")
-    ggsave(paste("./proportion in pollen/BlossomClass_per_Site_leg.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./01_Goal 0/BlossomClass_per_Site_leg.png", sep = ""), width = 16, height = 8)
     
 # 3. produce data frame with blossom class per region
     blossom.region <- BB22.full.leg %>%
@@ -233,7 +233,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       theme(axis.text.x = element_text(angle = 90))+
       scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"),
                         name = "")
-    ggsave(paste("./proportion in pollen/BlossomClass_per_Region_leg.png", sep = ""), width = 16, height = 8)
+    ggsave(paste("./01_Goal 0/BlossomClass_per_Region_leg.png", sep = ""), width = 16, height = 8)
     setwd(input)
 
     
@@ -287,7 +287,7 @@ ggplot(families.site, aes(fill=family.agg, y=cum.abund, x=site)) +
   labs(fill='Plant families') +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, name = "Plant families")
-ggsave(paste("./proportion in pollen/PlantFamilies_per_Site_body.png", sep = ""), width = 16, height = 8, device = "png")
+ggsave(paste("./01_Goal 0/PlantFamilies_per_Site_body.png", sep = ""), width = 16, height = 8, device = "png")
 
 # 4. produce data frame with families' abundances per region
 families.region <- BB22.full.body %>%
@@ -304,7 +304,7 @@ ggplot(families.region, aes(fill=family.agg, y=cum.abund, x=region)) +
   labs(fill='Plant families') +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.fams, name = "Plant families")
-ggsave(paste("./proportion in pollen/PlantFamilies_per_Region_body.png", sep = ""), width = 16, height = 8, device = "png", )
+ggsave(paste("./01_Goal 0/PlantFamilies_per_Region_body.png", sep = ""), width = 16, height = 8, device = "png", )
 setwd(input) 
 
 #### plot plant growth form per site, region and species
@@ -327,7 +327,7 @@ ggplot(ex.nat.site, aes(fill=native_exotic, y=abund, x=site)) +
   labs(fill='Origin status') +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'), name = "")
-ggsave(paste("./proportion in pollen/OriginStatus_per_Site_body.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./01_Goal 0/OriginStatus_per_Site_body.png", sep = ""), width = 16, height = 8)
 
 # 3. produce data frame with exotic/native per region
 ex.nat.region <- BB22.full.body %>%
@@ -344,7 +344,7 @@ ggplot(ex.nat.region, aes(fill=native_exotic, y=abund, x=region)) +
   labs(fill='Origin status') +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'), name="")
-ggsave(paste("./proportion in pollen/OriginStatus_per_Region_body.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./01_Goal 0/OriginStatus_per_Region_body.png", sep = ""), width = 16, height = 8)
 setwd(input)
 
 
@@ -368,7 +368,7 @@ ggplot(growth.site, aes(fill=growth_form_category, y=abund, x=site)) +
   labs(fill='Growth form') +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.growth, name="")
-ggsave(paste("./proportion in pollen/GrowthForm_per_Site_body.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./01_Goal 0/GrowthForm_per_Site_body.png", sep = ""), width = 16, height = 8)
 
 # 3. produce data frame with growth form per region
 growth.region <- BB22.full.body %>%
@@ -385,7 +385,7 @@ ggplot(growth.region, aes(fill=growth_form_category, y=abund, x=region)) +
   labs(fill='Growth form') +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_manual(values=palette.growth, name="")
-ggsave(paste("./proportion in pollen/GrowthForm_per_Region_body.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./01_Goal 0/GrowthForm_per_Region_body.png", sep = ""), width = 16, height = 8)
 setwd(input)
 
 #### blossom class per site and species
@@ -409,7 +409,7 @@ ggplot(blossom.site, aes(fill=structural_blossom_class, y=abund, x=site)) +
   theme(axis.text.x = element_text(angle = 90))+
   scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"),
                     name = "")
-ggsave(paste("./proportion in pollen/BlossomClass_per_Site_body.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./01_Goal 0/BlossomClass_per_Site_body.png", sep = ""), width = 16, height = 8)
 
 # 3. produce data frame with blossom class per region
 blossom.region <- BB22.full.body %>%
@@ -427,7 +427,7 @@ ggplot(blossom.region, aes(fill=structural_blossom_class, y=abund, x=region)) +
   theme(axis.text.x = element_text(angle = 90))+
   scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"),
                     name = "")
-ggsave(paste("./proportion in pollen/BlossomClass_per_Region_body.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./01_Goal 0/BlossomClass_per_Region_body.png", sep = ""), width = 16, height = 8)
 setwd(input)
     
     
@@ -507,7 +507,7 @@ setwd(output)
     theme_classic(base_size = 20) + guides(alpha = "none") +
     scale_color_manual(values = palette.site, guide = "none")+ #no legend
     scale_fill_manual(values = palette.site, guide = "none") #no legend
-  ggsave(paste("./proportion in pollen/Phylo_Bubble_Site_leg.png", sep = ""), width = 16, height = 16)
+  ggsave(paste("./01_Goal 0/Phylo_Bubble_Site_leg.png", sep = ""), width = 16, height = 16)
   
   # region level
   palette.region <- kelly(18)[10:16] #create color palette for region
@@ -518,7 +518,7 @@ setwd(output)
     theme_classic(base_size = 20) + guides(alpha = "none") +
     scale_color_manual(values = palette.region, guide = "none")+ #no legend
     scale_fill_manual(values = palette.region, guide = "none") #no legend
-  ggsave(paste("./proportion in pollen/Phylo_Bubble_Region_leg.png", sep = ""), width = 16, height = 16)
+  ggsave(paste("./01_Goal 0/Phylo_Bubble_Region_leg.png", sep = ""), width = 16, height = 16)
   
   # landscape level
   palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
@@ -530,7 +530,7 @@ setwd(output)
     theme_classic(base_size = 20) + guides(alpha = "none") +
     scale_color_manual(values = palette.landscape, guide = "none") +
     scale_fill_manual(values = palette.landscape, guide = "none")
-  ggsave(paste("./proportion in pollen/Phylo_Bubble_Landscape_leg.png", sep = ""), width = 16, height = 16)
+  ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape_leg.png", sep = ""), width = 16, height = 16)
   setwd(input)
   
 
@@ -625,7 +625,7 @@ setwd(output)
   plot1 <- ggarrange(p1, p2, ncol = 2, labels = c("A", "B")); plot1
   annotate_figure(plot1, top = text_grob("Comparison of corbicula and body pollen", 
                                          face = "bold", size = 22))
-  # ggsave("./proportion in pollen/Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
+  ggsave("./01_Goal 0/Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
   setwd(input)
 
 ############################
@@ -742,9 +742,10 @@ setwd(output)
   plot1 <- ggarrange(p3, p4, ncol = 2, labels = c("A", "B"))
   annotate_figure(plot1, top = text_grob("Comparison Body and Leg Pollen across Landscapes", 
                                          face = "bold", size = 22))
-  ggsave("./proportion in pollen/Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
+  ggsave("./01_Goal 0/Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
   setwd(input)
-  
+
+    
   
 
 
