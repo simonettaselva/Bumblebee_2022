@@ -506,18 +506,19 @@ setwd(output)
     theme(axis.text.x = element_text(angle = 90))+
     theme_classic(base_size = 20) + guides(alpha = "none") +
     scale_color_manual(values = palette.site, guide = "none")+ #no legend
-    scale_fill_manual(values = palette.site, guide = "none") #no legend
+    scale_fill_manual(values = palette.site, guide = "none") + #no legend
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
   ggsave(paste("./01_Goal 0/Phylo_Bubble_Site_leg.png", sep = ""), width = 16, height = 16)
   
   # region level
-  palette.region <- kelly(18)[10:16] #create color palette for region
-  ggplot(BB22.full.leg.bubble_ordered, aes(x = region, y =BB22.full.leg.bubble_ordered$plant.species, color = region)) + 
-    geom_point(aes(size = Abundance, fill = region, alpha=0.5)) + 
+  # palette.region <- kelly(18)[10:16] #create color palette for region
+  ggplot(BB22.full.leg.bubble_ordered, aes(x = region, y =BB22.full.leg.bubble_ordered$plant.species)) + 
+    geom_point(aes(size = Abundance, alpha=0.5), color = "#d6851a",) + 
     facet_wrap(~bbspecies) +
     labs(y = "plant species")+    
-    theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_color_manual(values = palette.region, guide = "none")+ #no legend
-    scale_fill_manual(values = palette.region, guide = "none") #no legend
+    theme_classic(base_size = 20) + guides(alpha = "none") #+
+    # scale_color_manual(values = palette.region, guide = "none")+ #no legend
+    # scale_fill_manual(values = palette.region, guide = "none") #no legend
   ggsave(paste("./01_Goal 0/Phylo_Bubble_Region_leg.png", sep = ""), width = 16, height = 16)
   
   # landscape level
