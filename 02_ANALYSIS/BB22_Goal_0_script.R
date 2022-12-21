@@ -90,7 +90,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       theme_classic(base_size = 20) +
       facet_wrap(~bbspecies)+ 
       ggtitle("Plant families per site LEG") +
-      labs(fill='Plant families') +
+      labs(fill='Plant families', x = "sites", y = "relative abundance") +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.fams, name = "Plant families")
     ggsave(paste("./01_Goal 0/PlantFamilies_per_Site_leg.png", sep = ""), width = 16, height = 8, device = "png")
@@ -107,7 +107,7 @@ BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
       theme_classic(base_size = 20) +
       facet_wrap(~bbspecies)+ 
       ggtitle("Plant families per region LEG") +
-      labs(fill='Plant families') +
+      labs(fill='Plant families', x = "regions", y = "relative abundance") +
       theme(axis.text.x = element_text(angle = 90)) +
       scale_fill_manual(values=palette.fams, name = "Plant families")
     ggsave(paste("./01_Goal 0/PlantFamilies_per_Region_leg.png", sep = ""), width = 16, height = 8, device = "png", )
