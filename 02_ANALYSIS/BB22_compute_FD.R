@@ -20,11 +20,13 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 setwd(input)
 
 # load data
-BB22_full <- read_csv("BB22_full.csv")
+BB22_full <- read_csv("BB22_full.csv")%>% 
+  mutate(ID = as.character(ID))
 
 # choose only to numeric data
 BB22_full.numeric <- BB22_full %>% 
-  summarise(ID = as.factor(ID),
+  summarise(ID.short = as.factor(substring(ID,1, nchar(ID)-1)), #remove information on leg and body from ID
+            ID = as.factor(ID),
             location = as.factor(location),
             landscape = as.factor(landscape),
             replicate = as.factor(replicate),
@@ -42,10 +44,24 @@ BB22_full.numeric <- BB22_full %>%
             plant_height_m = plant_height_m)
 BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_duration)
 
-# for (i in levels(BB22_full.numeric$bbspecies)) { #loop trough bumblebee species
-#   for (j in c("ID", "site", "landscape")) {
+# correlation analysis of the variables
+library(Hmisc)
+library(corrplot)
+res <- rcorr(as.matrix(BB22_full.numeric[,c(11:17)]),type="pearson")
+M <- cor(BB22_full.numeric[,c(11:17)], use = "complete.obs")
+corrplot::corrplot(M, type="upper", order="hclust", p.mat = res$P, sig.level = 0.05)
+
+# remove growth_form_numeric from data set
+res2 <- rcorr(as.matrix(BB22_full.numeric[,c(11:12, 14:17)]),type="pearson") # all p values are <0.05
+
+BB22_full.red <- BB22_full.numeric%>% 
+  select(-growth_form_numeric) # remove growth_form_numeric from data set
+
+
+# for (i in levels(BB22_full.red$bbspecies)) { #loop trough bumblebee species
+#   for (j in c("ID.short", "site", "landscape")) {
     
-    j <- "site"
+    j <- "ID.short"
     i <- "B.pascuorum"
     
 
@@ -53,51 +69,58 @@ BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_d
 require(caret)
 require(vegan)
    
-  BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
-    filter(plant.species!="Fabaceae sp.")%>% # Remove this uninteresting entry, where no traits are found
+  BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
+    filter(plant.species!= "Fabaceae sp.",
+           plant.species!= "Cyclamen sp.",
+           plant.species!= "Petunia sp.",
+           plant.species!= "Mandevilla atroviolacea" )%>% # Remove this uninteresting entries, where no traits are found
     mutate(Flowering_duration = as.numeric(Flowering_duration))%>% 
     droplevels()
   
   # find Individuals with less than 3 plant species in pollen and remove them from data set
-  if (j == "ID") {
-    BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == i,]%>% 
-      group_by(ID) %>%
-      summarise(NrSpecies=n_distinct(plant.species))
-    filter.list <- BB22.NrSpecies$ID[BB22.NrSpecies$NrSpecies < 3]
-  }
+  # if (j == "ID") {
+  #   BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == i,]%>% 
+  #     group_by(ID) %>%
+  #     summarise(NrSpecies=n_distinct(plant.species))
+  #   filter.list <- BB22.NrSpecies$ID[BB22.NrSpecies$NrSpecies < 3]
+  # }
   
 BB22_full.loop.species <- BB22_full.loop %>% 
-  select(plant.species, Flowering_duration, Flowering_start, growth_form_numeric, 
-         structural_blossom_numeric, sugar.concentration, symmetry_numeric, plant_height_m) %>% 
+  select(plant.species, Flowering_duration, Flowering_start, structural_blossom_numeric, 
+         sugar.concentration, symmetry_numeric, plant_height_m) %>% 
   distinct() # remove duplicates
 
 trt.mis.pred <- preProcess(as.data.frame(BB22_full.loop.species[,-c(1)]), "knnImpute")
 traits <- predict(trt.mis.pred, BB22_full.loop.species[,-c(1)]); head(trt.mis.pred)
 traits <- as.data.frame(traits)
 rownames(traits)  <- BB22_full.loop.species$plant.species
-# traits$Flowering_duration <- as.numeric(traits$Flowering_duration)
-
 
 # PCA -> reduce dimensionality
 trt.pca <- prcomp(traits, scale. = T, center = T)
 cumsum(trt.pca$sdev/sum(trt.pca$sdev))
 trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 
-# 2. prepare data rames for mFD-package
+# 2. prepare data frames for mFD-package
 # 2.1 bring plants species per site/ID into wide format (for each BB species)
 library(reshape2)
-wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")
+wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")[,-1]
 rownames(wide)  <- levels(BB22_full.loop[[j]])
 
-sp.pa <- decostand(wide[,-1], "pa")
-# rownames(sp.pa)  = wide[[j]] #re-introduce rownames
+
+# ATTENTION USE ONLY IN CASE OF NR SPECIES MUST BE REDUCED
+sum.wide <- sapply(wide,as.numeric)
+rownames(sum.wide)  <- rownames(wide)
+sum.wide <- wide[!rowSums(sum.wide)<=5,]
+wide <- sum.wide
+
+sp.pa <- decostand(wide, "pa")
 sp.pa <- as.matrix(sp.pa) #turn into matrix
 
 # 2.2 Summarize my assemblages
 asb_sp_summ <- mFD::asb.sp.summary(asb_sp_w = sp.pa)
 asb_sp_occ <- asb_sp_summ$"asb_sp_occ"
 
-# 2.3 reate data frame with information on the variables (numeric, character, factor etc.)
+# 2.3 create data frame with information on the variables (numeric, character, factor etc.)
 # for details go to "mFD: General Workflow", by Camille Magneville 2022
 traits_cat <- data_frame(trait_name = colnames(traits),
                          trait_type = rep("Q", length(colnames(traits))))
@@ -119,7 +142,17 @@ sp_dist <- mFD::funct.dist(
   stop_if_NA    = TRUE)
 round(sp_dist, 3)     # Output of the function mFD::funct.dist()
 
-# 4. Computing functional spaces & their quality
+# Compute the functional space to asses how many axis to keep
+fspace <- mFD::tr.cont.fspace(
+  sp_tr        = traits, 
+  pca          = TRUE, 
+  nb_dim       = 5, 
+  scaling      = "scale_center",
+  compute_corr = "pearson")
+fspace$eigenvalues_percentage_var
+# keep number of axis that explain >80% of variation
+
+# 4. Computing functional spaces & their quality,
 # 4.1. Compute multdimensional functional spaces and assess their quality
 fspaces_quality <- mFD::quality.fspaces(
   sp_dist             = sp_dist,
@@ -128,7 +161,10 @@ fspaces_quality <- mFD::quality.fspaces(
   fdist_scaling       = FALSE,
   fdendro             = "average")
 round(fspaces_quality$"quality_fspaces", 3)  # Quality metrics of spaces
-
+# The space with the best quality has the lowest quality metric. 
+# It is based on the lowest deviation between the original trait-based 
+# distances and the final Euclidean distances in the functional space.
+# starting with the deviations from the data's median, the MAD is the median of their absolute values
 
 # 4.2. Illustrating the quality of the selected functional spaces
 mFD::quality.fspaces.plot(
@@ -209,7 +245,7 @@ alpha_fd_indices <-mFD::alpha.fd.multidim(
 
 fd_ind_values <- alpha_fd_indices$"functional_diversity_indices"
 assign(paste("fd",i,j, sep = "_"), fd_ind_values) #return FD data frame
-write.csv(assign(paste("fd",i,j, sep = "_"), fd_ind_values), file = paste("./FD/fd",i,j, ".csv", sep = "_"))
+write.csv(assign(paste("fd",i,j, sep = "_"), fd_ind_values), file = paste("./FD/fd_n<5",i,j, ".csv", sep = "_"))
 
 # FDis Functional Dispersion: the biomass weighted deviation of species traits values from the center of the functional space filled by the assemblage 
 #   i.e. the biomass-weighted mean distance to the biomass-weighted mean trait values of the assemblage.
@@ -249,7 +285,7 @@ beta_fd_indices$pairasb_fbd_indices
 ##### LEG POLLEN trial ####
 
 
-BB22_full.loop <- BB22_full.numeric[BB22_full.numeric$bbspecies == i,]%>%
+BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
   filter(plant.species!="Fabaceae sp.", # Remove this uninteresting entry, where no traits are found
          bborgan =="L")%>% 
   mutate(Flowering_duration = as.numeric(Flowering_duration))%>% 
