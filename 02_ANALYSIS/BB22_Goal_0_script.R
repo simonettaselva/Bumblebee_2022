@@ -982,17 +982,17 @@ setwd(output)
   df.sum.urban <- data.frame(sum = c(length(BB22.pasc.L.U$plant.species), length(BB22.pasc.B.U$plant.species), 
                                      length(BB22.lapi.L.U$plant.species), length(BB22.lapi.B.U$plant.species)),
                              bbspecies = c(rep("B.pascuorum", 2), rep("B.lapidarius", 2)),
-                             bborgan = rep(factor(c("body", "corbicula"), levels = c("body", "corbicula")),2),
+                             bborgan = rep(factor(c("corbicula","body"), levels = c("corbicula","body")),2),
                              landscape = rep("urban",4))
   df.sum.rural <- data.frame(sum = c(length(BB22.pasc.L.R$plant.species), length(BB22.pasc.B.R$plant.species), 
                                      length(BB22.lapi.L.R$plant.species), length(BB22.lapi.B.R$plant.species)),
                              bbspecies = c(rep("B.pascuorum", 2), rep("B.lapidarius", 2)),
-                             bborgan = rep(factor(c("body", "corbicula"), levels = c("body", "corbicula")),2),
+                             bborgan = rep(factor(c("corbicula","body"), levels = c("corbicula","body")),2),
                              landscape = rep("rural",4))
   df.sum <- rbind(df.sum.urban, df.sum.rural)
   
   # plotting
-  palette.p2 <- c("#88A550","#FA812F")
+  palette.p2 <- c("#FA812F", "#88A550")
   
   p4 <- ggplot(df.sum, aes(x=landscape, y=sum, fill = bborgan)) +
     geom_bar(stat="identity", position=position_dodge()) +
