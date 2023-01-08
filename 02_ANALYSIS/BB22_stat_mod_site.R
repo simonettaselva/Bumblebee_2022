@@ -98,8 +98,48 @@ plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                   labels = c("A", "B", "C", "D", "E", "F"))
 annotate_figure(plot, top = text_grob("B.pascuorum: species richness and funtional diversity across landscapes", 
                                        face = "bold", size = 22))
-ggsave("./functional diversity/FD_B.pascuorum.png", width = 4, height = 24)
+# ggsave("./functional diversity/FD_B.pascuorum.png", width = 4, height = 24)
 setwd(input)
+
+# plot the relationship of plants traits of one site and bumblebee traits of one site
+traits <- colnames(BB22.sites[, 4:12]) # bumblebee traits to look at; prepare for loop
+metrics <- colnames(BB22.sites[, c(15, 16, 19, 20, 21, 23)]) # plant FD to look at (see file BB22_compute_FD); prepare for loop
+
+library(nlme)
+
+# perform loop to output plots per relationship summarized per FD
+for (i in metrics) {
+  x <- 1 # for naming the plots
+  for (j in traits) {
+    f <- formula(paste(i,"~", j))
+    fit <- lme(f, random=~1|landscape, data = BB22.sites)
+    assign(paste("a", x, sep=""), # assign the ggplot to plot name
+           # define the ggplot
+           ggplot(BB22.sites, aes_string(j, i, colour = "landscape")) + 
+             geom_point() + 
+             theme_classic(base_size = 20) + 
+             theme(aspect.ratio=1) + 
+             geom_smooth(method="lm", se = FALSE)+
+             scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
+             stat_cor(aes(color = landscape), size = 5))
+    x <- x+1
+  } # end loop j
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, # arrange to plots nicely and export them 
+                     ncol = 4, nrow=2, 
+                     labels = c(LETTERS[1:8]),   
+                     common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
+                                         face = "bold", size = 22))
+  ggsave(paste("./functional diversity/pasc_site/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+} # end loop i
+
+
+
+
+
+
 
 
 #### only B.lapidarius ####
@@ -166,12 +206,36 @@ plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                   labels = c("A", "B", "C", "D", "E", "F"))
 annotate_figure(plot, top = text_grob("B.lapidarius: species richness and funtional diversity across landscapes", 
                                       face = "bold", size = 22))
-ggsave("./functional diversity/FD_B.lapidarius.png", width = 4, height = 24)
+# ggsave("./functional diversity/FD_B.lapidarius.png", width = 4, height = 24)
 setwd(input)
 
+# plot the relationship of plants traits of one site and bumblebee traits of one site
+traits <- colnames(BB22.sites[, 4:12]) # bumblebee traits to look at; prepare for loop
+metrics <- colnames(BB22.sites[, c(15, 16, 19, 20, 21, 23)]) # plant FD to look at (see file BB22_compute_FD); prepare for loop
 
-
-# comparison between species
-
-
+# perform loop to output plots per relationship summarized per FD
+for (i in metrics) {
+  x <- 1 # for naming the plots
+  for (j in traits) {
+    assign(paste("a", x, sep=""), # assign the ggplot to plot name
+           # define the ggplot
+           ggplot(BB22.sites, aes_string(j, i, colour = "landscape")) + 
+             geom_point() + 
+             theme_classic(base_size = 20) + 
+             theme(aspect.ratio=1) + 
+             geom_smooth(method="lm", se = FALSE)+
+             scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
+             stat_cor(aes(color = landscape), size = 5))
+    x <- x+1
+  } # end loop j
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, # arrange to plots nicely and export them 
+                     ncol = 4, nrow=2, 
+                     labels = c(LETTERS[1:8]),   
+                     common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("B.lapidarius: comparison of ", i, " and traits across landscapes", sep = ""),
+                                         face = "bold", size = 22))
+  ggsave(paste("./functional diversity/lapi_site/FD_lapi_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+} # end loop i
 
