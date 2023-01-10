@@ -192,7 +192,7 @@ form <- formula(sp_richn ~ intertegular_distance + glossa + prementum + probosci
                   fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio) 
 M1.Full <- lme(form, random = ~ 1 | landscape, method = "ML", data = BB22.sites)
 fix.check(M1.Full) # check model assumptions
-M1.Full <- lmer(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length+proboscis_ratio + 
+M1.Full <- lmer(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length + proboscis_ratio + 
                   fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|landscape),
                 data = BB22.sites)
 
@@ -227,6 +227,13 @@ M1.red <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio +
              data=BB22.sites) 
 anova(M1.Full, M1.red) # better fit than full model
 fix.check(M1.red) # looks also better than full model
+
+M1.red.eco <- lmer(sp_richn ~ intertegular_distance + proboscis_length +
+                     fore_wing_length + corbicula_length + 
+                 (1|landscape),
+               data=BB22.sites) 
+anova(M1.red, M1.red.eco) # better fit than full model
+fix.check(M1.red.eco) # looks also better than full model
 
 
 
