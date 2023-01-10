@@ -16,6 +16,19 @@ library(ggpubr)
 library(glmmTMB)
 library(DHARMa)
 
+# load function
+#function to produce model-checking plots for the fixed effects of an lmer model
+fix.check <- function(mod){
+  par(mfrow = c(1,3))
+  plot(fitted(mod),resid(mod),main="Scale-location plot")	#should have no pattern
+  abline(h = 0, col="red", lty=2)
+  print(anova(lm(fitted(mod)~resid(mod))))	#should be non-significant
+  qqnorm(resid(mod), ylab="Residuals")		#should be approximately straight line
+  qqline(resid(mod), col="red")
+  plot(density(resid(mod)))					#should be roughly normally distributed
+  rug(resid(mod))}
+
+
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
@@ -131,14 +144,89 @@ for (i in metrics) {
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
                                          face = "bold", size = 22))
-  ggsave(paste("./functional diversity/pasc_site/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  # ggsave(paste("./functional diversity/pasc_site/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
   setwd(input)
 } # end loop i
 
+# center and scale all the variables
+BB22.sites[, c(4:12, 15, 16, 19, 20, 21, 23)] <- scale(BB22.sites[, c(4:12, 15, 16, 19, 20, 21, 23)],center=TRUE,scale=TRUE)
+
+# correlation analysis
+# look at the correlation between the explanatory variables
+library(corrplot)
+M<-cor(BB22.sites[, 4:12], use = "complete.obs") # subset data; only explanatory variables
+corrplot::corrplot(M, method="circle", type="lower") # first look
+
+# calculate p values of correlations
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+
+# matrix of the p-value of the correlation
+p.mat <- cor.mtest(BB22.sites[, 4:12])
+head(p.mat)
+corrplot::corrplot(M, type="upper", order="hclust", p.mat = p.mat, sig.level = 0.01) # plot correlation with p-values
+
+# !!! a lot are multicollinear. in the model only use: proboscis_ratio, fore_wing_ratio and corbicula_ratio
+
+#  fit GLMM
+#load the libraries
+library(lme4)
+library(nlme)
+library(arm)
+
+# ----------------------------------------------------- Species Richness ---------------------------------------------------
+#define formula for the full model
+form <- formula(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length+proboscis_ratio + 
+                  fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio) 
+M1.Full <- lme(form, random = ~ 1 | landscape, method = "ML", data = BB22.sites)
+fix.check(M1.Full) # check model assumptions
+M1.Full <- lmer(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length+proboscis_ratio + 
+                  fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|landscape),
+                data = BB22.sites)
+
+# perform variable selection
+### ROUND 1
+M1.A <- update(M1.Full, .~. -intertegular_distance)
+M1.B <- update(M1.Full, .~. -glossa)
+M1.C <- update(M1.Full, .~. -prementum)
+M1.D <- update(M1.Full, .~. -proboscis_length)
+M1.E <- update(M1.Full, .~. -proboscis_ratio)
+M1.F <- update(M1.Full, .~. -fore_wing_length)
+M1.G <- update(M1.Full, .~. -fore_wing_ratio)
+M1.H <- update(M1.Full, .~. -corbicula_length)
+M1.I <- update(M1.Full, .~. -corbicula_ratio)
+
+anova(M1.Full, M1.A)
+anova(M1.Full, M1.B)
+anova(M1.Full, M1.C)
+anova(M1.Full, M1.D)
+anova(M1.Full, M1.E)
+anova(M1.Full, M1.F)
+anova(M1.Full, M1.G)
+anova(M1.Full, M1.H)
+anova(M1.Full, M1.I)
+
+#  here I'd remove proboscis lenght (makes note really sense thinking ecologically)
 
 
-
-
+# reduced model based on collinearity 
+M1.red <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
+                 (1|landscape),
+             data=BB22.sites) 
+anova(M1.Full, M1.red) # better fit than full model
+fix.check(M1.red) # looks also better than full model
 
 
 
