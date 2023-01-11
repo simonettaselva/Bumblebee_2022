@@ -85,19 +85,22 @@ BB22.sites <- merge(BB22.sites, BB22.fun.site, by  = "site", all.x=TRUE)
 library(Hmisc)
 hist.data.frame(BB22.sites[, -c(1:14)])
 
-# Boxplots for all the variables we want to look at
+# Boxplots for all the variables we want to look at with Wilcoxon test
 resp <- c("sp_richn","fdis", "fric", "fdiv", "feve", "fspe")
 library(psych)
+library(rstatix)
 plot_list  <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 for (j in resp) {
   gg.data <- data.frame(landscape=BB22.sites$landscape,value=BB22.sites[[j]])
+  w.test <- wilcox_test(gg.data,value~landscape)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
     ylab(j) + xlab("") +
     scale_x_discrete(labels=c('rural', 'urban'))+
     theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_fill_manual(values=palette.landscape, guide = "none")
+    scale_fill_manual(values=palette.landscape, guide = "none") + 
+    labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep=""))
   plot_list[[j]] <- p
   describeBy(gg.data$value, gg.data$landscape)
 }
@@ -111,7 +114,7 @@ plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                   labels = c("A", "B", "C", "D", "E", "F"))
 annotate_figure(plot, top = text_grob("B.pascuorum: species richness and funtional diversity across landscapes", 
                                        face = "bold", size = 22))
-# ggsave("./functional diversity/FD_B.pascuorum.png", width = 4, height = 24)
+# ggsave("./functional diversity/pasc_site/FD_B.pascuorum.png", width = 4, height = 24)
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
@@ -132,7 +135,7 @@ for (i in metrics) {
              geom_point() + 
              theme_classic(base_size = 20) + 
              theme(aspect.ratio=1) + 
-             geom_smooth(method="lm", se = FALSE)+
+             geom_smooth(method="lm", se = FALSE) +
              scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
              stat_cor(aes(color = landscape), size = 5))
     x <- x+1
@@ -183,18 +186,39 @@ corrplot::corrplot(M, type="upper", order="hclust", p.mat = p.mat, sig.level = 0
 #  fit GLMM
 #load the libraries
 library(lme4)
-library(nlme)
-library(arm)
+
+
+# Wilcoxon-Test for all FD
+
+qnorm(w.test$p/2) # z score = -9.000839
+w.test$p # p value = 2.24e-19
+
+ggplot(BB22.sites, aes(x=landscape, y=sp_richn, fill = landscape)) + 
+  geom_boxplot(notch = T) + 
+  theme_classic(base_size = 20) +              
+  scale_fill_manual(values=palette.landscape, labels=c("rural", "urban")) + 
+  labs(subtitle = get_test_label(w.test, detailed = TRUE))
+
+
+
 
 # ----------------------------------------------------- Species Richness ---------------------------------------------------
+
+
+
+
+
+
+
+
+
 #define formula for the full model
 form <- formula(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length+proboscis_ratio + 
                   fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio) 
-M1.Full <- lme(form, random = ~ 1 | landscape, method = "ML", data = BB22.sites)
-fix.check(M1.Full) # check model assumptions
 M1.Full <- lmer(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length + proboscis_ratio + 
                   fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|landscape),
                 data = BB22.sites)
+fix.check(M1.Full) # check model assumptions
 
 # perform variable selection
 ### ROUND 1
@@ -218,8 +242,8 @@ anova(M1.Full, M1.G)
 anova(M1.Full, M1.H)
 anova(M1.Full, M1.I)
 
-#  here I'd remove proboscis lenght (makes note really sense thinking ecologically)
-
+# variable selection based on AIC or BIC???
+# here I'd remove proboscis lenght (makes note really sense thinking ecologically)
 
 # reduced model based on collinearity 
 M1.red <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
@@ -228,12 +252,31 @@ M1.red <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio +
 anova(M1.Full, M1.red) # better fit than full model
 fix.check(M1.red) # looks also better than full model
 
+M1.red.1 <- lmer(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                   corbicula_ratio + (1|landscape),
+               data=BB22.sites) 
+anova(M1.red.1, M1.red) # with intertegular_distance better fit than M1.red
+fix.check(M1.red.1)
+summary(M1.red.1)
+
+# reduced model based on personal (ecological?) opinion
 M1.red.eco <- lmer(sp_richn ~ intertegular_distance + proboscis_length +
                      fore_wing_length + corbicula_length + 
                  (1|landscape),
                data=BB22.sites) 
-anova(M1.red, M1.red.eco) # better fit than full model
+anova(M1.Full, M1.red.eco) # better fit than full model
 fix.check(M1.red.eco) # looks also better than full model
+
+# looking at only tongue length
+M1.tongue <- lmer(sp_richn ~ proboscis_length + (1|landscape),
+               data=BB22.sites) 
+fix.check(M1.tongue) # looks also better than full model
+summary(M1.tongue)
+
+
+
+
+
 
 
 
@@ -282,12 +325,14 @@ palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (j in resp) {
   gg.data <- data.frame(landscape=BB22.sites$landscape,value=BB22.sites[[j]])
+  w.test <- wilcox_test(gg.data,value~landscape)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
     ylab(j) + xlab("") +
     scale_x_discrete(labels=c('rural', 'urban'))+
     theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_fill_manual(values=palette.landscape, guide = "none")
+    scale_fill_manual(values=palette.landscape, guide = "none") + 
+    labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep=""))
   plot_list[[j]] <- p
   describeBy(gg.data$value, gg.data$landscape)
 }
@@ -301,7 +346,7 @@ plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                   labels = c("A", "B", "C", "D", "E", "F"))
 annotate_figure(plot, top = text_grob("B.lapidarius: species richness and funtional diversity across landscapes", 
                                       face = "bold", size = 22))
-# ggsave("./functional diversity/FD_B.lapidarius.png", width = 4, height = 24)
+# ggsave("./functional diversity/lapi_site/FD_B.lapidarius.png", width = 4, height = 24)
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
