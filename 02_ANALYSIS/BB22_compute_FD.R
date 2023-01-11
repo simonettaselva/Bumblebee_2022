@@ -22,10 +22,11 @@ setwd(input)
 # load data
 BB22_full <- read_csv("BB22_full.csv")%>% 
   mutate(ID = as.character(ID))
-
+BB22_full$ID.short = as.factor(substring(BB22_full$ID,1, nchar(BB22_full$ID)-1)) #remove information on leg and body from ID
+          
 # choose only to numeric data
 BB22_full.numeric <- BB22_full %>% 
-  summarise(ID.short = as.factor(substring(ID,1, nchar(ID)-1)), #remove information on leg and body from ID
+  summarise(ID.short = ID.short, #remove information on leg and body from ID
             ID = as.factor(ID),
             location = as.factor(location),
             landscape = as.factor(landscape),
@@ -78,12 +79,15 @@ require(vegan)
     droplevels()
   
   # find Individuals with less than 3 plant species in pollen and remove them from data set
-  # if (j == "ID") {
-  #   BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == i,]%>% 
-  #     group_by(ID) %>%
-  #     summarise(NrSpecies=n_distinct(plant.species))
-  #   filter.list <- BB22.NrSpecies$ID[BB22.NrSpecies$NrSpecies < 3]
-  # }
+  if (j == "ID.short") {
+    BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == "B.pascuorum",]%>%
+      group_by(ID.short) %>%
+      summarise(NrSpecies=n_distinct(plant.species))
+    filter.list <- BB22.NrSpecies$ID.short[BB22.NrSpecies$NrSpecies < 5]
+  }
+ 
+BB22_full.loop <- BB22_full.loop[BB22_full.loop$ID.short %in% filter.list,]%>% 
+  droplevels()
   
 BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, Flowering_start, structural_blossom_numeric, 

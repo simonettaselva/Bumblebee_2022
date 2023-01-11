@@ -179,99 +179,54 @@ cor.mtest <- function(mat, ...) {
 # matrix of the p-value of the correlation
 p.mat <- cor.mtest(BB22.sites[, 4:12])
 head(p.mat)
-corrplot::corrplot(M, type="upper", order="hclust", p.mat = p.mat, sig.level = 0.01) # plot correlation with p-values
+corrplot::corrplot(M, type="upper", order="hclust", 
+                   p.mat = p.mat, sig.level = 0.01, tl.col = "black",
+                   col = COL2('RdBu', 10)) # plot correlation with p-values
 
 # !!! a lot are multicollinear. in the model only use: proboscis_ratio, fore_wing_ratio and corbicula_ratio
 
 #  fit GLMM
 #load the libraries
 library(lme4)
-
-
-# Wilcoxon-Test for all FD
-
-qnorm(w.test$p/2) # z score = -9.000839
-w.test$p # p value = 2.24e-19
-
-ggplot(BB22.sites, aes(x=landscape, y=sp_richn, fill = landscape)) + 
-  geom_boxplot(notch = T) + 
-  theme_classic(base_size = 20) +              
-  scale_fill_manual(values=palette.landscape, labels=c("rural", "urban")) + 
-  labs(subtitle = get_test_label(w.test, detailed = TRUE))
-
-
-
+library(car)
+library(MuMIn)
 
 # ----------------------------------------------------- Species Richness ---------------------------------------------------
 
-
-
-
-
-
-
-
-
-#define formula for the full model
-form <- formula(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length+proboscis_ratio + 
-                  fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio) 
-M1.Full <- lmer(sp_richn ~ intertegular_distance + glossa + prementum + proboscis_length + proboscis_ratio + 
-                  fore_wing_length + fore_wing_ratio + corbicula_length + corbicula_ratio + (1|landscape),
-                data = BB22.sites)
-fix.check(M1.Full) # check model assumptions
-
-# perform variable selection
-### ROUND 1
-M1.A <- update(M1.Full, .~. -intertegular_distance)
-M1.B <- update(M1.Full, .~. -glossa)
-M1.C <- update(M1.Full, .~. -prementum)
-M1.D <- update(M1.Full, .~. -proboscis_length)
-M1.E <- update(M1.Full, .~. -proboscis_ratio)
-M1.F <- update(M1.Full, .~. -fore_wing_length)
-M1.G <- update(M1.Full, .~. -fore_wing_ratio)
-M1.H <- update(M1.Full, .~. -corbicula_length)
-M1.I <- update(M1.Full, .~. -corbicula_ratio)
-
-anova(M1.Full, M1.A)
-anova(M1.Full, M1.B)
-anova(M1.Full, M1.C)
-anova(M1.Full, M1.D)
-anova(M1.Full, M1.E)
-anova(M1.Full, M1.F)
-anova(M1.Full, M1.G)
-anova(M1.Full, M1.H)
-anova(M1.Full, M1.I)
-
-# variable selection based on AIC or BIC???
-# here I'd remove proboscis lenght (makes note really sense thinking ecologically)
-
-# reduced model based on collinearity 
-M1.red <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
+# built an initial full model based on collinearity 
+M1.full <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                  (1|landscape),
-             data=BB22.sites) 
-anova(M1.Full, M1.red) # better fit than full model
-fix.check(M1.red) # looks also better than full model
+             data=BB22.sites)
+fix.check(M1.full) # looks ok
+vif(M1.full) # looks good
 
-M1.red.1 <- lmer(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+# add intertegular distance to the model
+M1.full.1 <- lmer(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                    corbicula_ratio + (1|landscape),
                data=BB22.sites) 
-anova(M1.red.1, M1.red) # with intertegular_distance better fit than M1.red
-fix.check(M1.red.1)
-summary(M1.red.1)
+fix.check(M1.full.1)
+vif(M1.full.1) # looks good
+anova(M1.full.1, M1.full) # with intertegular_distance better fit than M1.full
 
-# reduced model based on personal (ecological?) opinion
-M1.red.eco <- lmer(sp_richn ~ intertegular_distance + proboscis_length +
-                     fore_wing_length + corbicula_length + 
-                 (1|landscape),
-               data=BB22.sites) 
-anova(M1.Full, M1.red.eco) # better fit than full model
-fix.check(M1.red.eco) # looks also better than full model
+# dredging
+# Things to take into account when dredging:
+# 1) epends on the models included in the candidate set. You can’t identify a model as being the 
+# “best” fit to the data if you didn’t include the model to begin with!
+# 2) The parameter estimates and predictions arising from the “best” model or set of best models 
+# should be biologically meaningful.
 
-# looking at only tongue length
-M1.tongue <- lmer(sp_richn ~ proboscis_length + (1|landscape),
-               data=BB22.sites) 
-fix.check(M1.tongue) # looks also better than full model
-summary(M1.tongue)
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M1.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+
+
+
+
 
 
 
