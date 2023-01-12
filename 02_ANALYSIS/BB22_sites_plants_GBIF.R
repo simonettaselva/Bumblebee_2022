@@ -38,6 +38,8 @@ for (i in sitenames) {
     droplevels()
 }
 
+saveRDS(site.list, file="site_list_bb.RData")
+
 # create species lists per region
 location.list <- list()
 for (i in region) {
