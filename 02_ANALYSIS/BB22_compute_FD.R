@@ -83,11 +83,11 @@ require(vegan)
     BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == "B.pascuorum",]%>%
       group_by(ID.short) %>%
       summarise(NrSpecies=n_distinct(plant.species))
-    filter.list <- BB22.NrSpecies$ID.short[BB22.NrSpecies$NrSpecies < 5]
+    filter.list <- BB22.NrSpecies$ID.short[BB22.NrSpecies$NrSpecies < 6]
   }
  
-BB22_full.loop <- BB22_full.loop[BB22_full.loop$ID.short %in% filter.list,]%>% 
-  droplevels()
+BB22_full.loop <- BB22_full.loop[!BB22_full.loop$ID.short %in% filter.list,]%>% 
+  droplevels() #filter for individuals with less more than 5 species
   
 BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, Flowering_start, structural_blossom_numeric, 
@@ -109,13 +109,6 @@ trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 library(reshape2)
 wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")[,-1]
 rownames(wide)  <- levels(BB22_full.loop[[j]])
-
-
-# ATTENTION USE ONLY IN CASE OF NR SPECIES MUST BE REDUCED
-sum.wide <- sapply(wide,as.numeric)
-rownames(sum.wide)  <- rownames(wide)
-sum.wide <- wide[!rowSums(sum.wide)<=5,]
-wide <- sum.wide
 
 sp.pa <- decostand(wide, "pa")
 sp.pa <- as.matrix(sp.pa) #turn into matrix
