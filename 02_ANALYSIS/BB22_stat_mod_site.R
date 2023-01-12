@@ -17,6 +17,22 @@ library(glmmTMB)
 library(DHARMa)
 
 # load function
+# calculate p values of correlations
+cor.mtest <- function(mat, ...) {
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat<- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  for (i in 1:(n - 1)) {
+    for (j in (i + 1):n) {
+      tmp <- cor.test(mat[, i], mat[, j], ...)
+      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
+    }
+  }
+  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
+  p.mat
+}
+
 #function to produce model-checking plots for the fixed effects of an lmer model
 fix.check <- function(mod){
   par(mfrow = c(1,3))
@@ -26,7 +42,9 @@ fix.check <- function(mod){
   qqnorm(resid(mod), ylab="Residuals")		#should be approximately straight line
   qqline(resid(mod), col="red")
   plot(density(resid(mod)))					#should be roughly normally distributed
-  rug(resid(mod))}
+  rug(resid(mod))
+  par(mfrow = c(1,1))
+}
 
 
 # set working directory to main repository
@@ -37,6 +55,7 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 setwd(input)
 BB22.bb.traits <- read_csv("BB22.bb.traits.csv")
 
+#### data preparation ####
 # replace the names for urban and rural
 for (i in 1:nrow(BB22.bb.traits)) {
   if (BB22.bb.traits$landscape[i] == "urban") {
@@ -80,7 +99,7 @@ BB22.bb.traits.site <- BB22.bb.traits.sp %>%
 BB22.sites <- merge(BB22.bb.traits.site, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
 BB22.sites <- merge(BB22.sites, BB22.fun.site, by  = "site", all.x=TRUE)
 
-# look at data
+#### look at data ####
 # FDis, FRic, FDiv, FEve, FSpe
 library(Hmisc)
 hist.data.frame(BB22.sites[, -c(1:14)])
@@ -158,27 +177,11 @@ BB22.sites[, c(4:12, 15, 16, 19, 20, 21, 23)] <- scale(BB22.sites[, c(4:12, 15, 
 # look at the correlation between the explanatory variables
 library(corrplot)
 M<-cor(BB22.sites[, 4:12], use = "complete.obs") # subset data; only explanatory variables
-corrplot::corrplot(M, method="circle", type="lower") # first look
-
-# calculate p values of correlations
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
 
 # matrix of the p-value of the correlation
 p.mat <- cor.mtest(BB22.sites[, 4:12])
 head(p.mat)
+#correlation plot
 corrplot::corrplot(M, type="upper", order="hclust", 
                    p.mat = p.mat, sig.level = 0.01, tl.col = "black",
                    col = COL2('RdBu', 10)) # plot correlation with p-values
@@ -200,13 +203,30 @@ M1.full <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio +
 fix.check(M1.full) # looks ok
 vif(M1.full) # looks good
 
-# add intertegular distance to the model
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M1.full)
+BB22.sites$site <- as.factor(BB22.sites$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.sites$site)
+testSpatialAutocorrelation(sims, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# update model: add intertegular distance to the model
 M1.full.1 <- lmer(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                    corbicula_ratio + (1|landscape),
-               data=BB22.sites) 
+               data=BB22.sites) # boundary (singular) fit: see help('isSingular')
 fix.check(M1.full.1)
+summary(M1.full.1)
 vif(M1.full.1) # looks good
 anova(M1.full.1, M1.full) # with intertegular_distance better fit than M1.full
+
+# update model: remove random effect as its variance is estimated very near zero
+M1.full.lm <- lm(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio,
+                  data=BB22.sites)
+summary(M1.full.lm)
+fix.check(M1.full.lm)
+vif(M1.full.lm) # some are >3
+anova(M1.full.1, M1.full.lm) 
 
 # dredging
 # Things to take into account when dredging:
@@ -223,6 +243,77 @@ top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham 
 # Model averaging
 avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
+
+# the only variable having a significant effect in any model is intertegular distance
+
+
+# ----------------------------------------------------- Functional Richness ---------------------------------------------------
+# built an initial full model based on collinearity 
+M2.full <- lmer(fric ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
+                  (1|landscape),
+                data=BB22.sites)
+fix.check(M2.full) # looks ok
+vif(M2.full) # looks good
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M2.full)
+BB22.sites$site <- as.factor(BB22.sites$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.sites$site)
+testSpatialAutocorrelation(sims, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M2.full.1 <- lmer(fric ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.sites) # boundary (singular) fit: see help('isSingular')
+fix.check(M2.full.1)
+summary(M2.full.1)
+vif(M2.full.1) # looks good
+anova(M2.full.1, M2.full) # with intertegular_distance better fit than M1.full
+
+# remove random effect as its variance is estimated very near zero
+M2.full.lm <- lm(fric ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio,
+                 data=BB22.sites)
+summary(M2.full.lm)
+fix.check(M2.full.lm)
+vif(M2.full.lm) # looks good
+anova(M2.full.1, M2.full.lm) 
+
+# nothing explains the differences in fric
+
+# dredging
+
+
+
+# ----------------------------------------------------- Functional Divergence ---------------------------------------------------
+
+
+# ----------------------------------------------------- Functional Evenness ---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
