@@ -38,7 +38,7 @@ for (i in sitenames) {
     droplevels()
 }
 
-# create species lists per location
+# create species lists per region
 location.list <- list()
 for (i in region) {
   location.list[[i]]  <- unique(BB22.abund$species[BB22.abund$region == i]) %>%
@@ -396,6 +396,7 @@ for (i in sitenames) {
   site.list.1500[[i]] <- unique(c(x,y))%>% 
     droplevels()
 }
+saveRDS(site.list.1500, file="sp_list_gbif_infoflora.RData")
 
 ratios.1500 <- c()
 
