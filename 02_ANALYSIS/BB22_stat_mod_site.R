@@ -50,7 +50,6 @@ fix.check <- function(mod){
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
-
 # load data
 setwd(input)
 BB22.bb.traits <- read_csv("BB22.bb.traits.csv")
@@ -225,7 +224,7 @@ M1.full.lm <- lm(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_
                   data=BB22.sites)
 summary(M1.full.lm)
 fix.check(M1.full.lm)
-vif(M1.full.lm) # some are >3
+vif(M1.full.lm)
 anova(M1.full.1, M1.full.lm) 
 
 # dredging
@@ -243,6 +242,7 @@ top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham 
 # Model averaging
 avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
+avg.model$sw
 
 # the only variable having a significant effect in any model is intertegular distance
 
@@ -254,6 +254,7 @@ M2.full <- lmer(fric ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio +
                 data=BB22.sites)
 fix.check(M2.full) # looks ok
 vif(M2.full) # looks good
+summary(M2.full)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M2.full)
@@ -278,42 +279,98 @@ summary(M2.full.lm)
 fix.check(M2.full.lm)
 vif(M2.full.lm) # looks good
 anova(M2.full.1, M2.full.lm) 
-
 # nothing explains the differences in fric
 
 # dredging
-
-
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M2.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
 
 # ----------------------------------------------------- Functional Divergence ---------------------------------------------------
+# built an initial full model based on collinearity 
+M3.full <- lmer(fdiv ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
+                data=BB22.sites)
+fix.check(M3.full) # looks ok
+vif(M3.full) # looks good
+summary(M3.full)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M3.full)
+BB22.sites$site <- as.factor(BB22.sites$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.sites$site)
+testSpatialAutocorrelation(sims, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M3.full.1 <- lmer(fdiv ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.sites)
+fix.check(M3.full.1)
+summary(M3.full.1)
+vif(M3.full.1) # looks good
+anova(M3.full.1, M3.full) # with intertegular_distance not a better fit than M1.full
+
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M3.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
 
 
 # ----------------------------------------------------- Functional Evenness ---------------------------------------------------
+# built an initial full model based on collinearity 
+M4.full <- lmer(feve ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
+                data=BB22.sites) #boundary (singular) fit: see help('isSingular')
+fix.check(M4.full) # looks ok
+vif(M4.full) # looks good
+summary(M4.full)
 
+# formal test for spatial correlation
+sims <- simulateResiduals(M4.full)
+BB22.sites$site <- as.factor(BB22.sites$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.sites$site)
+testSpatialAutocorrelation(sims, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
 
+# add intertegular distance to the model
+M4.full.1 <- lmer(feve ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.sites) # boundary (singular) fit: see help('isSingular')
+fix.check(M4.full.1)
+summary(M4.full.1)
+vif(M4.full.1) # looks good
+anova(M4.full.1, M4.full) # with intertegular_distance not a better fit than M1.full
 
+# remove random effect as its variance is estimated very near zero
+M4.full.lm <- lm(feve ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio,
+                 data=BB22.sites)
+summary(M4.full.lm)
+fix.check(M4.full.lm)
+vif(M4.full.lm) # looks good
+anova(M4.full.1, M4.full.lm) 
+# nothing explains the differences in fric
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M4.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
 
 
 
