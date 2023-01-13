@@ -32,9 +32,33 @@ sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "
 for (i in sitenames) {
   x <- as.factor(site.list.occ [[i]])
   y <- as.factor(site.list.bb [[i]])
-  site.list[[i]] <- unique(c(x,y))%>% 
+  site.list[[i]] <- unique(c(x,y)) %>% 
     droplevels()
 }
+
+mean.landsacpe <- c()
+for (i in sitenames) {
+  temp <- c(substring(i, 3, 3), nlevels(site.list[[i]]))
+  mean.landsacpe <- rbind(mean.landsacpe, temp)
+}
+colnames(mean.landsacpe) <- c("landscape", "species_richness")
+mean.landsacpe$species_richness <- as.numeric(mean.landsacpe$species_richness)
+mean.landsacpe <- as.data.frame(mean.landsacpe)
+
+
+library(rstatix)
+w.test <- wilcox_test(mean.landsacpe,~landscape)
+palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landscape)) + 
+  geom_boxplot(notch = T) + 
+  ylab("plant diversity of sites") +
+  xlab("") +
+  scale_x_discrete(labels=c('rural', 'urban')) +
+  theme_classic(base_size = 20) + 
+  theme(aspect.ratio=1) + 
+  scale_fill_manual(values=palette.landscape, guide = "none") + 
+  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep="")); a
+
 
 # compile species richness per site in dataframe
 rich.occ <- c()
@@ -59,14 +83,13 @@ ggplot(df.site, aes(x = rich.occ, y = rich.bb)) +
   geom_point()
 
 # test the relationship with a model
-fit <- lm(rich.bb~rich.occ, df.site)
+fit <- lm(rich.occ ~ rich.bb, df.site)
 summary(fit)
 
 # plot it with information on the model
-palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-ggplot(df.site, aes(x = rich.occ, y = rich.bb)) + 
+b <- ggplot(df.site, aes(x = rich.bb , y = rich.occ)) + 
   geom_point(aes(color = landscape), size = 3) + 
-  labs(x = "species occurances data bases", y = "species richness bumblebees") +
+  labs(x ="species richness in pollen" , y = "plant diversity of sites") +
   theme_classic(base_size = 20) + 
   theme(aspect.ratio=1) + 
   geom_smooth(method="lm", se = FALSE, col = "black") +
@@ -74,12 +97,20 @@ ggplot(df.site, aes(x = rich.occ, y = rich.bb)) +
   stat_cor(
     aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
     label.x = 3,
-    size = 7)
+    size = 7); b
+
+# arrange them into one file to export
+setwd(output)
+ggarrange(a, b, ncol = 2, nrow = 1,
+          labels = c("A", "B"))
+ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 20, height = 10)
+setwd(input)
+
+
 
 # save the figure
 setwd(output)
-ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 10, height = 10)
-setwd(input)
 
+setwd(input)
 
 
