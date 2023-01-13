@@ -105,7 +105,7 @@ library(Hmisc)
 hist.data.frame(BB22.sites[, -c(1:14)])
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
-resp <- c("sp_richn","fdis", "fric", "fdiv", "feve", "fspe")
+resp <- c("sp_richn", "fric", "fdiv", "feve")
 library(psych)
 library(rstatix)
 plot_list  <- list()
@@ -115,11 +115,22 @@ for (j in resp) {
   w.test <- wilcox_test(gg.data,value~landscape)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
-    ylab(j) + xlab("") +
+    xlab("") +
     scale_x_discrete(labels=c('rural', 'urban'))+
-    theme_classic(base_size = 20) + guides(alpha = "none") +
+    theme_classic(base_size = 20) +     
+    theme(aspect.ratio=1) + 
+    guides(alpha = "none") +
     scale_fill_manual(values=palette.landscape, guide = "none") + 
     labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep=""))
+  if (j == "sp_richn") {
+    p <- p + ylim(20,65) + ylab("species richness")
+  } else if (j == "fric") {
+    p <- p + ylim(0, 1) + ylab("funtional richness")
+  } else if (j == "fdiv") {
+    p <- p + ylim(0.6, 0.85) + ylab("funtional divergence")
+  } else {
+    p <- p + ylim(0.5, 0.75) + ylab("funtional evenness")
+  }
   plot_list[[j]] <- p
   describeBy(gg.data$value, gg.data$landscape)
 }
@@ -128,12 +139,11 @@ for (j in resp) {
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                    plot_list[[3]],plot_list[[4]],
-                   plot_list[[5]],plot_list[[6]], 
                   ncol = 1, nrow = 6,
-                  labels = c("A", "B", "C", "D", "E", "F"))
+                  labels = c("A", "B", "C", "D"))
 annotate_figure(plot, top = text_grob("B.pascuorum: species richness and funtional diversity across landscapes", 
                                        face = "bold", size = 22))
-# ggsave("./functional diversity/pasc_site/FD_B.pascuorum.png", width = 4, height = 24)
+# ggsave("./functional diversity/pasc_site/FD_B.pascuorum.png", width = 6, height = 24)
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
@@ -428,7 +438,7 @@ library(Hmisc)
 hist.data.frame(BB22.sites[, -c(1:14)])
 
 # Boxplots for all the variables we want to look at
-resp <- c("sp_richn","fdis", "fric", "fdiv", "feve", "fspe")
+resp <- c("sp_richn", "fric", "fdiv", "feve")
 library(psych)
 plot_list  <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
@@ -438,11 +448,22 @@ for (j in resp) {
   w.test <- wilcox_test(gg.data,value~landscape)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
-    ylab(j) + xlab("") +
+    xlab("") +
     scale_x_discrete(labels=c('rural', 'urban'))+
-    theme_classic(base_size = 20) + guides(alpha = "none") +
+    theme_classic(base_size = 20) + 
+    theme(aspect.ratio=1) + 
+    guides(alpha = "none") +
     scale_fill_manual(values=palette.landscape, guide = "none") + 
     labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep=""))
+  if (j == "sp_richn") {
+    p <- p + ylim(20,65) + ylab("species richness")
+  } else if (j == "fric") {
+    p <- p + ylim(0, 1) + ylab("funtional richness")
+  } else if (j == "fdiv") {
+    p <- p + ylim(0.6, 0.85) + ylab("funtional divergence")
+  } else {
+    p <- p + ylim(0.5, 0.75) + ylab("funtional evenness")
+  }
   plot_list[[j]] <- p
   describeBy(gg.data$value, gg.data$landscape)
 }
@@ -451,12 +472,11 @@ for (j in resp) {
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                   plot_list[[3]],plot_list[[4]],
-                  plot_list[[5]],plot_list[[6]], 
                   ncol = 1, nrow = 6,
-                  labels = c("A", "B", "C", "D", "E", "F"))
+                  labels = c("A", "B", "C", "D"))
 annotate_figure(plot, top = text_grob("B.lapidarius: species richness and funtional diversity across landscapes", 
                                       face = "bold", size = 22))
-# ggsave("./functional diversity/lapi_site/FD_B.lapidarius.png", width = 4, height = 24)
+# ggsave("./functional diversity/lapi_site/FD_B.lapidarius.png", width = 6, height = 24)
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
