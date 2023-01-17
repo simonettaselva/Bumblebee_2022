@@ -10,8 +10,9 @@
 # and chemical properties of the two bumblebee species in both urban and rural landscapes.
 
 # information: every subsection works in itself
-# SPECIES ABBUNDANCES IN POLLEN AND PHYLOGENETIC TREE ----
 
+
+# SPECIES ABBUNDANCES IN POLLEN AND PHYLOGENETIC TREE ----
 ## preparation ----
 # clear environment
 rm(list=ls())
@@ -172,7 +173,7 @@ ggplot(BB22.full.bubble_ordered, aes(x = site, y =BB22.full.bubble_ordered$plant
   scale_color_manual(values = palette.site, guide = "none")+ #no legend
   scale_fill_manual(values = palette.site, guide = "none") + #no legend
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-# ggsave(paste("./01_Goal 0/Phylo_Bubble_Site.png", sep = ""), width = 16, height = 16)
+ggsave(paste("./01_Goal 0/Phylo_Bubble_Site.png", sep = ""), width = 16, height = 16)
 
 # region level
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
@@ -184,7 +185,7 @@ ggplot(BB22.full.bubble_ordered, aes(x = region, y =BB22.full.bubble_ordered$pla
   guides(alpha = "none") +
   scale_color_manual(values = palette.landscape, labels = c("rural", "urban"), name = "Landscape") +
   guides(color = guide_legend(override.aes=list(alpha = 1)))
-# ggsave(paste("./01_Goal 0/Phylo_Bubble_Region.png", sep = ""), width = 16, height = 16)
+ggsave(paste("./01_Goal 0/Phylo_Bubble_Region.png", sep = ""), width = 16, height = 16)
 
 # landscape level
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
@@ -196,7 +197,7 @@ ggplot(BB22.full.bubble_ordered, aes(x = landscape, y =BB22.full.bubble_ordered$
   theme_classic(base_size = 20) + guides(alpha = "none") +
   scale_color_manual(values = palette.landscape, guide = "none") +
   scale_fill_manual(values = palette.landscape, guide = "none")
-# ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape.png", sep = ""), width = 16, height = 16)
+ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape.png", sep = ""), width = 16, height = 16)
 setwd(input)
 
 
@@ -923,8 +924,9 @@ ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 20, height = 10)
 setwd(input)
 
 
-# LEG/BODY POLLEN DIFFERENCES ----
-  
+# BODY POLLEN vs. CORBICULA POLLEN ----
+## preparation ----
+
   #reset environment
   rm(list=ls())
   
@@ -944,6 +946,7 @@ setwd(input)
   BB22.pasc.body <- BB22.full %>% 
     filter(str_detect(bborgan, "B") & bbspecies == "B.pascuorum")
   
+## compare species richness of data bases and pollen ----
   # create data frame with cumulative abundance per plant species per bumblebee species
   # for B.lapidarius
   BB22.lapi.body <- BB22.lapi.body %>% 
@@ -1016,10 +1019,17 @@ setwd(input)
   ggsave("./01_Goal 0/Comparison_Body_Leg_Pollen.png", width = 16, height = 8)
   setwd(input)
 
-############################
-#### LEG/BODY POLLEN DIFFERENCES IN LANDSCAPE ####
+# BODY POLLEN vs. CORBICULA POLLEN IN LANDSCAPE----
+  
+## preparation ----
   #reset environment
   rm(list=ls())
+  
+  #load libraries
+  library(dplyr)
+  library(tidyverse)
+  library(ggplot2)
+  library(ggpubr)
   
   # set working directory to main repository
   input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
@@ -1034,7 +1044,8 @@ setwd(input)
   organ <- c("B", "L")
   species <- c("B.lapidarius", "B.pascuorum")
   bb <- c()
-  # produce data frame per landscape, per species, and per body part
+  
+## produce data frame on species in pollen per landscape, per species, and per body part ----
   for (i in landscape) {
     BB22.full.loop <- BB22.full %>%
       filter(landscape == i) #filter for landscape
@@ -1057,7 +1068,7 @@ setwd(input)
     } #end loop j
   }#end loop i
   
-  # find common visited plant species body per landscape
+## find common visited plant species body per landscape ----
   # urban
   intersection.pasc <- length(intersect(BB22.pasc.L.U$plant.species, BB22.pasc.B.U$plant.species))
   notshared.1.pasc <- length(BB22.pasc.L.U$plant.species[!(BB22.pasc.L.U$plant.species %in% intersection.pasc)])
