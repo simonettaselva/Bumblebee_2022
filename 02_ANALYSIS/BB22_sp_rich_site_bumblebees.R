@@ -108,10 +108,3 @@ ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 20, height = 10)
 setwd(input)
 
 
-
-# save the figure
-setwd(output)
-
-setwd(input)
-
-
