@@ -41,13 +41,14 @@ for (i in sitenames) {
   temp <- c(substring(i, 3, 3), nlevels(site.list[[i]]))
   mean.landsacpe <- rbind(mean.landsacpe, temp)
 }
-colnames(mean.landsacpe) <- c("landscape", "species_richness")
-mean.landsacpe$species_richness <- as.numeric(mean.landsacpe$species_richness)
-mean.landsacpe <- as.data.frame(mean.landsacpe)
 
+colnames(mean.landsacpe) <- c("landscape", "species_richness")
+mean.landsacpe <- as.data.frame(mean.landsacpe)
+mean.landsacpe$species_richness <- as.numeric(mean.landsacpe$species_richness)
+str(mean.landsacpe)
 
 library(rstatix)
-w.test <- wilcox_test(mean.landsacpe,~landscape)
+w.test <- wilcox_test(mean.landsacpe, species_richness~landscape, paired = F)
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landscape)) + 
   geom_boxplot(notch = T) + 

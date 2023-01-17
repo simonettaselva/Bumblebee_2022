@@ -750,6 +750,17 @@ setwd(output)
                      region = region,
                      landscape = landscape)
   
+  # find how many taa were visited per region
+  BB22.full.taxa <- BB22.full.bubble %>%
+    dplyr::group_by(region, bbspecies) %>%
+    dplyr::summarise(plant.species = plant.species)%>%
+    distinct()
+  
+  BB22.full.taxa <- BB22.full.taxa%>%
+    dplyr::summarise(Nr.taxa = n())
+  
+  write_csv(BB22.full.taxa, "BB22_NrTaxa_region.csv")
+  
   # merge two data frames and order along plant species in phylo-tree
   BB22.full.bubble_ordered <- merge(x = BB22.full.bubble, y = phylo.order, by.x = "plant.species")%>%
     mutate(plant.species = as_factor(plant.species))
