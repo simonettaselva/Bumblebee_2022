@@ -1,5 +1,5 @@
 ################################################
-# GOAL 0
+# GOAL 0: Species Diet Analysis
 # by Simonetta Selva
 #
 # Created: December 14, 2022
@@ -9,9 +9,199 @@
 # AIM: Characterize the diet compositional and structural (taxonomic, functional, and phylogenetic diversity) 
 # and chemical properties of the two bumblebee species in both urban and rural landscapes.
 
+# information: every subsection works in itself
+# SPECIES ABBUNDANCES IN POLLEN AND PHYLOGENETIC TREE ----
 
-############################
-#### POLLEN COMPOSITION ####
+## preparation ----
+# clear environment
+rm(list=ls())
+
+# load required library
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(pals)
+library(V.PhyloMaker)
+library(ape)
+
+# set working directory to main repository
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+
+# load data
+setwd(input) # set working directory
+BB22.full <- read_csv("BB22_full.csv") # import data set with 
+
+# initialize region as column
+BB22.full$region <- c() 
+
+# add site and region as columns
+for (i in 1:nrow(BB22.full)) {
+  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
+  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
+}
+
+## leg pollen ----
+
+# 1. prepare the data
+# only using leg pollen as it reflects better the bees choice of plant species
+BB22.full.leg <- BB22.full[BB22.full$bborgan=="L",]
+
+# create a data frame with taxa (species, genus, family)
+phylo <- data.frame(species = BB22.full.leg$plant.species, genus = BB22.full.leg$genus, family = BB22.full.leg$family)
+
+
+# 2. phylogentic tree
+# phylogenetic hypotheses under three scenarios based on a backbone phylogeny 
+tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
+
+# plot the phylogenies with node ages displayed with sceanario 3
+tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen"); tree
+
+# get order of species in tree
+phylo.order <- data.frame(sps=tree.result$scenario.3$tip.label)
+phylo.order$order <- seq(1, length(phylo.order$sps))
+colnames(phylo.order) <- c("plant.species", " order")
+phylo.order$plant.species <- sub("_", " ", phylo.order$plant.species)
+
+# 3. plotting
+# create new data frame with variables needed for plotting
+BB22.full.leg.bubble <- BB22.full.leg%>%
+  dplyr::group_by(site, plant.species, bbspecies)%>%
+  dplyr::summarise(Abundance = sum(Abundance),
+                   region = region,
+                   landscape = landscape)
+
+# merge two data frames and order along plant species in phylo-tree
+BB22.full.leg.bubble_ordered <- merge(x = BB22.full.leg.bubble, y = phylo.order, by.x = "plant.species")%>%
+  mutate(plant.species = as_factor(plant.species))
+BB22.full.leg.bubble_ordered <- BB22.full.leg.bubble_ordered[order(BB22.full.leg.bubble_ordered$` order`),]
+BB22.full.leg.bubble_ordered$plant.species <- factor(BB22.full.leg.bubble_ordered$plant.species, 
+                                                     levels = unique(BB22.full.leg.bubble_ordered$plant.species[order(BB22.full.leg.bubble_ordered$` order`)]))
+
+# plot bubble plot with relative abundances along order of species in tree
+setwd(output)
+# on site level
+palette.site <- kelly(18)[3:18] #create color palette for sites
+ggplot(BB22.full.leg.bubble_ordered, aes(x = site, y =BB22.full.leg.bubble_ordered$plant.species, color = site)) + 
+  geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + 
+  facet_wrap(~bbspecies) +
+  labs(y = "plant species") +
+  theme(axis.text.x = element_text(angle = 90))+
+  theme_classic(base_size = 20) + guides(alpha = "none") +
+  scale_color_manual(values = palette.site, guide = "none")+ #no legend
+  scale_fill_manual(values = palette.site, guide = "none") + #no legend
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggsave(paste("./01_Goal 0/Phylo_Bubble_Site_leg.png", sep = ""), width = 16, height = 16)
+
+# on region level
+ggplot(BB22.full.leg.bubble_ordered, aes(x = region, y =BB22.full.leg.bubble_ordered$plant.species)) + 
+  geom_point(aes(size = Abundance, alpha=0.5), color = "#d6851a",) + 
+  facet_wrap(~bbspecies) +
+  labs(y = "plant species")+    
+  theme_classic(base_size = 20) + guides(alpha = "none")
+ggsave(paste("./01_Goal 0/Phylo_Bubble_Region_leg.png", sep = ""), width = 16, height = 16)
+
+# on landscape level
+palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+ggplot(BB22.full.leg.bubble_ordered, aes(x = landscape, y =BB22.full.leg.bubble_ordered$plant.species, color = landscape)) + 
+  geom_point(aes(size = Abundance, fill = landscape, alpha=0.5)) + 
+  facet_wrap(~bbspecies) +
+  labs(y = "plant species")+ 
+  scale_x_discrete(labels=c('rural', 'urban'))+
+  theme_classic(base_size = 20) + guides(alpha = "none") +
+  scale_color_manual(values = palette.landscape, guide = "none") +
+  scale_fill_manual(values = palette.landscape, guide = "none")
+ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape_leg.png", sep = ""), width = 16, height = 16)
+setwd(input)
+
+## body and corbicula pollen ----
+# 1. create a data frame with taxa (species, genus, family)
+phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
+
+# 2. phylogentic tree
+# phylogenetic hypotheses under three scenarios based on a backbone phylogeny 
+tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
+
+# plot the phylogenies with node ages displayed with sceanario 3
+tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen"); tree
+
+# get order of species in tree
+phylo.order <- data.frame(sps=tree.result$scenario.3$tip.label)
+phylo.order$order <- seq(1, length(phylo.order$sps))
+colnames(phylo.order) <- c("plant.species", " order")
+phylo.order$plant.species <- sub("_", " ", phylo.order$plant.species)
+
+# 3. plotting
+# create new data frame with needed variables
+BB22.full.bubble <- BB22.full%>%
+  dplyr::group_by(site, plant.species, bbspecies)%>%
+  dplyr::summarise(Abundance = sum(Abundance),
+                   region = region,
+                   landscape = landscape)
+
+# find how many taa were visited per region
+BB22.full.taxa <- BB22.full.bubble %>%
+  dplyr::group_by(region, bbspecies) %>%
+  dplyr::summarise(plant.species = plant.species)%>%
+  distinct()
+
+BB22.full.taxa <- BB22.full.taxa%>%
+  dplyr::summarise(Nr.taxa = n())
+
+write_csv(BB22.full.taxa, "BB22_NrTaxa_region.csv")
+
+# merge two data frames and order along plant species in phylo-tree
+BB22.full.bubble_ordered <- merge(x = BB22.full.bubble, y = phylo.order, by.x = "plant.species")%>%
+  mutate(plant.species = as_factor(plant.species))
+BB22.full.bubble_ordered <- BB22.full.bubble_ordered[order(BB22.full.bubble_ordered$` order`),]
+BB22.full.bubble_ordered$plant.species <- factor(BB22.full.bubble_ordered$plant.species, 
+                                                 levels = unique(BB22.full.bubble_ordered$plant.species[order(BB22.full.bubble_ordered$` order`)]))
+
+# plot bubble plot with relative abundances along order of species in tree
+setwd(output)
+# on site level
+palette.site <- kelly(18)[3:18] #create color palette for sites
+ggplot(BB22.full.bubble_ordered, aes(x = site, y =BB22.full.bubble_ordered$plant.species, color = site)) + 
+  geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + 
+  facet_wrap(~bbspecies) +
+  labs(y = "plant species") +
+  theme(axis.text.x = element_text(angle = 90))+
+  theme_classic(base_size = 20) + guides(alpha = "none") +
+  scale_color_manual(values = palette.site, guide = "none")+ #no legend
+  scale_fill_manual(values = palette.site, guide = "none") + #no legend
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+# ggsave(paste("./01_Goal 0/Phylo_Bubble_Site.png", sep = ""), width = 16, height = 16)
+
+# region level
+palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+ggplot(BB22.full.bubble_ordered, aes(x = region, y =BB22.full.bubble_ordered$plant.species)) + 
+  geom_point(aes(size = Abundance, color = landscape), alpha=0.5) + 
+  facet_wrap(~bbspecies) +
+  labs(y = "plant species")+    
+  theme_classic(base_size = 20) + 
+  guides(alpha = "none") +
+  scale_color_manual(values = palette.landscape, labels = c("rural", "urban"), name = "Landscape") +
+  guides(color = guide_legend(override.aes=list(alpha = 1)))
+# ggsave(paste("./01_Goal 0/Phylo_Bubble_Region.png", sep = ""), width = 16, height = 16)
+
+# landscape level
+palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+ggplot(BB22.full.bubble_ordered, aes(x = landscape, y =BB22.full.bubble_ordered$plant.species, color = landscape)) + 
+  geom_point(aes(size = Abundance, fill = landscape, alpha=0.5)) + 
+  facet_wrap(~bbspecies) +
+  labs(y = "plant species")+ 
+  scale_x_discrete(labels=c('rural', 'urban'))+
+  theme_classic(base_size = 20) + guides(alpha = "none") +
+  scale_color_manual(values = palette.landscape, guide = "none") +
+  scale_fill_manual(values = palette.landscape, guide = "none")
+# ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape.png", sep = ""), width = 16, height = 16)
+setwd(input)
+
+
+# POLLEN COMPOSITION ----
+## preparation ----
 
 #reset environment
 rm(list=ls())
@@ -43,8 +233,9 @@ BB22.full$region <- c()
 BB22.full.leg <- BB22.full[BB22.full$bborgan=="L",]
 BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
 
-#### BOTH TYPE OF POLLEN ####
-#### plot plant families per site, region and species
+
+## body and corbicula pollen ----
+### plant families per site, region and species ----
 
 # 1. find the 30 most abundant families
 families.overview <- BB22.full%>%
@@ -67,9 +258,9 @@ for(h in rare.families$family){
   for(i in 1:nrow(BB22.full)){
     if(BB22.full$family.agg[i] == h){
       BB22.full$family.agg[i] <- "Other families"
-    }
-  }
-}
+    } 
+  } # end loop i
+} # end loop h
 
 # 2. produce data frame with families' abundances per site with leg pollen
 families.site <- BB22.full %>%
@@ -113,7 +304,7 @@ ggplot(families.region, aes(fill=family.agg, y=cum.abund, x=region)) +
 ggsave(paste("./01_Goal 0/PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8, device = "png", )
 setwd(input) 
 
-#### plot plant growth form per site, region and species
+### origin status per site, region and species ----
 # 1. produce data frame with exotic/native per site
 ex.nat.site <- BB22.full %>%
   dplyr::group_by(native_exotic, site, bbspecies) %>%
@@ -153,8 +344,7 @@ ggplot(ex.nat.region, aes(fill=native_exotic, y=abund, x=region)) +
 ggsave(paste("./01_Goal 0/OriginStatus_per_Region.png", sep = ""), width = 16, height = 8)
 setwd(input)
 
-
-#### growth type per site and species
+### growth form per site, region and species ----
 # 1. produce data frame with growth form per site
 growth.site <- BB22.full %>%
   dplyr::group_by(growth_form_category, site, bbspecies) %>%
@@ -194,7 +384,7 @@ ggplot(growth.region, aes(fill=growth_form_category, y=abund, x=region)) +
 ggsave(paste("./01_Goal 0/GrowthForm_per_Region.png", sep = ""), width = 16, height = 8)
 setwd(input)
 
-#### blossom class per site and species
+### blossom class per site, region and species ----
 # 1. produce data frame with blossom class per site
 blossom.site <- BB22.full %>%
   dplyr::group_by(structural_blossom_class, site, bbspecies) %>%
@@ -237,8 +427,8 @@ ggsave(paste("./01_Goal 0/BlossomClass_per_Region.png", sep = ""), width = 16, h
 setwd(input)
 
 
-#### LEG POLLEN ####
-#### plot plant families per site, region and species
+## corbicula pollen ----
+### plant families per site, region and species ----
 
 # 1. find the 30 most abundant families
   families.overview <- BB22.full.leg%>%
@@ -262,8 +452,8 @@ setwd(input)
       if(BB22.full.leg$family.agg[i] == h){
         BB22.full.leg$family.agg[i] <- "Other families"
       }
-    }
-  }
+    } # end loop i
+  } # end loop h
 
 # 2. produce data frame with families' abundances per site with leg pollen
     families.site <- BB22.full.leg %>%
@@ -307,7 +497,7 @@ setwd(input)
     ggsave(paste("./01_Goal 0/PlantFamilies_per_Region_leg.png", sep = ""), width = 16, height = 8, device = "png", )
     setwd(input) 
 
-#### plot plant growth form per site, region and species
+### origin status per site, region and species ----
 # 1. produce data frame with exotic/native per site
     ex.nat.site <- BB22.full.leg %>%
       dplyr::group_by(native_exotic, site, bbspecies) %>%
@@ -348,7 +538,7 @@ setwd(input)
     setwd(input)
     
 
-#### growth type per site and species
+### growth form per site, region and species ----
 # 1. produce data frame with growth form per site
     growth.site <- BB22.full.leg %>%
       dplyr::group_by(growth_form_category, site, bbspecies) %>%
@@ -388,7 +578,7 @@ setwd(input)
     ggsave(paste("./01_Goal 0/GrowthForm_per_Region_leg.png", sep = ""), width = 16, height = 8)
     setwd(input)
     
-#### blossom class per site and species
+### blossom class per site, region and species ----
 # 1. produce data frame with blossom class per site
     blossom.site <- BB22.full.leg %>%
       dplyr::group_by(structural_blossom_class, site, bbspecies) %>%
@@ -431,8 +621,8 @@ setwd(input)
     setwd(input)
 
     
-#### BODY POLLEN ####
-#### plot plant families per site, region and species
+## body pollen ----
+### plant families per site, region and species ----
 
 # 1. find the 30 most abundant families
 families.overview <- BB22.full.body%>%
@@ -456,8 +646,8 @@ for(h in rare.families$family){
     if(BB22.full.body$family.agg[i] == h){
       BB22.full.body$family.agg[i] <- "Other families"
     }
-  }
-}
+  } # end loop i
+} # end loop h
 
 # 2. produce data frame with families' abundances per site with body pollen
 families.site <- BB22.full.body %>%
@@ -501,7 +691,7 @@ ggplot(families.region, aes(fill=family.agg, y=cum.abund, x=region)) +
 ggsave(paste("./01_Goal 0/PlantFamilies_per_Region_body.png", sep = ""), width = 16, height = 8, device = "png", )
 setwd(input) 
 
-#### plot plant growth form per site, region and species
+### origin status per site, region and species ----
 # 1. produce data frame with exotic/native per site
 ex.nat.site <- BB22.full.body %>%
   dplyr::group_by(native_exotic, site, bbspecies) %>%
@@ -542,7 +732,7 @@ ggsave(paste("./01_Goal 0/OriginStatus_per_Region_body.png", sep = ""), width = 
 setwd(input)
 
 
-#### growth type per site and species
+### growth form per site, region and species ----
 # 1. produce data frame with growth form per site
 growth.site <- BB22.full.body %>%
   dplyr::group_by(growth_form_category, site, bbspecies) %>%
@@ -582,7 +772,7 @@ ggplot(growth.region, aes(fill=growth_form_category, y=abund, x=region)) +
 ggsave(paste("./01_Goal 0/GrowthForm_per_Region_body.png", sep = ""), width = 16, height = 8)
 setwd(input)
 
-#### blossom class per site and species
+### blossom class per site, region and species ----
 # 1. produce data frame with blossom class per site
 blossom.site <- BB22.full.body %>%
   dplyr::group_by(structural_blossom_class, site, bbspecies) %>%
@@ -625,194 +815,115 @@ ggsave(paste("./01_Goal 0/BlossomClass_per_Region_body.png", sep = ""), width = 
 setwd(input)
     
     
-    
-############################
-#### PHYLOGENETIC TREE #####    
 
-#reset environment
-rm(list=ls())
+# DOCUMENTED PLANT SPECIES PER SITE AND FOUND IN POLLEN ----
+
+## preparation ----
+rm(list=ls()) # clear work environment
+
+#load libraries
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
 
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
 
-# load required library
-library(V.PhyloMaker)
-library(ape)
+setwd(input)
 
-# load data
-setwd(input) # set working directory
-BB22.full <- read_csv("BB22_full.csv") # import data set with 
-    
-# initialize region as column
-BB22.full$region <- c() 
-    
-# add site and region as columns
-for (i in 1:nrow(BB22.full)) {
-  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
-  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
+# import species lists form GBIF and InfoFlora (file BB22_sites_plants_GBIF.R)
+site.list.occ <- readRDS("sp_list_gbif_infoflora.RData")
+
+# load data on pollen (file BB22_sites_plants_GBIF.R)
+site.list.bb <- readRDS("site_list_bb.RData")
+
+# combine occurrence data with species found in pollen per site
+site.list <- list()
+sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+for (i in sitenames) {
+  x <- as.factor(site.list.occ [[i]])
+  y <- as.factor(site.list.bb [[i]])
+  site.list[[i]] <- unique(c(x,y)) %>% 
+    droplevels()
 }
 
-### LEG POLLEN
+# calculate mean of number of species per site
+mean.landsacpe <- c()
+for (i in sitenames) {
+  temp <- c(substring(i, 3, 3), nlevels(site.list[[i]]))
+  mean.landsacpe <- rbind(mean.landsacpe, temp)
+}
 
-# only using leg pollen as it reflects better the bees choice of plant species
-BB22.full.leg <- BB22.full[BB22.full$bborgan=="L",]
+# adapt dataframe to be used with t-test
+colnames(mean.landsacpe) <- c("landscape", "species_richness")
+mean.landsacpe <- as.data.frame(mean.landsacpe)
+mean.landsacpe$species_richness <- as.numeric(mean.landsacpe$species_richness)
+str(mean.landsacpe)
 
-# create a data frame with taxa (species, genus, family)
-phylo <- data.frame(species = BB22.full.leg$plant.species, genus = BB22.full.leg$genus, family = BB22.full.leg$family)
+# perform t-test and display it in a boxplot
+library(rstatix)
+w.test <- wilcox_test(mean.landsacpe, species_richness~landscape, paired = F)
+palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landscape)) + 
+  geom_boxplot(notch = T) + 
+  ylab("plant diversity of sites") +
+  xlab("") +
+  scale_x_discrete(labels=c('rural', 'urban')) +
+  theme_classic(base_size = 20) + 
+  theme(aspect.ratio=1) + 
+  scale_fill_manual(values=palette.landscape, guide = "none") + 
+  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep="")); a
 
-# run the phylo-function
-tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
+# compile species richness per site in dataframe
+rich.occ <- c()
+for (i in sitenames) {
+  x <- nlevels(site.list.occ[[i]])
+  rich.occ <- c(rich.occ, x)
+}
 
-# plot the phylogenies with node ages displayed with sceanario 3
-tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen"); tree
- 
-# get order of species in tree
-phylo.order <- data.frame(sps=tree.result$scenario.3$tip.label)
-phylo.order$order <- seq(1, length(phylo.order$sps))
-colnames(phylo.order) <- c("plant.species", " order")
-phylo.order$plant.species <- sub("_", " ", phylo.order$plant.species)
+rich.bb <- c()
+for (i in sitenames) {
+  x <- nlevels(site.list.bb[[i]])
+  rich.bb <- c(rich.bb, x)
+}
 
-# create new data frame with needed variables
-BB22.full.leg.bubble <- BB22.full.leg%>%
-  dplyr::group_by(site, plant.species, bbspecies)%>%
-  dplyr::summarise(Abundance = sum(Abundance),
-                   region = region,
-                   landscape = landscape)
+df.site <- data_frame(site = sitenames,
+                      landscape = rep_len(c(rep("U", 3), rep("R", 3)), length(sitenames)),
+                      rich.occ = rich.occ,
+                      rich.bb = rich.bb)
 
-# merge two data frames and order along plant species in phylo-tree
-BB22.full.leg.bubble_ordered <- merge(x = BB22.full.leg.bubble, y = phylo.order, by.x = "plant.species")%>%
-  mutate(plant.species = as_factor(plant.species))
-BB22.full.leg.bubble_ordered <- BB22.full.leg.bubble_ordered[order(BB22.full.leg.bubble_ordered$` order`),]
-BB22.full.leg.bubble_ordered$plant.species <- factor(BB22.full.leg.bubble_ordered$plant.species, 
-                                                     levels = unique(BB22.full.leg.bubble_ordered$plant.species[order(BB22.full.leg.bubble_ordered$` order`)]))
+# plot the relationship of species richness of data bases and species collected by the bumblebees
+ggplot(df.site, aes(x = rich.occ, y = rich.bb)) + 
+  geom_point()
 
-# plot bubble plot with relative abundances along order of species in tree
+# test the relationship with a model
+fit <- lm(rich.occ ~ rich.bb, df.site)
+summary(fit)
+
+# plot it with information on the model
+b <- ggplot(df.site, aes(x = rich.bb , y = rich.occ)) + 
+  geom_point(aes(color = landscape), size = 3) + 
+  labs(x ="species richness in pollen" , y = "plant diversity of sites") +
+  theme_classic(base_size = 20) + 
+  theme(aspect.ratio=1) + 
+  geom_smooth(method="lm", se = FALSE, col = "black") +
+  scale_color_manual(values = palette.landscape) +
+  stat_cor(
+    aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
+    label.x = 3,
+    size = 7); b
+
+# arrange them into one file to export
 setwd(output)
-  # site level
-  library(pals)
-  palette.site <- kelly(18)[3:18] #create color palette for sites
-  ggplot(BB22.full.leg.bubble_ordered, aes(x = site, y =BB22.full.leg.bubble_ordered$plant.species, color = site)) + 
-   geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + 
-    facet_wrap(~bbspecies) +
-    labs(y = "plant species") +
-    theme(axis.text.x = element_text(angle = 90))+
-    theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_color_manual(values = palette.site, guide = "none")+ #no legend
-    scale_fill_manual(values = palette.site, guide = "none") + #no legend
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-  ggsave(paste("./01_Goal 0/Phylo_Bubble_Site_leg.png", sep = ""), width = 16, height = 16)
-  
-  # region level
-  # palette.region <- kelly(18)[10:16] #create color palette for region
-  ggplot(BB22.full.leg.bubble_ordered, aes(x = region, y =BB22.full.leg.bubble_ordered$plant.species)) + 
-    geom_point(aes(size = Abundance, alpha=0.5), color = "#d6851a",) + 
-    facet_wrap(~bbspecies) +
-    labs(y = "plant species")+    
-    theme_classic(base_size = 20) + guides(alpha = "none") #+
-    # scale_color_manual(values = palette.region, guide = "none")+ #no legend
-    # scale_fill_manual(values = palette.region, guide = "none") #no legend
-  ggsave(paste("./01_Goal 0/Phylo_Bubble_Region_leg.png", sep = ""), width = 16, height = 16)
-  
-  # landscape level
-  palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-  ggplot(BB22.full.leg.bubble_ordered, aes(x = landscape, y =BB22.full.leg.bubble_ordered$plant.species, color = landscape)) + 
-    geom_point(aes(size = Abundance, fill = landscape, alpha=0.5)) + 
-    facet_wrap(~bbspecies) +
-    labs(y = "plant species")+ 
-    scale_x_discrete(labels=c('rural', 'urban'))+
-    theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_color_manual(values = palette.landscape, guide = "none") +
-    scale_fill_manual(values = palette.landscape, guide = "none")
-  ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape_leg.png", sep = ""), width = 16, height = 16)
-  setwd(input)
-  
-### BOTH TYPE OF POLLEN
-  # create a data frame with taxa (species, genus, family)
-  phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
-  
-  # run the phylo-function
-  tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
-  
-  # plot the phylogenies with node ages displayed with sceanario 3
-  tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen"); tree
-  
-  # get order of species in tree
-  phylo.order <- data.frame(sps=tree.result$scenario.3$tip.label)
-  phylo.order$order <- seq(1, length(phylo.order$sps))
-  colnames(phylo.order) <- c("plant.species", " order")
-  phylo.order$plant.species <- sub("_", " ", phylo.order$plant.species)
-  
-  # create new data frame with needed variables
-  BB22.full.bubble <- BB22.full%>%
-    dplyr::group_by(site, plant.species, bbspecies)%>%
-    dplyr::summarise(Abundance = sum(Abundance),
-                     region = region,
-                     landscape = landscape)
-  
-  # find how many taa were visited per region
-  BB22.full.taxa <- BB22.full.bubble %>%
-    dplyr::group_by(region, bbspecies) %>%
-    dplyr::summarise(plant.species = plant.species)%>%
-    distinct()
-  
-  BB22.full.taxa <- BB22.full.taxa%>%
-    dplyr::summarise(Nr.taxa = n())
-  
-  write_csv(BB22.full.taxa, "BB22_NrTaxa_region.csv")
-  
-  # merge two data frames and order along plant species in phylo-tree
-  BB22.full.bubble_ordered <- merge(x = BB22.full.bubble, y = phylo.order, by.x = "plant.species")%>%
-    mutate(plant.species = as_factor(plant.species))
-  BB22.full.bubble_ordered <- BB22.full.bubble_ordered[order(BB22.full.bubble_ordered$` order`),]
-  BB22.full.bubble_ordered$plant.species <- factor(BB22.full.bubble_ordered$plant.species, 
-                                                       levels = unique(BB22.full.bubble_ordered$plant.species[order(BB22.full.bubble_ordered$` order`)]))
-  
-  # plot bubble plot with relative abundances along order of species in tree
-  setwd(output)
-  # site level
-  library(pals)
-  palette.site <- kelly(18)[3:18] #create color palette for sites
-  ggplot(BB22.full.bubble_ordered, aes(x = site, y =BB22.full.bubble_ordered$plant.species, color = site)) + 
-    geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + 
-    facet_wrap(~bbspecies) +
-    labs(y = "plant species") +
-    theme(axis.text.x = element_text(angle = 90))+
-    theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_color_manual(values = palette.site, guide = "none")+ #no legend
-    scale_fill_manual(values = palette.site, guide = "none") + #no legend
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-  # ggsave(paste("./01_Goal 0/Phylo_Bubble_Site.png", sep = ""), width = 16, height = 16)
-  
-  # region level
-  # palette.region <- kelly(18)[10:16] #create color palette for region
-  palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-  ggplot(BB22.full.bubble_ordered, aes(x = region, y =BB22.full.bubble_ordered$plant.species)) + 
-    geom_point(aes(size = Abundance, color = landscape), alpha=0.5) + 
-    facet_wrap(~bbspecies) +
-    labs(y = "plant species")+    
-    theme_classic(base_size = 20) + 
-    guides(alpha = "none") +
-    scale_color_manual(values = palette.landscape, labels = c("rural", "urban"), name = "Landscape") +
-    guides(color = guide_legend(override.aes=list(alpha = 1)))
-  # scale_fill_manual(values = palette.region, guide = "none") #no legend
-  ggsave(paste("./01_Goal 0/Phylo_Bubble_Region.png", sep = ""), width = 16, height = 16)
-  
-  # landscape level
-  palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-  ggplot(BB22.full.bubble_ordered, aes(x = landscape, y =BB22.full.bubble_ordered$plant.species, color = landscape)) + 
-    geom_point(aes(size = Abundance, fill = landscape, alpha=0.5)) + 
-    facet_wrap(~bbspecies) +
-    labs(y = "plant species")+ 
-    scale_x_discrete(labels=c('rural', 'urban'))+
-    theme_classic(base_size = 20) + guides(alpha = "none") +
-    scale_color_manual(values = palette.landscape, guide = "none") +
-    scale_fill_manual(values = palette.landscape, guide = "none")
-  ggsave(paste("./01_Goal 0/Phylo_Bubble_Landscape.png", sep = ""), width = 16, height = 16)
-  setwd(input)
+ggarrange(a, b, ncol = 2, nrow = 1,
+          labels = c("A", "B"))
+ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 20, height = 10)
+setwd(input)
 
-############################
-#### LEG/BODY POLLEN DIFFERENCES ####
+
+# LEG/BODY POLLEN DIFFERENCES ----
   
   #reset environment
   rm(list=ls())
@@ -1023,110 +1134,9 @@ setwd(output)
   setwd(input)
 
 
-#### documented plant species per site and pollen ####
-  
-  rm(list=ls()) # clear work environment
-  
-  #load libraries
-  library(dplyr)
-  library(tidyverse)
-  library(ggplot2)
-  library(ggpubr)
-  
-  # set working directory to main repository
-  input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
-  output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
-  
-  setwd(input)
-  
-  # import species lists form GBIF and InfoFlora (file BB22_sites_plants_GBIF.R)
-  site.list.occ <- readRDS("sp_list_gbif_infoflora.RData")
-  
-  # load data on pollen (file BB22_sites_plants_GBIF.R)
-  site.list.bb <- readRDS("site_list_bb.RData")
-  
-  # combine occurrence data with species found in pollen per site
-  site.list <- list()
-  sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
-  for (i in sitenames) {
-    x <- as.factor(site.list.occ [[i]])
-    y <- as.factor(site.list.bb [[i]])
-    site.list[[i]] <- unique(c(x,y)) %>% 
-      droplevels()
-  }
-  
-  # calculate mean of number of species per site
-  mean.landsacpe <- c()
-  for (i in sitenames) {
-    temp <- c(substring(i, 3, 3), nlevels(site.list[[i]]))
-    mean.landsacpe <- rbind(mean.landsacpe, temp)
-  }
-  
-  # adapt dataframe to be useful
-  colnames(mean.landsacpe) <- c("landscape", "species_richness")
-  mean.landsacpe <- as.data.frame(mean.landsacpe)
-  mean.landsacpe$species_richness <- as.numeric(mean.landsacpe$species_richness)
-  str(mean.landsacpe)
-  
-  # perform t-test and display it in a boxplot
-  library(rstatix)
-  w.test <- wilcox_test(mean.landsacpe, species_richness~landscape, paired = F)
-  palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-  a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landscape)) + 
-    geom_boxplot(notch = T) + 
-    ylab("plant diversity of sites") +
-    xlab("") +
-    scale_x_discrete(labels=c('rural', 'urban')) +
-    theme_classic(base_size = 20) + 
-    theme(aspect.ratio=1) + 
-    scale_fill_manual(values=palette.landscape, guide = "none") + 
-    labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep="")); a
-  
-  # compile species richness per site in dataframe
-  rich.occ <- c()
-  for (i in sitenames) {
-    x <- nlevels(site.list.occ[[i]])
-    rich.occ <- c(rich.occ, x)
-  }
-  
-  rich.bb <- c()
-  for (i in sitenames) {
-    x <- nlevels(site.list.bb[[i]])
-    rich.bb <- c(rich.bb, x)
-  }
-  
-  df.site <- data_frame(site = sitenames,
-                        landscape = rep_len(c(rep("U", 3), rep("R", 3)), length(sitenames)),
-                        rich.occ = rich.occ,
-                        rich.bb = rich.bb)
-  
-  # plot the relationship of species richness of data bases and species collected by the bumblebees
-  ggplot(df.site, aes(x = rich.occ, y = rich.bb)) + 
-    geom_point()
-  
-  # test the relationship with a model
-  fit <- lm(rich.occ ~ rich.bb, df.site)
-  summary(fit)
-  
-  # plot it with information on the model
-  b <- ggplot(df.site, aes(x = rich.bb , y = rich.occ)) + 
-    geom_point(aes(color = landscape), size = 3) + 
-    labs(x ="species richness in pollen" , y = "plant diversity of sites") +
-    theme_classic(base_size = 20) + 
-    theme(aspect.ratio=1) + 
-    geom_smooth(method="lm", se = FALSE, col = "black") +
-    scale_color_manual(values = palette.landscape) +
-    stat_cor(
-      aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
-      label.x = 3,
-      size = 7); b
-  
-  # arrange them into one file to export
-  setwd(output)
-  ggarrange(a, b, ncol = 2, nrow = 1,
-            labels = c("A", "B"))
-  ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 20, height = 10)
-  setwd(input)
-  
 
+  
+  
+  
+  
 
