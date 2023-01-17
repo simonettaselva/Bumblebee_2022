@@ -11,7 +11,6 @@
 
 # information: every subsection works in itself
 
-
 # SPECIES ABBUNDANCES IN POLLEN AND PHYLOGENETIC TREE ----
 ## preparation ----
 # clear environment
@@ -51,7 +50,6 @@ BB22.full.leg <- BB22.full[BB22.full$bborgan=="L",]
 
 # create a data frame with taxa (species, genus, family)
 phylo <- data.frame(species = BB22.full.leg$plant.species, genus = BB22.full.leg$genus, family = BB22.full.leg$family)
-
 
 # 2. phylogentic tree
 # phylogenetic hypotheses under three scenarios based on a backbone phylogeny 
@@ -816,6 +814,75 @@ ggsave(paste("./01_Goal 0/BlossomClass_per_Region_body.png", sep = ""), width = 
 setwd(input)
     
     
+# TEST FAMILY, FLOWER, GRWOTH FORM, EXOTIC/NATIVE PROPORTIONS URBAN vs. RURAL ----
+## preparation ----
+# clear work environment
+rm(list=ls()) 
+
+#load libraries
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(insight)
+
+# set working directory to main repository
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+
+setwd(input)
+
+# import data (added row with information on family)
+BB22.full.family <- read_csv("BB22.full.family")
+
+BB.pasc <- BB22.full.family %>% 
+  filter(bbspecies == "B.pascuorum")
+BB.lapi <- BB22.full.family %>% 
+  filter(bbspecies == "B.lapidarius")
+
+# define vectors to loop over
+resolution <- c("landscape", "region", "site")
+fun.trait <- c("family.agg", "native_exotic", "growth_form_category", "structural_blossom_class")
+
+## B. pascuorum ----
+chisq.summary <- NULL
+for (i in resolution) {
+  for (j in fun.trait) {
+    chisq <- chisq.test(BB.pasc[[i]], BB.pasc[[j]]); chisq
+    summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3), chisq$parameter, chisq$p.value)
+    chisq.summary <- rbind(chisq.summary, summary)
+  } # end loop j
+} # end loop i
+
+chisq.summary <- as.data.frame(chisq.summary)
+colnames(chisq.summary) <- c("formula", "X-squared", "df", "p")
+rownames(chisq.summary) <- NULL
+chisq.summary <- chisq.summary %>%
+  mutate(p = format_p(p, stars = TRUE)) %>%
+  format_table()
+
+# export the summary of the tests
+# write.table(chisq.summary, file = "chisq_Bpascuorum.txt", sep = "\t", row.names = TRUE, col.names = NA)
+
+## B. lapidarius ----
+chisq.summary.1 <- NULL
+for (i in resolution) {
+  for (j in fun.trait) {
+    chisq <- chisq.test(BB.lapi[[i]], BB.lapi[[j]]); chisq
+    summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3),chisq$parameter,chisq$p.value)
+    chisq.summary.1 <- rbind(chisq.summary.1, summary)
+  } # end loop j
+} # end loop i
+
+chisq.summary.1 <- as.data.frame(chisq.summary.1)
+colnames(chisq.summary.1) <- c("formula", "X-squared", "df", "p")
+rownames(chisq.summary.1) <- NULL
+chisq.summary.1 <- chisq.summary.1 %>%
+  mutate(p = format_p(p, stars = TRUE)) %>%
+  format_table()
+
+# export the summaryof the tests
+# write.table(chisq.summary.1, file = "chisq_Blapidarius.txt", sep = "\t", row.names = TRUE, col.names = NA)
 
 # DOCUMENTED PLANT SPECIES PER SITE AND FOUND IN POLLEN ----
 
@@ -1143,11 +1210,5 @@ setwd(input)
                                          face = "bold", size = 22))
   ggsave("./01_Goal 0/Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
   setwd(input)
-
-
-
-  
-  
-  
   
 

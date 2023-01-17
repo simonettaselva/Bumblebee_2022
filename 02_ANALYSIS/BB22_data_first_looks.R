@@ -613,14 +613,12 @@ for(h in rare.families$family){
 
 # write_csv(BB22.full, "BB22.full.family")
 
-<<<<<<< HEAD
 # ACHTUNG neuer Datensatz mit Familien --> schönere Darstellung
 families.site <- BB22.full%>%
   dplyr::group_by(family.agg, site)%>%
   dplyr::summarise(cum.abund = sum(Abundance))
 
-=======
->>>>>>> main
+
 BB22.full$family.agg <- as.factor(BB22.full$family.agg)
 palette.fams=c("#375E97", "#80BD9E", "#FA812F", "#F34A4A", "#07575B", "#66A5AD", "#C4DFE6", "#FAAF08", 
                  "#336B87", "#5D535E", "#DFE166", "#1995AD", "#258039", "#73605B", "#4897D8", "#DDBC95",
@@ -716,49 +714,6 @@ ggplot(BB22.full, aes(fill=structural_blossom_class, y=binom.abund, x=region)) +
 # ggsave(paste("BlossonClass_per_Region.png", sep = ""), width = 16, height = 8)
 
 setwd(input)
-
-
-### phylogenetic tree
-
-library(V.PhyloMaker)
-species <- BB22.full$plant.species
-phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
-
-# run the function (load data since it takes a long time)
-result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
-# saveRDS(example, file="phylo.RData")
-# result <- readRDS("phylo.RData")
-
-# plot the phylogenies with node ages displayed.
-library(ape)
-tree <- plot.phylo(result$scenario.3, cex = 0.5, main = "Phylogenetic tree of Species in Pollen") #Joan used S3
-tree
-# write.tree(result$scenario.3, "tree.tre")
-
- # bubble plot relative abundances
-BB22.full.site <- BB22.full%>%
-  group_by(site, plant.species, bbspecies)%>%
-  summarise(Abundance = sum(Abundance))
-p2 <- ggplot(BB22.full.site, aes(x = site, y =BB22.full.site$plant.species, color = site)) + 
-  geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + facet_wrap(~bbspecies) +theme_classic()
-
-
-
-library(patchwork)
-library(ggtree)
-
-atree | p2
-
-p2 %>% insert_left(tree)
-
-
-
-
-p <- ggtree(result)
-
-
-
-
 
 
 
