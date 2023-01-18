@@ -22,14 +22,18 @@ setwd(input)
 sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
 region <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
 
-BB22.abund <- read_csv("BB22.abund.csv") %>%
-  mutate(site = as_factor(site),
-         species = as_factor(species)) 
-BB22.abund <- BB22.abund%>%
-  mutate(site = paste(location, landscape, replicate, sep = ""))
+# BB22.abund <- read_csv("BB22.abund.csv") %>%
+#   mutate(site = as_factor(site),
+#          species = as_factor(species)) 
+# BB22.abund <- BB22.abund%>%
+#   mutate(site = paste(location, landscape, replicate, sep = ""))
+# BB22.abund <- BB22.abund%>%
+#   mutate(region = substr(site, 1, 3))
 
-BB22.abund <- BB22.abund%>%
-  mutate(region = substr(site, 1, 3))
+BB22.full <- read_csv("BB22_full.csv") %>%
+  mutate(site = as_factor(site),
+         species = as_factor(species),
+         region = substr(site, 1, 3)) 
 
 # create species lists per site
 site.list <- list()
@@ -47,6 +51,7 @@ for (i in region) {
     droplevels()
 }
 
+saveRDS(site.list, file="region_list_bb.RData")
 
 
 #### GBIF ####
@@ -363,13 +368,16 @@ intersection$ZHRD
 
 #### 1500m Buffer ####
 sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+region <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
+
 # InfoFlora
 site.list.InfoFlora.1500 <- list()
 for (i in sitenames) {
   site.data.InfoFlora.1500  <- read_csv(paste("./sites_plant_list/04_InfoFlora_1500/",i , "_IF_1500.csv", sep = "")) 
   site.data.InfoFlora.1500 <- site.data.InfoFlora.1500 %>%
     summarise(Species = Taxon,
-              site = rep(i, nrow(site.data.InfoFlora.1500)))
+              site = rep(i, nrow(site.data.InfoFlora.1500)),
+              region = rep(substr(i, 1, 3), nrow(site.data.InfoFlora.1500)))
   j <- 0
   site.data.InfoFlora.1500$species <- c()
   for (j in 1:nrow(site.data.InfoFlora.1500)){
@@ -378,6 +386,7 @@ for (i in sitenames) {
   }
   site.list.InfoFlora.1500[[i]] <- unique(site.data.InfoFlora.1500$species)
 }
+
 
 # GBIF
 site.list.gbif.1500 <- list()
@@ -389,8 +398,7 @@ for (i in sitenames) {
   site.list.gbif.1500[[i]] <- unique(site.data.gbif.1500$species)
 }
 
-
-# combine species list GBIF and InfoFlora
+# combine species list GBIF and InfoFlora (site level)
 site.list.1500 <- list()
 for (i in sitenames) {
   x <- as.factor(site.list.InfoFlora.1500 [[i]])
@@ -399,6 +407,19 @@ for (i in sitenames) {
     droplevels()
 }
 saveRDS(site.list.1500, file="sp_list_gbif_infoflora.RData")
+
+
+# combine species list GBIF and InfoFlora (region level)
+site.list.1500 <- list()
+for (i in sitenames) {
+  x <- as.factor(site.list.InfoFlora.1500 [[i]])
+  y <- as.factor(site.list.gbif.1500 [[i]])
+  site.list.1500[[i]] <- unique(c(x,y))%>% 
+    droplevels()
+}
+saveRDS(site.list.1500, file="sp_list_gbif_infoflora.RData")
+
+
 
 ratios.1500 <- c()
 
