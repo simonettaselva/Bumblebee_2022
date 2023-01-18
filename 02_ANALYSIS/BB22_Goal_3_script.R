@@ -100,7 +100,6 @@ site.list.occ <- readRDS("sp_list_gbif_infoflora.RData")
 list.intersections <- list()
 list.table <- list()
 correlation.df.pasc <- data.frame(species = NA, site1 = NA, site2 = NA, Correlation = NA)
-correlation.matrix.pasc <- matrix(data=NA, nrow=16, ncol=16)
 
 for (i in sitenames) {
   for (j in sitenames) {
@@ -133,7 +132,8 @@ correlation.matrix.lapi <- split(correlation.df.lapi, f = correlation.df.lapi$si
 temp <- list.cbind(correlation.matrix.lapi)[, seq(4, 67, 4)]
 colnames(temp) <- levels(correlation.df.lapi$site1)
 rownames(temp) <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
-correlation.matrix.lapi <- x[,match(sitenames, colnames(temp))]
+correlation.matrix.lapi <- as.matrix(temp[,match(sitenames, colnames(temp))])
+class(correlation.matrix.lapi) <- "numeric"
 
 # B.pascuroum
 correlation.df.pasc$site1 <- as.factor(correlation.df.pasc$site1)
@@ -141,19 +141,19 @@ correlation.matrix.pasc <- split(correlation.df.pasc, f = correlation.df.pasc$si
 temp <- list.cbind(correlation.matrix.pasc)[, seq(4, 67, 4)]
 colnames(temp) <- levels(correlation.df.pasc$site1)
 rownames(temp) <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
-correlation.matrix.pasc <- x[,match(sitenames, colnames(temp))]
+correlation.matrix.pasc <- as.matrix(temp[,match(sitenames, colnames(temp))])
+class(correlation.matrix.pasc) <- "numeric"
 
-
-
-
-
+# plot the correlations
 library(corrplot)
-library(rlist)
 library(RColorBrewer)
 
-M <-correlation.df.lapi
-corrplot(M, type="upper", order="hclust",
+par(mfrow = c(1,2))
+corrplot(correlation.matrix.lapi, type="upper", order="hclust",
          col=brewer.pal(n=8, name="RdYlBu"))
+corrplot(correlation.matrix.pasc, type="upper", order="hclust",
+         col=brewer.pal(n=8, name="RdYlBu"))
+par(mfrow = c(1,1))
 
 
 
