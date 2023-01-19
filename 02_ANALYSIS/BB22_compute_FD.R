@@ -114,6 +114,8 @@ trt.NMDS <-
           wascores = TRUE)
 trt.space.NMDS <- trt.NMDS$spcies   # you can then used this object in the same was as the PCA above   :)
 
+#change
+
 # 2. prepare data frames for mFD-package
 # 2.1 bring plants species per site/ID into wide format (for each BB species)
 library(reshape2)
