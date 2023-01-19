@@ -242,7 +242,7 @@ big_plot$patchwork
 sp.pa <- as.matrix(sp.pa)
 
 alpha_fd_indices <-mFD::alpha.fd.multidim(
-  sp_faxes_coord   = sp_faxes_coord[ , c("PC1", "PC2", "PC3", "PC4")],
+  sp_faxes_coord   = sp_faxes_coord[ , c("PC1", "PC2", "PC3", "PC4")],  # here use "trt.space.NMDS" instead. All the steps about trait space quality can be skiped.
   asb_sp_w         = sp.pa,
   ind_vect         = c("fdis", "fmpd", "fnnd", "feve", "fric", "fdiv", "fori", 
                        "fspe", "fide"),
