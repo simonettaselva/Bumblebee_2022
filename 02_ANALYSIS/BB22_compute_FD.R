@@ -104,6 +104,16 @@ trt.pca <- prcomp(traits, scale. = T, center = T)
 cumsum(trt.pca$sdev/sum(trt.pca$sdev))
 trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 
+# NMDS
+trt.NMDS <-
+  metaMDS(scale(traits),
+          distance = "bray",
+          k = 2,
+          maxit = 999, 
+          trymax = 500,
+          wascores = TRUE)
+trt.space.NMDS <- trt.NMDS$spcies   # you can then used this object in the same was as the PCA above   :)
+
 # 2. prepare data frames for mFD-package
 # 2.1 bring plants species per site/ID into wide format (for each BB species)
 library(reshape2)
