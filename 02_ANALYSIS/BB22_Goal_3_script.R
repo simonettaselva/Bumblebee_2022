@@ -19,6 +19,7 @@ library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
+library(rlist)
 
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
@@ -147,6 +148,7 @@ class(correlation.matrix.pasc) <- "numeric"
 # plot the correlations
 library(corrplot)
 library(RColorBrewer)
+library(ggcorrplot)
 
 par(mfrow = c(1,2))
 corrplot(correlation.matrix.lapi, type="upper", order="hclust",
@@ -155,9 +157,26 @@ corrplot(correlation.matrix.pasc, type="upper", order="hclust",
          col=brewer.pal(n=8, name="RdYlBu"))
 par(mfrow = c(1,1))
 
+a <- ggcorrplot(correlation.matrix.lapi, hc.order = TRUE, type = "lower", method = "circle",
+           outline.col = "white")+ 
+  labs(title ='B. lapidarius', fill = "", x = "", y = "") +
+  theme_classic(base_size = 20) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_fill_gradient2(limit = c(-0.02,1), low = "white", high =  "#07575B")
 
+b <- ggcorrplot(correlation.matrix.pasc, hc.order = TRUE, type = "lower", method = "circle",
+           outline.col = "white")+ 
+  labs(title ='B.pascuroum', fill = "", x = "", y = "") +
+  theme_classic(base_size = 20) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  scale_fill_gradient2(limit = c(-0.02,1), low = "white", high =  "#07575B")
 
-
+# arrange them into one file to export
+setwd(output)
+ggarrange(a, b, ncol = 2, nrow = 1,
+          labels = c("A", "B"), common.legend = TRUE, legend = "right")
+ggsave("./04_Goal_3/corr_plots_species.png", width = 20, height = 10)
+setwd(input)
 
 
 

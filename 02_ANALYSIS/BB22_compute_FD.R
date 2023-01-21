@@ -79,15 +79,15 @@ require(vegan)
     droplevels()
   
   # find Individuals with less than 3 plant species in pollen and remove them from data set
-  if (j == "ID.short") {
-    BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == "B.pascuorum",]%>%
-      group_by(ID.short) %>%
-      summarise(NrSpecies=n_distinct(plant.species))
-    filter.list <- BB22.NrSpecies$ID.short[BB22.NrSpecies$NrSpecies < 6]
-  }
- 
-BB22_full.loop <- BB22_full.loop[!BB22_full.loop$ID.short %in% filter.list,]%>% 
-  droplevels() #filter for individuals with less more than 5 species
+#   if (j == "ID.short") {
+#     BB22.NrSpecies <- BB22_full[BB22_full$bbspecies == "B.pascuorum",]%>%
+#       group_by(ID.short) %>%
+#       summarise(NrSpecies=n_distinct(plant.species))
+#     filter.list <- BB22.NrSpecies$ID.short[BB22.NrSpecies$NrSpecies < 6]
+#   }
+#  
+# BB22_full.loop <- BB22_full.loop[!BB22_full.loop$ID.short %in% filter.list,]%>% 
+#   droplevels() #filter for individuals with less more than 5 species
   
 BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, Flowering_start, structural_blossom_numeric, 
@@ -106,15 +106,19 @@ trt.scaled <- scores(trt.pca)[,1:2] # adjust number of axes for each group
 
 # NMDS
 trt.NMDS <-
-  metaMDS(scale(traits),
+  metaMDS(scale(trt.scaled),
           distance = "bray",
           k = 2,
           maxit = 999, 
           trymax = 500,
           wascores = TRUE)
-trt.space.NMDS <- trt.NMDS$spcies   # you can then used this object in the same was as the PCA above   :)
+trt.space.NMDS <- trt.NMDS$species   # you can then used this object in the same was as the PCA above   :)
+scores(trt.NMDS, display="site")
+# Stress:     0.2370617 --> not good...
 
-#change
+# As a rule of thumb, an NMDS ordination with a stress value around or above 0.2 is deemed suspect and a 
+# stress value approaching 0.3 indicates that the ordination is arbitrary. Stress values equal to or 
+# below 0.1 are considered fair, while values equal to or below 0.05 indicate good fit. 
 
 # 2. prepare data frames for mFD-package
 # 2.1 bring plants species per site/ID into wide format (for each BB species)
