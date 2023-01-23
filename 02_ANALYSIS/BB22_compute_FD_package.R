@@ -53,7 +53,7 @@ res <- rcorr(as.matrix(BB22_full.numeric[,c(12:18)]),type="pearson")
 M <- cor(BB22_full.numeric[,c(12:18)], use = "complete.obs")
 corrplot::corrplot(M, type="upper", order="hclust", p.mat = res$P, sig.level = 0.05)
 
-# remove plant height, flowering start and symmetry
+# remove plant height, flowering start and symmetry and look at correlation
 res2 <- rcorr(as.matrix(BB22_full.numeric[,c(12, 14, 15, 16)]), type="pearson") # all p values are <0.05
 M <- cor(BB22_full.numeric[,c(12, 14, 15, 16)], use = "complete.obs")
 corrplot::corrplot(M, type="upper", order="hclust", p.mat = res2$P, sig.level = 0.05)
@@ -68,7 +68,7 @@ BB22_full.red <- BB22_full.numeric%>%
 #   for (j in c("ID.short", "site", "landscape")) {
 
 j <- "ID.short"
-i <- "B.pascuorum"
+i <- "B.lapidarius"
 
 
 # 1. Impute missing values and reduce data dimensionality using PCA 
@@ -98,13 +98,13 @@ rownames(traits)  <- BB22_full.loop.species$plant.species
 traits <- traits[order(row.names(traits)), ] # reorder traits into alphabetical order
 
 
-# bring plants species per site/ID into wide format (for each BB species)
-library(reshape2)
-# presence/absence data
-wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")[,-1]
-rownames(wide)  <- levels(BB22_full.loop[[j]])
-sp.pa <- decostand(wide, "pa")
-sp.pa <- as.matrix(sp.pa) #turn into matrix
+# # bring plants species per site/ID into wide format (for each BB species)
+# library(reshape2)
+# # presence/absence data
+# wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")[,-1]
+# rownames(wide)  <- levels(BB22_full.loop[[j]])
+# sp.pa <- decostand(wide, "pa")
+# sp.pa <- as.matrix(sp.pa) #turn into matrix
 
 ### ACHTUNG KANN NICHT IM LOOP LAUFEN !!!
 # relative abundance data
@@ -134,9 +134,29 @@ sp.pa <- as.matrix(sp.pa) #turn into matrix
   
 # compute FD
 library(FD)
-fd <- FD::dbFD(x = traits , a = sp.ab)
+fd.weig <- FD::dbFD(x = traits , a = sp.ab, w.abun = T) # weighted 
+fd.bino <- FD::dbFD(x = traits , a = sp.pa) # not weighted 
 
+df.FD <- data.frame(nbsp.w = fd.weig$nbsp,
+                    nbsp = fd.bino$nbsp,
+                    FRic.w = fd.weig$FRic, 
+                    FRic = fd.bino$FRic, 
+                    FEve.w = fd.weig$FEve, 
+                    FEve = fd.bino$FEve, 
+                    FDiv.w = fd.weig$FDiv, 
+                    FDiv = fd.bino$FDiv)
 
+# look at possible correlation between weighted and non.weighted FDs
+library(GGally)
+ggpairs(df.FD)
 
+cor(df.FD$FRic, df.FD$FRic.w, method=c("pearson"), use = "complete.obs") # are the same
+cor(df.FD$FEve, df.FD$FEve.w, method=c("pearson"), use = "complete.obs") # 0.291
+cor(df.FD$FDiv, df.FD$FDiv.w, method=c("pearson"), use = "complete.obs") # 0.229
+
+# weighed FD are strongly different than non weighted --> makes sense to use weighted???
+
+assign(paste("df.FD", i, sep="_"), df.FD[, c(1,3,5,7)])
+write.csv(assign(paste("df.FD",i,j, sep = "_"), df.FD[, c(1,3,5,7)]), file = paste("./FD/FD_package",i,j, ".csv", sep = "_"))
 
 
