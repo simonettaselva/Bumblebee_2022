@@ -52,12 +52,16 @@ res <- rcorr(as.matrix(BB22_full.numeric[,c(11:17)]),type="pearson")
 M <- cor(BB22_full.numeric[,c(11:17)], use = "complete.obs")
 corrplot::corrplot(M, type="upper", order="hclust", p.mat = res$P, sig.level = 0.05)
 
-# remove growth_form_numeric from data set
-res2 <- rcorr(as.matrix(BB22_full.numeric[,c(11:12, 14:17)]),type="pearson") # all p values are <0.05
+# remove plant height, flowering start and symmetry
+res2 <- rcorr(as.matrix(BB22_full.numeric[,c(11, 13, 14, 15)]), type="pearson") # all p values are <0.05
+M <- cor(BB22_full.numeric[,c(11, 13, 14, 15)], use = "complete.obs")
+corrplot::corrplot(M, type="upper", order="hclust", p.mat = res2$P, sig.level = 0.05)
 
+# remove plant height, flowering start and symmetry from data set
 BB22_full.red <- BB22_full.numeric%>% 
-  select(-growth_form_numeric) # remove growth_form_numeric from data set
-
+  select(-Flowering_start,
+         -symmetry_numeric,
+         -plant_height_m) 
 
 # for (i in levels(BB22_full.red$bbspecies)) { #loop trough bumblebee species
 #   for (j in c("ID.short", "site", "landscape")) {
@@ -98,6 +102,16 @@ trt.mis.pred <- preProcess(as.data.frame(BB22_full.loop.species[,-c(1)]), "knnIm
 traits <- predict(trt.mis.pred, BB22_full.loop.species[,-c(1)]); head(trt.mis.pred)
 traits <- as.data.frame(traits)
 rownames(traits)  <- BB22_full.loop.species$plant.species
+
+# BLABLABLA
+traits2= traits[order(row.names(traits)), ]
+
+fd=FD::dbFD(x =traits2, a =sp.pa )
+
+#evtl. add abundance matrix
+
+
+
 
 # PCA -> reduce dimensionality
 trt.pca <- prcomp(traits, scale. = T, center = T)
