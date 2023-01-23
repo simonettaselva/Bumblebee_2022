@@ -146,25 +146,16 @@ correlation.matrix.pasc <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(correlation.matrix.pasc) <- "numeric"
 
 # plot the correlations
-library(corrplot)
-library(RColorBrewer)
 library(ggcorrplot)
 
-par(mfrow = c(1,2))
-corrplot(correlation.matrix.lapi, type="upper", order="hclust",
-         col=brewer.pal(n=8, name="RdYlBu"))
-corrplot(correlation.matrix.pasc, type="upper", order="hclust",
-         col=brewer.pal(n=8, name="RdYlBu"))
-par(mfrow = c(1,1))
-
-a <- ggcorrplot(correlation.matrix.lapi, hc.order = TRUE, type = "lower", method = "circle",
+a <- ggcorrplot(correlation.matrix.lapi, hc.order = F, type = "lower", #method = "circle",
            outline.col = "white")+ 
   labs(title ='B. lapidarius', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(-0.02,1), low = "white", high =  "#07575B")
 
-b <- ggcorrplot(correlation.matrix.pasc, hc.order = TRUE, type = "lower", method = "circle",
+b <- ggcorrplot(correlation.matrix.pasc, hc.order = F, type = "lower", #method = "circle",
            outline.col = "white")+ 
   labs(title ='B.pascuroum', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
