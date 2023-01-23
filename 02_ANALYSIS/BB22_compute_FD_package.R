@@ -130,7 +130,6 @@ sp.ab <- as.matrix(wide)
 # presence/absence
 sp.pa <- decostand(wide, "pa")
 sp.pa <- as.matrix(sp.pa) #turn into matrix
-
   
 # compute FD
 library(FD)
