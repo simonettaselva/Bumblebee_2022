@@ -7,6 +7,7 @@
 ################################################
 
 rm(list=ls())
+# preparation and load data ----
 
 #load libraries
 library(dplyr)
@@ -39,7 +40,6 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 setwd(input)
 BB22.bb.traits <- read_csv("BB22_traits.csv")
 
-#### data preparation ####
 # replace the names for urban and rural
 for (i in 1:nrow(BB22.bb.traits)) {
   if (BB22.bb.traits$landscape[i] == "urban") {
@@ -48,17 +48,19 @@ for (i in 1:nrow(BB22.bb.traits)) {
     BB22.bb.traits$landscape[i] = "R"
   }
 }
+
 # rename column site to match other dataframes
 BB22.bb.traits <- BB22.bb.traits %>%
   mutate(site = paste(location, landscape, replicate, sep = ""))
 
+# B.PASCUORUM ---- 
 #only B.pascuroum 
 BB22.bb.traits.sp <- BB22.bb.traits[BB22.bb.traits$bbspecies == "B.pascuorum",]
 
 # import data with spatial information on sites
 BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
 
-# import data with funtional diversity of plants per site
+# import data with functional diversity of plants per site
 BB22.fun.site <- read_csv("./FD/fd_B.pascuorum_site.csv")%>% 
   rename_with(.cols = 1, ~"site")
 
@@ -83,7 +85,7 @@ BB22.bb.traits.site <- BB22.bb.traits.sp %>%
 BB22.sites <- merge(BB22.bb.traits.site, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
 BB22.sites <- merge(BB22.sites, BB22.fun.site, by  = "site", all.x=TRUE)
 
-#### look at data ####
+## look at data ----------------------------------------------------------------------------------------
 # FDis, FRic, FDiv, FEve, FSpe
 library(Hmisc)
 hist.data.frame(BB22.sites[, -c(1:14)])
@@ -164,7 +166,7 @@ for (i in metrics) {
   setwd(input)
 } # end loop i
 
-# MODELLING
+## modelling ----------------------------------------------------------------------------------------
 # center and scale all the variables
 BB22.sites[, c(4:12, 15, 16, 19, 20, 21, 23)] <- scale(BB22.sites[, c(4:12, 15, 16, 19, 20, 21, 23)],center=TRUE,scale=TRUE)
 
@@ -183,7 +185,7 @@ corrplot::corrplot(M, type="upper", order="hclust",
 
 # !!! a lot are multicollinear. in the model only use: proboscis_ratio, fore_wing_ratio and corbicula_ratio
 
-#  fit GLMM
+#  fit GLMMs
 #load the libraries
 library(lme4)
 library(car)
@@ -191,7 +193,7 @@ library(MuMIn)
 library(arm)
 
 
-# ----------------------------------------------------- Species Richness ---------------------------------------------------
+### Species Richness ----------------------------------------------------------------------------------------
 
 # built an initial full model based on collinearity 
 M1.full <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
@@ -245,7 +247,7 @@ avg.model$sw
 # the only variable having a significant effect in any model is intertegular distance
 
 
-# ----------------------------------------------------- Functional Richness ---------------------------------------------------
+### Functional Richness ----------------------------------------------------------------------------------------
 # built an initial full model based on collinearity 
 M2.full <- lmer(fric ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
@@ -290,7 +292,7 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
-# ----------------------------------------------------- Functional Divergence ---------------------------------------------------
+### Functional Divergence ----------------------------------------------------------------------------------------
 # built an initial full model based on collinearity 
 M3.full <- lmer(fdiv ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.sites)
@@ -325,7 +327,7 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
-# ----------------------------------------------------- Functional Evenness ---------------------------------------------------
+### Functional Evenness ----------------------------------------------------------------------------------------
 # built an initial full model based on collinearity 
 M4.full <- lmer(feve ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.sites) #boundary (singular) fit: see help('isSingular')
@@ -382,10 +384,8 @@ avg.model$sw
 
 
 
-
-#### only B.lapidarius ####
-
-#### Data preparation ####
+# B.LAPIDARIUS ----
+# only B.lapidarius
 BB22.bb.traits.sp <- BB22.bb.traits[BB22.bb.traits$bbspecies == "B.lapidarius",]
 
 # import data with spatial information on sites
@@ -416,7 +416,7 @@ BB22.bb.traits.site <- BB22.bb.traits.sp %>%
 BB22.sites <- merge(BB22.bb.traits.site, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
 BB22.sites <- merge(BB22.sites, BB22.fun.site, by  = "site", all.x=TRUE)
 
-# look at data
+## look at data ----------------------------------------------------------------------------------------
 # FDis, FRic, FDiv, FEve, FSpe
 library(Hmisc)
 hist.data.frame(BB22.sites[, -c(1:14)])
@@ -494,7 +494,7 @@ for (i in metrics) {
 } # end loop i
 
 
-# MODELLING
+## modelling ----------------------------------------------------------------------------------------
 #load the libraries
 library(lme4)
 library(car)
@@ -522,7 +522,7 @@ corrplot::corrplot(M, type="upper", order="hclust",
 #  fit GLMM
 
 
-# ----------------------------------------------------- Species Richness ---------------------------------------------------
+### Species Richness ----------------------------------------------------------------------------------------
 
 # built an initial full model based on collinearity 
 M5.full <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
@@ -568,7 +568,7 @@ summary(avg.model)
 avg.model$sw
 
 
-# ----------------------------------------------------- Functional Richness ---------------------------------------------------
+### Functional Richness ----------------------------------------------------------------------------------------
 # built an initial full model based on collinearity 
 M6.full <- lmer(fric ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
@@ -604,7 +604,7 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
-# ----------------------------------------------------- Functional Divergence ---------------------------------------------------
+### Functional Divergence ----------------------------------------------------------------------------------------
 # built an initial full model based on collinearity 
 M6.full <- lmer(fdiv ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.sites)
@@ -639,7 +639,7 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
-# ----------------------------------------------------- Functional Evenness ---------------------------------------------------
+### Functional Evenness ----------------------------------------------------------------------------------------
 # built an initial full model based on collinearity 
 M8.full <- lmer(feve ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.sites) #boundary (singular) fit: see help('isSingular')
