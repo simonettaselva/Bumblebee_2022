@@ -53,7 +53,7 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 
 # load data
 setwd(input)
-BB22.bb.traits <- read_csv("BB22.bb.traits.csv")
+BB22.bb.traits <- read_csv("BB22_traits.csv")
 
 #### data preparation ####
 # replace the names for urban and rural

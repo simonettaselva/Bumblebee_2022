@@ -65,17 +65,12 @@ BB22_full.red <- BB22_full.numeric%>%
          -plant_height_m) 
 
 # for (i in levels(BB22_full.red$bbspecies)) { #loop trough bumblebee species
-#   for (j in c("ID.short", "site", "landscape")) {
+#   for (j in c("ID.short", "site")) {
 
-j <- "ID.short"
-i <- "B.lapidarius"
+ j <- "ID.short"
+ i <- "B.pascuorum"
 
-
-# 1. Impute missing values and reduce data dimensionality using PCA 
-require(caret)
-require(vegan)
-
-# remove plant species entrences that do not have traits
+# remove plant species entries that do not have traits
 BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
   filter(plant.species!= "Fabaceae sp.",
          plant.species!= "Cyclamen sp.",
@@ -84,38 +79,33 @@ BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
   mutate(Flowering_duration = as.numeric(Flowering_duration))%>% 
   droplevels()
 
-# select columnes used in computing FDs
+# select columns used in computing FDs
 BB22_full.loop.species <- BB22_full.loop %>% 
   select(plant.species, Flowering_duration, structural_blossom_numeric, 
          sugar.concentration, growth_form_numeric) %>% 
   distinct() # remove duplicates
 
 # impute missing data
+library(caret)
+library(vegan)
+
 trt.mis.pred <- preProcess(as.data.frame(BB22_full.loop.species[,-c(1)]), "knnImpute")
 traits <- predict(trt.mis.pred, BB22_full.loop.species[,-c(1)]); head(trt.mis.pred)
 traits <- as.data.frame(traits)
 rownames(traits)  <- BB22_full.loop.species$plant.species
 traits <- traits[order(row.names(traits)), ] # reorder traits into alphabetical order
 
-
-# # bring plants species per site/ID into wide format (for each BB species)
-# library(reshape2)
-# # presence/absence data
-# wide <- dcast(BB22_full.loop, BB22_full.loop[[j]] ~ plant.species, value.var="binom.abund")[,-1]
-# rownames(wide)  <- levels(BB22_full.loop[[j]])
-# sp.pa <- decostand(wide, "pa")
-# sp.pa <- as.matrix(sp.pa) #turn into matrix
-
-### ACHTUNG KANN NICHT IM LOOP LAUFEN !!!
 # relative abundance data
+j.unquoted <- rlang::sym(j)
+
 BB22_full.ab <- BB22_full.loop%>%
-  group_by(ID.short, plant.species)%>%
+  group_by(!!j.unquoted, plant.species)%>%
   summarise(abundance = sum(abundance))%>% 
   distinct() # remove duplicates
 
 BB22_full.ab.new <- c()
-for (h in unique(BB22_full.ab$ID.short)) {
-  temp <- BB22_full.ab[BB22_full.ab$ID.short==h,]
+for (h in unique(BB22_full.ab[[j]])) {
+  temp <- BB22_full.ab[BB22_full.ab[[j]]==h,]
   perc <- sum(temp$abundance)
   for (k in 1:nrow(temp)) {
     temp$ab.new[k] <- 100/perc*temp$abundance[k]/100
@@ -123,8 +113,11 @@ for (h in unique(BB22_full.ab$ID.short)) {
   BB22_full.ab.new <- rbind(BB22_full.ab.new, temp[, c(1,2,4)])
 }
 
-wide <- dcast(BB22_full.ab.new, ID.short ~ plant.species, value.var="ab.new")[,-1]
-rownames(wide)  <- levels(BB22_full.ab.new$ID.short)
+library(reshape2)
+wide <- dcast(BB22_full.ab.new, BB22_full.ab.new[[j]] ~ plant.species, value.var="ab.new")[,-1]
+rownames(wide)  <- levels(BB22_full.ab.new[[j]])
+wide[is.na(wide)] <- 0
+
 # abundance
 sp.ab <- as.matrix(wide)
 # presence/absence
@@ -155,7 +148,15 @@ cor(df.FD$FDiv, df.FD$FDiv.w, method=c("pearson"), use = "complete.obs") # 0.229
 
 # weighed FD are strongly different than non weighted --> makes sense to use weighted???
 
+# assign and export dataframe
 assign(paste("df.FD", i, sep="_"), df.FD[, c(1,3,5,7)])
-write.csv(assign(paste("df.FD",i,j, sep = "_"), df.FD[, c(1,3,5,7)]), file = paste("./FD/FD_package",i,j, ".csv", sep = "_"))
+write.csv(assign(paste("df.FD",i,j, sep = "_"), df.FD[, c(1,3,5,7)]), file = paste("./FD/FD_package_", i, "_", j, ".csv", sep = ""))
+
+
+
+
+
+
+
 
 
