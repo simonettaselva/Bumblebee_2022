@@ -17,22 +17,6 @@ library(glmmTMB)
 library(DHARMa)
 
 # load function
-# calculate p values of correlations
-cor.mtest <- function(mat, ...) {
-  mat <- as.matrix(mat)
-  n <- ncol(mat)
-  p.mat<- matrix(NA, n, n)
-  diag(p.mat) <- 0
-  for (i in 1:(n - 1)) {
-    for (j in (i + 1):n) {
-      tmp <- cor.test(mat[, i], mat[, j], ...)
-      p.mat[i, j] <- p.mat[j, i] <- tmp$p.value
-    }
-  }
-  colnames(p.mat) <- rownames(p.mat) <- colnames(mat)
-  p.mat
-}
-
 #function to produce model-checking plots for the fixed effects of an lmer model
 fix.check <- function(mod){
   par(mfrow = c(1,3))
