@@ -36,6 +36,7 @@ fix.check <- function(mod){
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
 
+
 # load data
 setwd(input)
 BB22.bb.traits <- read_csv("BB22_traits.csv")
@@ -63,7 +64,7 @@ BB22.bb.traits.sp <- BB22.bb.traits[BB22.bb.traits$bbspecies == "B.pascuorum",]
 # import data with spatial information on sites
 BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
 
-# import data with funtional diversity of plants per site
+# import data with functional diversity of plants per site
 BB22.fun.ID <- read_csv("./FD/FD_package_B.pascuorum_ID.short.csv")%>% 
   rename_with(.cols = 1, ~"ID")%>%
   rename_with(.cols = 2, ~"sp_richn")%>%
@@ -81,7 +82,7 @@ BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE)
 ## look at data ----------------------------------------------------------------------------------------
 # FDis, FRic, FDiv, FEve, FSpe
 library(Hmisc)
-hist.data.frame(BB22.ID[, c(17:20)])
+# hist.data.frame(BB22.ID[, c(17:20)])
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
 resp <- c("sp_richn", "fric", "fdiv", "feve")
@@ -139,9 +140,6 @@ library(nlme)
 for (i in metrics) {
   x <- 1 # for naming the plots
   for (j in traits) {
-    
-    i <- "fric"
-    j <- "corbicula_ratio"
     f <- formula(paste(i,"~", j))
     fit <- lme(f, random=~1|landscape, data = BB22.ID, na.action=na.omit)
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
@@ -162,10 +160,9 @@ for (i in metrics) {
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
                                          face = "bold", size = 22))
-  # ggsave(paste("./functional diversity/pasc_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("./functional diversity/pasc_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
   setwd(input)
 } # end loop i
-
 
 
 ## modelling ----------------------------------------------------------------------------------------
@@ -196,6 +193,8 @@ library(car)
 library(MuMIn)
 library(arm)
 
+# create empty list for best models for model testing
+models <- list()
 
 ### Species Richness ----------------------------------------------------------------------------------------
 
@@ -241,7 +240,6 @@ summary(avg.model)
 avg.model$sw
 
 # the only variable having a significant effect in any model is intertegular distance
-
 
 ### Functional Richness ----------------------------------------------------------------------------------------
 # built an initial full model based on colinearity 
@@ -348,6 +346,159 @@ top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham 
 avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
+
+## model testing ----------------------------------------------------------------------------------------
+
+### Data splitting  ----------------------------------------------------------------------------------------
+library(rsample)
+set.seed(123) # for reproducibility
+BB22.ID.complete <- BB22.ID %>%
+  filter(complete.cases(.))
+split <- initial_split(BB22.ID.complete, prop = 0.8)
+ddf_train <- training(split)
+ddf_test <- testing(split) 
+
+### Model training  and predicting ----------------------------------------------------------------------------------------
+library(caret) 
+
+for (i in metrics) {
+  f <- as.formula(paste(i,  "~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio + landscape", sep = ""))
+  train <- train(form = f,
+                 data = ddf_train, 
+                 method = "lm",
+                 trControl = trainControl(method = "cv", number = 10))
+  
+  train$finalModel
+  
+  ## Get variable importance, and turn into a data frame
+  var_imp <- varImp(train, scale=FALSE)$importance
+  var_imp <- data.frame(variables=row.names(var_imp), importance=var_imp$Overall)
+  
+  ## Create a plot of variable importance
+  var_imp %>%
+    
+    ## Sort the data by importance
+    arrange(importance) %>%
+    
+    ## Create a ggplot object for aesthetic
+    ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+    
+    ## Plot the bar graph
+    geom_bar(stat='identity') + 
+    
+    ## Flip the graph to make a horizontal bar plot
+    coord_flip() + 
+    
+    ## Add x-axis label
+    xlab('Variables') +
+    
+    ## Add a title
+    labs(title='Linear model variable importance') + 
+    
+    ## Some layout for the plot
+    theme_minimal() + 
+    theme(axis.text = element_text(size = 10), 
+          axis.title = element_text(size = 15), 
+          plot.title = element_text(size = 20), 
+    )
+  setwd(output)
+  ggsave(paste("./functional diversity/pasc_ID/training and predicting/", i, "var_imp_pasc.png", sep = ""), width = 8, height = 8)
+  setwd(input)
+  
+  predict_train <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions; remove the Species
+    newdata=ddf_train)
+  
+  predict_test <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions; remove the Species
+    newdata=ddf_test)
+  
+  data_metrics_train <- data.frame(truth=ddf_train$feve, pred=predict_train)
+  metrics_train <- metrics(data_metrics_train, truth, pred)
+  
+  data_metrics_test <- data.frame(truth=ddf_test$feve, pred=predict_test)
+  metrics_test <- metrics(data_metrics_test, truth, pred)
+  
+  # plotting prediction
+  library(patchwork)
+  
+  gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
+    geom_point()+
+    ggtitle("Density of Data Point for Testing Data")+
+    xlab("predicted values for feve")+
+    ylab("observed values for feve")+
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
+    geom_point()+
+    ggtitle("Density of Data Point for Training Data")+
+    xlab("predicted values for feve")+
+    ylab("observed values for feve")+
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  # arrange them into one file to export
+  # setwd(output)
+  ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
+            labels = c("A", "B"), common.legend = TRUE, legend = "right")
+  # ggsave("./04_Goal_3/corr_plots_species.png", width = 20, height = 10)
+  # setwd(input)
+  
+  
+}
+
+### Predicting  ----------------------------------------------------------------------------------------
+
+predict_train <- predict(
+  ## lm object
+  object=train, 
+  ## Data to use for predictions; remove the Species
+  newdata=ddf_train)
+
+predict_test <- predict(
+  ## lm object
+  object=train, 
+  ## Data to use for predictions; remove the Species
+  newdata=ddf_test)
+
+data_metrics_train <- data.frame(truth=ddf_train$feve, pred=predict_train)
+metrics(data_metrics_train, truth, pred)
+
+data_metrics_test <- data.frame(truth=ddf_test$feve, pred=predict_test)
+metrics(data_metrics_test, truth, pred)
+
+# plotting prediction
+library(patchwork)
+
+gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
+  geom_point()+
+  ggtitle("Density of Data Point for Testing Data")+
+  xlab("predicted values for feve")+
+  ylab("observed values for feve")+
+  theme(aspect.ratio=1)+
+  geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+
+gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
+  geom_point()+
+  ggtitle("Density of Data Point for Training Data")+
+  xlab("predicted values for feve")+
+  ylab("observed values for feve")+
+  theme(aspect.ratio=1)+
+  geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+
+# arrange them into one file to export
+# setwd(output)
+ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
+          labels = c("A", "B"), common.legend = TRUE, legend = "right")
+# ggsave("./04_Goal_3/corr_plots_species.png", width = 20, height = 10)
+# setwd(input)
+
+
 
 
 

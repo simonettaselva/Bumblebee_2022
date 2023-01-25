@@ -60,14 +60,14 @@ corrplot::corrplot(M, type="upper", order="hclust", p.mat = res2$P, sig.level = 
 
 # remove plant height, flowering start and symmetry from data set
 BB22_full.red <- BB22_full.numeric%>% 
-  select(-Flowering_start,
+  dplyr::select(-Flowering_start,
          -symmetry_numeric,
          -plant_height_m) 
 
 # for (i in levels(BB22_full.red$bbspecies)) { #loop trough bumblebee species
 #   for (j in c("ID.short", "site")) {
 
- j <- "ID.short"
+ j <- "site"
  i <- "B.pascuorum"
 
 # remove plant species entries that do not have traits
@@ -81,7 +81,7 @@ BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
 
 # select columns used in computing FDs
 BB22_full.loop.species <- BB22_full.loop %>% 
-  select(plant.species, Flowering_duration, structural_blossom_numeric, 
+  dplyr::select(plant.species, Flowering_duration, structural_blossom_numeric, 
          sugar.concentration, growth_form_numeric) %>% 
   distinct() # remove duplicates
 
