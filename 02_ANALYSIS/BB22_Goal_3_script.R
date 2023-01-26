@@ -9,7 +9,7 @@
 # Aim: Examine the diet consistency between and within urban and rural landscapes for both species.
 
 
-# xxx ----
+# SITE ----
 ## preparation ----
 # clear environment
 rm(list=ls())
@@ -51,14 +51,23 @@ for (i in sitenames) {
   site.list.bb[[i]]  <- unique(BB22.full.species$plant.species[BB22.full.species$site == i])
 }
 
+# create species lists per region
+region <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
+region.list.bb <- list()
+
+for (i in region) {
+  region.list.bb[[i]]  <- unique(BB22.full.species$plant.species[BB22.full.species$region == i])
+}
+
 # import species lists form GBIF and InfoFlora (file BB22_sites_plants_GBIF.R)
 site.list.occ <- readRDS("sp_list_gbif_infoflora.RData")
 
-# create list with intersection of species lists for all regions
+# create list with intersection of species lists for all sites
 list.intersections <- list()
 list.table <- list()
-correlation.df.lapi <- data.frame(species = NA, site1 = NA, site2 = NA, Correlation = NA)
+correlation.site.lapi <- data.frame(species = NA, site1 = NA, site2 = NA, Correlation = NA)
 
+# compute and store correlations between each site
 for (i in sitenames) {
   for (j in sitenames) {
     # find common species of two sites
@@ -72,10 +81,22 @@ for (i in sitenames) {
     
     # compute correlation and store them in a dataframe
     correlation <- c("B.lapidarius", i, j, round(cor(comparison.table[,1], comparison.table[,2], method=c("pearson")),3))
-    correlation.df.lapi <- rbind(correlation.df.lapi, correlation)
+    correlation.site.lapi <- rbind(correlation.site.lapi, correlation)
     
   } # end loop j
 } # end loop i
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## B.pascuroum ----
@@ -100,7 +121,7 @@ site.list.occ <- readRDS("sp_list_gbif_infoflora.RData")
 # create list with intersection of species lists for all regions
 list.intersections <- list()
 list.table <- list()
-correlation.df.pasc <- data.frame(species = NA, site1 = NA, site2 = NA, Correlation = NA)
+correlation.site.pasc <- data.frame(species = NA, site1 = NA, site2 = NA, Correlation = NA)
 
 for (i in sitenames) {
   for (j in sitenames) {
@@ -115,32 +136,32 @@ for (i in sitenames) {
     
     # compute correlation and store them in a data frame
     correlation <- c("B.pascuorum", i, j, round(cor(comparison.table[,1], comparison.table[,2], method=c("pearson")),3))
-    correlation.df.pasc <- rbind(correlation.df.pasc, correlation)
+    correlation.site.pasc <- rbind(correlation.site.pasc, correlation)
   
     # correlation.matrix.pasc[k, l] <- round(cor(comparison.table[,1], comparison.table[,2], method=c("pearson")),3)
     
   } # end loop j
 } # end loop i
 
-correlation.df.lapi <- correlation.df.lapi[-1, ]
-correlation.df.pasc <- correlation.df.pasc[-1, ]
-correlation.df <- rbind(correlation.df.lapi, correlation.df.pasc)
+correlation.site.lapi <- correlation.site.lapi[-1, ]
+correlation.site.pasc <- correlation.site.pasc[-1, ]
+correlation.site <- rbind(correlation.site.lapi, correlation.site.pasc)
 
 # bring the data frames into correlation matrix format
 # B.lapidarius
-correlation.df.lapi$site1 <- as.factor(correlation.df.lapi$site1)
-correlation.matrix.lapi <- split(correlation.df.lapi, f = correlation.df.lapi$site1)
+correlation.site.lapi$site1 <- as.factor(correlation.site.lapi$site1)
+correlation.matrix.lapi <- split(correlation.site.lapi, f = correlation.site.lapi$site1)
 temp <- list.cbind(correlation.matrix.lapi)[, seq(4, 67, 4)]
-colnames(temp) <- levels(correlation.df.lapi$site1)
+colnames(temp) <- levels(correlation.site.lapi$site1)
 rownames(temp) <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
 correlation.matrix.lapi <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(correlation.matrix.lapi) <- "numeric"
 
 # B.pascuroum
-correlation.df.pasc$site1 <- as.factor(correlation.df.pasc$site1)
-correlation.matrix.pasc <- split(correlation.df.pasc, f = correlation.df.pasc$site1)
+correlation.site.pasc$site1 <- as.factor(correlation.site.pasc$site1)
+correlation.matrix.pasc <- split(correlation.site.pasc, f = correlation.site.pasc$site1)
 temp <- list.cbind(correlation.matrix.pasc)[, seq(4, 67, 4)]
-colnames(temp) <- levels(correlation.df.pasc$site1)
+colnames(temp) <- levels(correlation.site.pasc$site1)
 rownames(temp) <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
 correlation.matrix.pasc <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(correlation.matrix.pasc) <- "numeric"
