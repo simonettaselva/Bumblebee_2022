@@ -360,6 +360,7 @@ ddf_test <- testing(split)
 
 ### Model training and predicting ----------------------------------------------------------------------------------------
 library(caret) 
+library(yardstick)
 
 #### Linear Model ----------------------------------------------------------------------------------------
 
@@ -402,7 +403,7 @@ for (i in metrics) {
           plot.title = element_text(size = 20), 
     )
   setwd(output)
-  ggsave(paste("./functional diversity/pasc_ID/training and predicting/linear model/", i, "_lm_var_imp_pasc.png", sep = ""), width = 8, height = 8)
+  ggsave(paste("./functional diversity/pasc_ID/training and predicting/linear model/", i, "_lm_var_imp_pasc.png", sep = ""), width = 8, height = 5)
   setwd(input)
   
   predict_train <- predict(
@@ -429,7 +430,7 @@ for (i in metrics) {
   gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
     geom_point()+
     labs(title = "Density of Data Point for Training Data",
-         subtitle = paste("Linear Model: Rsq = ", metrics_test$.estimate[2], sep = ""), 
+         subtitle = paste("Linear Model: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""), 
          x = paste("predicted values for ", i, sep = ""),
          y = paste("observed values for ", i, sep = "")) +
     theme(aspect.ratio=1)+
@@ -438,7 +439,7 @@ for (i in metrics) {
   gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
     geom_point()+
     labs(title = "Density of Data Point for Training Data",
-         subtitle = paste("Linear Model: Rsq = ", metrics_train$.estimate[2], sep = ""),
+         subtitle = paste("Linear Model: Rsq = ", round(metrics_train$.estimate[2], 3), sep = ""),
          x = paste("predicted values for ", i, sep = ""),
          y = paste("observed values for ", i, sep = "")) +
     theme(aspect.ratio=1)+
@@ -448,7 +449,7 @@ for (i in metrics) {
   setwd(output)
   ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
             labels = c("A", "B"), common.legend = TRUE, legend = "right")
-  ggsave(paste("./functional diversity/pasc_ID/training and predicting/linear model/", i, "_lm_prediction_pasc.png", sep = ""), width = 8, height = 8)
+  ggsave(paste("./functional diversity/pasc_ID/training and predicting/linear model/", i, "_lm_prediction_pasc.png", sep = ""), width = 8, height = 5)
   setwd(input)
 } # end i loop
 
@@ -520,7 +521,7 @@ for (i in metrics) {
   gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
     geom_point()+
     labs(title = "Density of Data Point for Training Data",
-         subtitle = paste("Random Forest: Rsq = ", metrics_test$.estimate[2], sep = ""),
+         subtitle = paste("Random Forest: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""),
          x = paste("predicted values for ", i, sep = ""),
          y = paste("observed values for ", i, sep = "")) +
     theme(aspect.ratio=1)+
@@ -529,7 +530,7 @@ for (i in metrics) {
   gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
     geom_point()+ 
     labs(title = "Density of Data Point for Training Data",
-         subtitle = paste("Random Forest: Rsq", metrics_train$.estimate[2], sep = ""),
+         subtitle = paste("Random Forest: Rsq", round(metrics_train$.estimate[2], 3), sep = ""),
          x = paste("predicted values for ", i, sep = ""),
          y = paste("observed values for ", i, sep = "")) +
     theme(aspect.ratio=1)+
@@ -539,7 +540,7 @@ for (i in metrics) {
   setwd(output)
   ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
             labels = c("A", "B"), common.legend = TRUE, legend = "right")
-  ggsave(paste("./functional diversity/pasc_ID/training and predicting/random forest/", i, "_rf_prediction_pasc.png", sep = ""), width = 8, height = 8)
+  ggsave(paste("./functional diversity/pasc_ID/training and predicting/random forest/", i, "_rf_prediction_pasc.png", sep = ""), width = 8, height = 5)
   setwd(input)
   
 } # end i loop
