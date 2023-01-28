@@ -339,13 +339,130 @@ setwd(output)
 plot1 <- ggarrange(a, b, c, ncol = 1, nrow = 3,
           labels = c("A", "B", "C"), common.legend = TRUE, legend = "right")
 annotate_figure(plot1, top = text_grob("B.pascuroum", face = "bold", size = 22))
-# 
 ggsave("./04_Goal_3/corr_pasc_site.png", width = 10, height = 30)
 setwd(input)
 
 ## region level ----
+# prepare list element to store correlation matrices for species, genus and family
+pasc.region <- list()
+
 ### species ----
+
+# convert into binary data frame for comaring and later calculate correlations between regions
+BB22.full.table <- t(as.data.frame.matrix(+(table(BB22.full.species[, c("region", "plant.species")]) > 0)))
+BB22.full.table <- as.data.frame(BB22.full.table)
+BB22.full.table$species <- rownames(BB22.full.table)
+
+# create species lists per region
+regionnames <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
+region.species.bb <- list()
+
+for (i in regionnames) {
+  region.species.bb[[i]]  <- unique(BB22.full.species$plant.species[BB22.full.species$region == i])
+} # end loop i
+
+# import data from GBIF and InfoFlora and convert into species lists per site
+# InfoFlora
+#prepare list to store species lists
+site.list.InfoFlora <- list()
+for (i in sitenames) {
+  # import data
+  site.data.InfoFlora  <- read_csv(paste("./sites_plant_list/04_InfoFlora_1500/",i , "_IF_1500.csv", sep = "")) 
+  # summarize only needed variables (site and species)
+  site.data.InfoFlora <- site.data.InfoFlora %>%
+    summarise(Species = Taxon,
+              site = rep(i, nrow(site.data.InfoFlora)),
+              region = rep(substr(i, 1, 3), nrow(site.data.InfoFlora)))
+  j <- 0
+  site.data.InfoFlora$species <- c()
+  for (j in 1:nrow(site.data.InfoFlora)){
+    # species names are different than in GBIF -> need to be adapted
+    site.data.InfoFlora$species[j] <- paste(unlist(strsplit(site.data.InfoFlora$Species[j], split=' ', fixed=TRUE))[1],
+                                            unlist(strsplit(site.data.InfoFlora$Species[j], split=' ', fixed=TRUE))[2])
+  } # end loop j
+  
+  # store species per site in a list
+  site.list.InfoFlora[[i]] <- unique(site.data.InfoFlora$species)
+} # end loop i
+
+# combine species list per site into regional level
+region.list.InfoFlora <- list()
+region.list.InfoFlora[["ZHU"]] <- unique(c(site.list.InfoFlora$ZHUA, site.list.InfoFlora$ZHUB, site.list.InfoFlora$ZHUC))
+region.list.InfoFlora[["ZHR"]] <- unique(c(site.list.InfoFlora$ZHRD, site.list.InfoFlora$ZHRE, site.list.InfoFlora$ZHRF))
+region.list.InfoFlora[["BSU"]] <- unique(c(site.list.InfoFlora$BSUA, site.list.InfoFlora$BSUB, site.list.InfoFlora$BSUC))
+region.list.InfoFlora[["BSR"]] <- unique(c(site.list.InfoFlora$BSRD, site.list.InfoFlora$BSRE, site.list.InfoFlora$BSRF))
+region.list.InfoFlora[["BEU"]] <- unique(c(site.list.InfoFlora$BEUA, site.list.InfoFlora$BEUB, site.list.InfoFlora$BEUC))
+region.list.InfoFlora[["BER"]] <- unique(c(site.list.InfoFlora$BERD))
+
+# GBIF
+#prepare list to store species lists
+site.list.gbif <- list()
+for (i in sitenames) {
+  # import data and filter for needed variables
+  site.data.gbif  <- read_csv(paste("./sites_plant_list/01_GBIF/BB22_", i, "_1500.csv", sep = "")) %>%
+    mutate(species = as_factor(species)) %>%
+    filter(class == "Magnoliopsida" | class == "Liliopsida")
+  site.list.gbif[[i]] <- unique(site.data.gbif$species)
+} # end loop i
+
+# combine species list per site into regional level
+region.list.gbif <- list()
+region.list.gbif[["ZHU"]] <- unique(c(site.list.gbif$ZHUA, site.list.gbif$ZHUB, site.list.gbif$ZHUC))
+region.list.gbif[["ZHR"]] <- unique(c(site.list.gbif$ZHRD, site.list.gbif$ZHRE, site.list.gbif$ZHRF))
+region.list.gbif[["BSU"]] <- unique(c(site.list.gbif$BSUA, site.list.gbif$BSUB, site.list.gbif$BSUC))
+region.list.gbif[["BSR"]] <- unique(c(site.list.gbif$BSRD, site.list.gbif$BSRE, site.list.gbif$BSRF))
+region.list.gbif[["BEU"]] <- unique(c(site.list.gbif$BEUA, site.list.gbif$BEUB, site.list.gbif$BEUC))
+region.list.gbif[["BER"]] <- unique(c(site.list.gbif$BERD))
+
+
+# combine species list GBIF and InfoFlora (region level) in new list
+region.species.occ <- list()
+for (i in regionnames) {
+  x <- as.factor(region.list.InfoFlora[[i]])
+  y <- as.factor(region.list.gbif[[i]])
+  region.species.occ[[i]] <- unique(c(x,y))%>% 
+    droplevels()
+} # end loop i
+
+# create list with intersection of species lists for all regions
+intersection.regions.species <- list()
+table.regions.species <- list()
+correlation.region.species <- data.frame(species = NA, region1 = NA, region2 = NA, Correlation = NA)
+
+# compute and store correlations between each region
+for (i in regionnames) {
+  for (j in regionnames) {
+    # find common species of two regions
+    intersection.regions.species[[paste(i,"/",j, sep="")]] <- intersect(region.species.occ[[i]], region.species.occ[[j]])
+    
+    # filter binary dataframe for the two regions
+    table.regions.species[[paste(i,"/",j, sep="")]] <- dplyr::select(BB22.full.table, i, j)
+    
+    # compare bumblebee pollen with pollen lists of landscape
+    comparison.table <- BB22.full.table[BB22.full.table$species %in% intersection.regions.species[[paste(i,"/",j, sep="")]], c(i,j)]
+    
+    # compute correlation and store them in a dataframe
+    correlation <- c("B.pascuorum", i, j, round(cor(comparison.table[,1], comparison.table[,2], method=c("pearson")),3))
+    correlation.region.species <- rbind(correlation.region.species, correlation)
+    
+  } # end loop j
+} # end loop i
+
+correlation.region.species$region1 <- as.factor(correlation.region.species$region1)
+matrix.region.species <- split(correlation.region.species, f = correlation.region.species$region1)
+temp <- list.cbind(matrix.region.species)[, seq(4, 24, 4)]
+colnames(temp) <- levels(correlation.region.species$region1)
+rownames(temp) <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
+matrix.region.species <- as.matrix(temp[,match(regionnames, colnames(temp))])
+class(matrix.region.species) <- "numeric"
+
+# store in list
+pasc.region[["species"]] <- matrix.region.species
+
+
 ### genus ----
+
+
 ### family ----
 
 # B.LAPIDARIUS ----
