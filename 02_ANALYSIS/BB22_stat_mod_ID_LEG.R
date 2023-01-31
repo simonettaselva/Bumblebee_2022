@@ -417,10 +417,10 @@ for (i in metrics) {
     ## Data to use for predictions
     newdata=ddf_test)
   
-  data_metrics_train <- data.frame(truth=ddf_train$feve, pred=predict_train)
+  data_metrics_train <- data.frame(truth=ddf_train[, i], pred=predict_train)
   metrics_train <- metrics(data_metrics_train, truth, pred)
   
-  data_metrics_test <- data.frame(truth=ddf_test$feve, pred=predict_test)
+  data_metrics_test <- data.frame(truth=ddf_test[, i], pred=predict_test)
   metrics_test <- metrics(data_metrics_test, truth, pred)
   
   # plotting prediction
@@ -508,10 +508,10 @@ for (i in metrics) {
     ## Data to use for predictions
     newdata=ddf_test)
   
-  data_metrics_train <- data.frame(truth=ddf_train$feve, pred=predict_train)
+  data_metrics_train <- data.frame(truth=ddf_train[, i], pred=predict_train)
   metrics_train <- metrics(data_metrics_train, truth, pred)
   
-  data_metrics_test <- data.frame(truth=ddf_test$feve, pred=predict_test)
+  data_metrics_test <- data.frame(truth=ddf_test[, i], pred=predict_test)
   metrics_test <- metrics(data_metrics_test, truth, pred)
   
   # plotting prediction

@@ -75,20 +75,20 @@ BB22.ID.cwm.sp.cwm <- merge(BB22.cwm, BB22.bb.traits[, c(1,9:17)], by  = "ID.sho
 
 ## B.PASCUORUM ---- 
 #only B.pascuroum 
-BB22.ID.cwm.sp.cwm.sp <- BB22.ID.cwm.sp.cwm[BB22.ID.cwm.sp.cwm$bbspecies == "B.pascuorum",]
+BB22.ID.cwm.sp <- BB22.ID.cwm.sp.cwm[BB22.ID.cwm.sp.cwm$bbspecies == "B.pascuorum",]
 
 
 ## look at data ----------------------------------------------------------------------------------------
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
-traits.pl <- colnames(BB22.ID.cwm.sp.cwm.sp[, 7:14])
+traits.pl <- colnames(BB22.ID.cwm.sp[, 7:14])
 library(psych)
 library(rstatix)
 plot_list  <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (i in traits.pl) {
-  gg.data <- data.frame(landscape=BB22.ID.cwm.sp.cwm.sp$landscape,value=BB22.ID.cwm.sp.cwm.sp[[i]])
+  gg.data <- data.frame(landscape=BB22.ID.cwm.sp$landscape,value=BB22.ID.cwm.sp[[i]])
   w.test <- wilcox_test(gg.data,value~landscape)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
@@ -133,7 +133,7 @@ ggsave("./community weighted means/pasc_ID/CWM_B.pascuorum_ID.png", width = 24, 
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
-traits.bb <- colnames(BB22.ID.cwm.sp.cwm.sp[, 15:23]) # bumblebee traits to look at; prepare for loop
+traits.bb <- colnames(BB22.ID.cwm.sp[, 15:23]) # bumblebee traits to look at; prepare for loop
 
 library(nlme)
 
@@ -142,10 +142,10 @@ for (i in traits.pl) {
   x <- 1 # for naming the plots
   for (j in traits.bb) {
     f <- formula(paste(i,"~", j))
-    fit <- lme(f, random=~1|landscape, data = BB22.ID.cwm.sp.cwm.sp, na.action=na.omit)
+    fit <- lme(f, random=~1|landscape, data = BB22.ID.cwm.sp, na.action=na.omit)
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
            # define the ggplot
-           ggplot(BB22.ID.cwm.sp.cwm.sp, aes_string(j, i, colour = "landscape")) + 
+           ggplot(BB22.ID.cwm.sp, aes_string(j, i, colour = "landscape")) + 
              geom_point() + 
              theme_classic(base_size = 20) + 
              theme(aspect.ratio=1) + 
@@ -167,15 +167,15 @@ for (i in traits.pl) {
 
 ## modelling ----------------------------------------------------------------------------------------
 # center and scale all the variables
-BB22.ID.cwm.sp.cwm.sp[, c(7:23)] <- scale(BB22.ID.cwm.sp.cwm.sp[, c(7:23)],center=TRUE,scale=TRUE)
+BB22.ID.cwm.sp[, c(7:23)] <- scale(BB22.ID.cwm.sp[, c(7:23)],center=TRUE,scale=TRUE)
 
 # correlation analysis
 # look at the correlation between the explanatory variables
 library(corrplot)
-M<-cor(BB22.ID.cwm.sp.cwm.sp[, 15:23], use = "complete.obs") # subset data; only explanatory variables
+M<-cor(BB22.ID.cwm.sp[, 15:23], use = "complete.obs") # subset data; only explanatory variables
 
 # matrix of the p-value of the correlation
-p.mat <- cor.mtest(BB22.ID.cwm.sp.cwm.sp[, 15:23])
+p.mat <- cor.mtest(BB22.ID.cwm.sp[, 15:23])
 head(p.mat)
 
 #correlation plot
@@ -204,21 +204,21 @@ BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
 # built an initial full model based on collinearity 
 M1.full <- lmer(Shannon ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
-                data=BB22.ID.cwm.sp.cwm.sp)
+                data=BB22.ID.cwm.sp)
 fix.check(M1.full) # looks ok
 vif(M1.full) # looks good
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M1.full)
-BB22.ID.cwm.sp.cwm.sp$site <- as.factor(BB22.ID.cwm.sp.cwm.sp$site)
-simulationOutput <- recalculateResiduals(sims, group = BB22.ID.cwm.sp.cwm.sp$site)
+BB22.ID.cwm.sp$site <- as.factor(BB22.ID.cwm.sp$site)
+simulationOutput <- recalculateResiduals(sims, group = BB22.ID.cwm.sp$site)
 testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
 # there is no spatial autocorrelation
 
 # update model: add intertegular distance to the model
 M1.full.1 <- lmer(Shannon ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
-                  data=BB22.ID.cwm.sp.cwm.sp)
+                  data=BB22.ID.cwm.sp)
 fix.check(M1.full.1)
 summary(M1.full.1)
 vif(M1.full.1) # looks good
@@ -423,6 +423,114 @@ top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham 
 avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
+
+
+## Model testing ----------------------------------------------------------------------------------------
+
+### Data splitting  ----------------------------------------------------------------------------------------
+library(rsample)
+set.seed(123) # for reproducibility
+BB22.ID.cwm.sp.complete <- BB22.ID.cwm.sp %>%
+  filter(complete.cases(.))
+split <- initial_split(BB22.ID.cwm.sp.complete, prop = 0.8)
+ddf_train <- training(split)
+ddf_test <- testing(split) 
+
+### Model training and predicting ----------------------------------------------------------------------------------------
+library(caret) 
+library(yardstick)
+
+#### Linear Model ----------------------------------------------------------------------------------------
+
+for (i in traits.pl) {
+  i <- "Shannon"
+  f <- as.formula(paste(i,  "~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio + landscape", sep = ""))
+  train <- train(form = f,
+                 data = ddf_train, 
+                 method = "lm",
+                 trControl = trainControl(method = "cv", number = 10))
+  
+  ## Get variable importance, and turn into a data frame
+  var_imp <- varImp(train, scale=FALSE)$importance
+  var_imp <- data.frame(variables=row.names(var_imp), importance=var_imp$Overall)
+  
+  ## Create a plot of variable importance
+  var_imp %>%
+    
+    ## Sort the data by importance
+    arrange(importance) %>%
+    
+    ## Create a ggplot object for aesthetic
+    ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+    
+    ## Plot the bar graph
+    geom_bar(stat='identity') + 
+    
+    ## Flip the graph to make a horizontal bar plot
+    coord_flip() + 
+    
+    ## Add x-axis label
+    xlab('Variables') +
+    
+    ## Add a title
+    labs(title='Linear model variable importance') + 
+    
+    ## Some layout for the plot
+    theme_minimal() + 
+    theme(axis.text = element_text(size = 10), 
+          axis.title = element_text(size = 15), 
+          plot.title = element_text(size = 20), 
+    )
+  setwd(output)
+  ggsave(paste("./community weighted means/pasc_ID/training and predicting/linear model/", i, "_lm_var_imp_pasc.png", sep = ""), width = 8, height = 5)
+  setwd(input)
+  
+  predict_train <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions
+    newdata=ddf_train)
+  
+  predict_test <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions
+    newdata=ddf_test)
+  
+  data_metrics_train <- data.frame(truth=ddf_train$feve, pred=predict_train)
+  metrics_train <- metrics(data_metrics_train, truth, pred)
+  
+  data_metrics_test <- data.frame(truth=ddf_test$feve, pred=predict_test)
+  metrics_test <- metrics(data_metrics_test, truth, pred)
+  
+  # plotting prediction
+  library(patchwork)
+  
+  gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
+    geom_point()+
+    labs(title = "Density of Data Point for Training Data",
+         subtitle = paste("Linear Model: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""), 
+         x = paste("predicted values for ", i, sep = ""),
+         y = paste("observed values for ", i, sep = "")) +
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
+    geom_point()+
+    labs(title = "Density of Data Point for Training Data",
+         subtitle = paste("Linear Model: Rsq = ", round(metrics_train$.estimate[2], 3), sep = ""),
+         x = paste("predicted values for ", i, sep = ""),
+         y = paste("observed values for ", i, sep = "")) +
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  # arrange them into one file to export
+  setwd(output)
+  ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
+            labels = c("A", "B"), common.legend = TRUE, legend = "right")
+  ggsave(paste("./community weighted means/pasc_ID/training and predicting/linear model/", i, "_lm_prediction_pasc.png", sep = ""), width = 8, height = 5)
+  setwd(input)
+} # end i loop
 
 
 
