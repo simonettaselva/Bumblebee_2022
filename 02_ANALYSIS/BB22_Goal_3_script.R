@@ -28,7 +28,6 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 setwd(input) 
 
 # load data
-# import species lists on bee pollen (file BB22_sites_plants_GBIF.R)
 BB22.full <- read_csv("BB22_full.csv") %>%
   mutate(site = as_factor(site),
          species = as_factor(species),
