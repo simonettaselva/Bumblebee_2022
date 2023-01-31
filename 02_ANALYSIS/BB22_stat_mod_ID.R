@@ -429,7 +429,7 @@ for (i in metrics) {
   
   gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
     geom_point()+
-    labs(title = "Density of Data Point for Training Data",
+    labs(title = "Density of Data Point for Testing Data",
          subtitle = paste("Linear Model: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""), 
          x = paste("predicted values for ", i, sep = ""),
          y = paste("observed values for ", i, sep = "")) +
@@ -520,7 +520,7 @@ for (i in metrics) {
   
   gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
     geom_point()+
-    labs(title = "Density of Data Point for Training Data",
+    labs(title = "Density of Data Point for Testing Data",
          subtitle = paste("Random Forest: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""),
          x = paste("predicted values for ", i, sep = ""),
          y = paste("observed values for ", i, sep = "")) +
@@ -868,6 +868,202 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
+## Model testing ----------------------------------------------------------------------------------------
 
+### Data splitting  ----------------------------------------------------------------------------------------
+library(rsample)
+set.seed(123) # for reproducibility
+BB22.ID.complete <- BB22.ID %>%
+  filter(complete.cases(.))
+split <- initial_split(BB22.ID.complete, prop = 0.8)
+ddf_train <- training(split)
+ddf_test <- testing(split) 
+
+### Model training and predicting ----------------------------------------------------------------------------------------
+library(caret) 
+library(yardstick)
+
+#### Linear Model ----------------------------------------------------------------------------------------
+
+for (i in metrics) {
+  f <- as.formula(paste(i,  "~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio + landscape", sep = ""))
+  train <- train(form = f,
+                 data = ddf_train, 
+                 method = "lm",
+                 trControl = trainControl(method = "cv", number = 10))
+  
+  ## Get variable importance, and turn into a data frame
+  var_imp <- varImp(train, scale=FALSE)$importance
+  var_imp <- data.frame(variables=row.names(var_imp), importance=var_imp$Overall)
+  
+  ## Create a plot of variable importance
+  var_imp %>%
+    
+    ## Sort the data by importance
+    arrange(importance) %>%
+    
+    ## Create a ggplot object for aesthetic
+    ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+    
+    ## Plot the bar graph
+    geom_bar(stat='identity') + 
+    
+    ## Flip the graph to make a horizontal bar plot
+    coord_flip() + 
+    
+    ## Add x-axis label
+    xlab('Variables') +
+    
+    ## Add a title
+    labs(title='Linear model variable importance') + 
+    
+    ## Some layout for the plot
+    theme_minimal() + 
+    theme(axis.text = element_text(size = 10), 
+          axis.title = element_text(size = 15), 
+          plot.title = element_text(size = 20), 
+    )
+  setwd(output)
+  ggsave(paste("./functional diversity/lapi_ID/training and predicting/linear model/", i, "_lm_var_imp_lapi.png", sep = ""), width = 8, height = 5)
+  setwd(input)
+  
+  predict_train <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions
+    newdata=ddf_train)
+  
+  predict_test <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions
+    newdata=ddf_test)
+  
+  data_metrics_train <- data.frame(truth=ddf_train[,i], pred=predict_train) #mistake
+  metrics_train <- metrics(data_metrics_train, truth, pred)
+  
+  data_metrics_test <- data.frame(truth=ddf_test[,i], pred=predict_test)
+  metrics_test <- metrics(data_metrics_test, truth, pred)
+  
+  # plotting prediction
+  library(patchwork)
+  
+  gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
+    geom_point()+
+    labs(title = "Density of Data Point for Testing Data",
+         subtitle = paste("Linear Model: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""), 
+         x = paste("predicted values for ", i, sep = ""),
+         y = paste("observed values for ", i, sep = "")) +
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
+    geom_point()+
+    labs(title = "Density of Data Point for Training Data",
+         subtitle = paste("Linear Model: Rsq = ", round(metrics_train$.estimate[2], 3), sep = ""),
+         x = paste("predicted values for ", i, sep = ""),
+         y = paste("observed values for ", i, sep = "")) +
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  # arrange them into one file to export
+  setwd(output)
+  ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
+            labels = c("A", "B"), common.legend = TRUE, legend = "right")
+  ggsave(paste("./functional diversity/lapi_ID/training and predicting/linear model/", i, "_lm_prediction_lapi.png", sep = ""), width = 8, height = 5)
+  setwd(input)
+} # end i loop
+
+#### Random Forest ----------------------------------------------------------------------------------------
+
+for (i in metrics) {
+  f <- as.formula(paste(i,  "~ intertegular_distance + proboscis_ratio + fore_wing_ratio + corbicula_ratio + landscape", sep = ""))
+  train <- train(form = f,
+                 data = ddf_train, 
+                 method = "rf",
+                 trControl = trainControl(method = "cv", number = 10))
+  
+  ## Get variable importance, and turn into a data frame
+  var_imp <- varImp(train, scale=FALSE)$importance
+  var_imp <- data.frame(variables=row.names(var_imp), importance=var_imp$Overall)
+  
+  ## Create a plot of variable importance
+  var_imp %>%
+    
+    ## Sort the data by importance
+    arrange(importance) %>%
+    
+    ## Create a ggplot object for aesthetic
+    ggplot(aes(x=reorder(variables, importance), y=importance)) + 
+    
+    ## Plot the bar graph
+    geom_bar(stat='identity') + 
+    
+    ## Flip the graph to make a horizontal bar plot
+    coord_flip() + 
+    
+    ## Add x-axis label
+    xlab('Variables') +
+    
+    ## Add a title
+    labs(title='Random forest variable importance') + 
+    
+    ## Some layout for the plot
+    theme_minimal() + 
+    theme(axis.text = element_text(size = 10), 
+          axis.title = element_text(size = 15), 
+          plot.title = element_text(size = 20), 
+    )
+  setwd(output)
+  ggsave(paste("./functional diversity/lapi_ID/training and predicting/random forest/", i, "_rf_var_imp_lapi.png", sep = ""), width = 8, height = 8)
+  setwd(input)
+  
+  predict_train <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions
+    newdata=ddf_train)
+  
+  predict_test <- predict(
+    ## lm object
+    object=train, 
+    ## Data to use for predictions
+    newdata=ddf_test)
+  
+  data_metrics_train <- data.frame(truth=ddf_train[, i], pred=predict_train)
+  metrics_train <- metrics(data_metrics_train, truth, pred)
+  
+  data_metrics_test <- data.frame(truth=ddf_test[, i], pred=predict_test)
+  metrics_test <- metrics(data_metrics_test, truth, pred)
+  
+  # plotting prediction
+  library(patchwork)
+  
+  gg_test <- ggplot(data_metrics_test, aes(x=truth, y=pred))+
+    geom_point()+
+    labs(title = "Density of Data Point for Testing Data",
+         subtitle = paste("Random Forest: Rsq = ", round(metrics_test$.estimate[2], 3), sep = ""),
+         x = paste("predicted values for ", i, sep = ""),
+         y = paste("observed values for ", i, sep = "")) +
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  gg_train <- ggplot(data_metrics_train, aes(x=truth, y=pred))+
+    geom_point()+ 
+    labs(title = "Density of Data Point for Training Data",
+         subtitle = paste("Random Forest: Rsq = ", round(metrics_train$.estimate[2], 3), sep = ""),
+         x = paste("predicted values for ", i, sep = ""),
+         y = paste("observed values for ", i, sep = "")) +
+    theme(aspect.ratio=1)+
+    geom_abline(intercept = 0, slope = 1, color = "#fc5e03")
+  
+  # arrange them into one file to export
+  setwd(output)
+  ggarrange(gg_test, gg_train, ncol = 2, nrow = 1,
+            labels = c("A", "B"), common.legend = TRUE, legend = "right")
+  ggsave(paste("./functional diversity/lapi_ID/training and predicting/random forest/", i, "_rf_prediction_lapi.png", sep = ""), width = 8, height = 5)
+  setwd(input)
+  
+} # end i loop
 
 
