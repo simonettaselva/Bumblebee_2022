@@ -176,8 +176,8 @@ M<-cor(BB22.ID[, 7:15], use = "complete.obs") # subset data; only explanatory va
 
 # matrix of the p-value of the correlation
 p.mat <- cor.mtest(BB22.ID[, 7:15])
-
 head(p.mat)
+
 #correlation plot
 corrplot::corrplot(M, type="upper", order="hclust", 
                    p.mat = p.mat$p, sig.level = 0.01, tl.col = "black",
