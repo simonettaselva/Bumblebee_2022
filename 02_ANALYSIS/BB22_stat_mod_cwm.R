@@ -71,24 +71,24 @@ BB22.cwm <- BB22_full %>%
 # combine trait and cwm in new dataframes
 BB22.bb.traits <- BB22.bb.traits %>% 
   rename(ID.short = ID)
-BB22.ID.cwm <- merge(BB22.cwm, BB22.bb.traits[, c(1,9:17)], by  = "ID.short", all.x=TRUE)
+BB22.ID.cwm.sp.cwm <- merge(BB22.cwm, BB22.bb.traits[, c(1,9:17)], by  = "ID.short", all.x=TRUE)
 
 ## B.PASCUORUM ---- 
 #only B.pascuroum 
-BB22.ID.cwm.sp <- BB22.ID.cwm[BB22.ID.cwm$bbspecies == "B.pascuorum",]
+BB22.ID.cwm.sp.cwm.sp <- BB22.ID.cwm.sp.cwm[BB22.ID.cwm.sp.cwm$bbspecies == "B.pascuorum",]
 
 
 ## look at data ----------------------------------------------------------------------------------------
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
-traits.pl <- colnames(BB22.ID.cwm.sp[, 7:14])
+traits.pl <- colnames(BB22.ID.cwm.sp.cwm.sp[, 7:14])
 library(psych)
 library(rstatix)
 plot_list  <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (i in traits.pl) {
-  gg.data <- data.frame(landscape=BB22.ID.cwm.sp$landscape,value=BB22.ID.cwm.sp[[i]])
+  gg.data <- data.frame(landscape=BB22.ID.cwm.sp.cwm.sp$landscape,value=BB22.ID.cwm.sp.cwm.sp[[i]])
   w.test <- wilcox_test(gg.data,value~landscape)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
@@ -133,7 +133,7 @@ ggsave("./community weighted means/pasc_ID/CWM_B.pascuorum_ID.png", width = 24, 
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
-traits.bb <- colnames(BB22.ID.cwm.sp[, 15:23]) # bumblebee traits to look at; prepare for loop
+traits.bb <- colnames(BB22.ID.cwm.sp.cwm.sp[, 15:23]) # bumblebee traits to look at; prepare for loop
 
 library(nlme)
 
@@ -142,10 +142,10 @@ for (i in traits.pl) {
   x <- 1 # for naming the plots
   for (j in traits.bb) {
     f <- formula(paste(i,"~", j))
-    fit <- lme(f, random=~1|landscape, data = BB22.ID.cwm.sp, na.action=na.omit)
+    fit <- lme(f, random=~1|landscape, data = BB22.ID.cwm.sp.cwm.sp, na.action=na.omit)
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
            # define the ggplot
-           ggplot(BB22.ID.cwm.sp, aes_string(j, i, colour = "landscape")) + 
+           ggplot(BB22.ID.cwm.sp.cwm.sp, aes_string(j, i, colour = "landscape")) + 
              geom_point() + 
              theme_classic(base_size = 20) + 
              theme(aspect.ratio=1) + 
@@ -167,15 +167,15 @@ for (i in traits.pl) {
 
 ## modelling ----------------------------------------------------------------------------------------
 # center and scale all the variables
-BB22.ID.cwm.sp[, c(7:23)] <- scale(BB22.ID.cwm.sp[, c(7:23)],center=TRUE,scale=TRUE)
+BB22.ID.cwm.sp.cwm.sp[, c(7:23)] <- scale(BB22.ID.cwm.sp.cwm.sp[, c(7:23)],center=TRUE,scale=TRUE)
 
 # correlation analysis
 # look at the correlation between the explanatory variables
 library(corrplot)
-M<-cor(BB22.ID.cwm.sp[, 15:23], use = "complete.obs") # subset data; only explanatory variables
+M<-cor(BB22.ID.cwm.sp.cwm.sp[, 15:23], use = "complete.obs") # subset data; only explanatory variables
 
 # matrix of the p-value of the correlation
-p.mat <- cor.mtest(BB22.ID.cwm.sp[, 15:23])
+p.mat <- cor.mtest(BB22.ID.cwm.sp.cwm.sp[, 15:23])
 head(p.mat)
 
 #correlation plot
@@ -186,8 +186,243 @@ corrplot::corrplot(M, type="upper", order="hclust",
 # !!! a lot are multicollinear. in the model only use: proboscis_ratio, fore_wing_ratio and corbicula_ratio
 
 
+#  fit GLMM
+#load the libraries
+library(lme4)
+library(car)
+library(MuMIn)
+library(arm)
+
+# create empty list for best models for model testing
+models <- list()
+
+# import data with spatial information on sites for spatial auto correlation tests
+BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
+
+### Shannon ----------------------------------------------------------------------------------------
+
+# built an initial full model based on collinearity 
+M1.full <- lmer(Shannon ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
+                  (1|landscape),
+                data=BB22.ID.cwm.sp.cwm.sp)
+fix.check(M1.full) # looks ok
+vif(M1.full) # looks good
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M1.full)
+BB22.ID.cwm.sp.cwm.sp$site <- as.factor(BB22.ID.cwm.sp.cwm.sp$site)
+simulationOutput <- recalculateResiduals(sims, group = BB22.ID.cwm.sp.cwm.sp$site)
+testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# update model: add intertegular distance to the model
+M1.full.1 <- lmer(Shannon ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.ID.cwm.sp.cwm.sp)
+fix.check(M1.full.1)
+summary(M1.full.1)
+vif(M1.full.1) # looks good
+anova(M1.full.1, M1.full) #  M1.full is the better fit
+
+# dredging
+# Things to take into account when dredging:
+# 1) epends on the models included in the candidate set. You can’t identify a model as being the 
+# “best” fit to the data if you didn’t include the model to begin with!
+# 2) The parameter estimates and predictions arising from the “best” model or set of best models 
+# should be biologically meaningful.
+
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M1.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 2) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
+
+# dredging not possible
 
 
+### Species Richness ----------------------------------------------------------------------------------------
+# built an initial full model based on colinearity 
+M2.full <- lmer(NrSpecies ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
+                  (1|landscape),
+                data=BB22.ID.cwm.sp)
+fix.check(M2.full) # looks ok
+vif(M2.full) # looks good
+summary(M2.full)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M2.full)
+BB22.ID.cwm.sp$site <- as.factor(BB22.ID.cwm.sp$site)
+simulationOutput <- recalculateResiduals(sims, group = BB22.ID.cwm.sp$site)
+testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M2.full.1 <- lmer(NrSpecies ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.ID.cwm.sp) # boundary (singular) fit: see help('isSingular')
+fix.check(M2.full.1)
+summary(M2.full.1)
+vif(M2.full.1) # looks good
+anova(M2.full.1, M2.full) # with intertegular_distance better fit than M2.full
+
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M2.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
+
+# dredging not possible
+
+
+### Flowering duration ----------------------------------------------------------------------------------------
+# built an initial full model based on collinearity 
+M3.full <- lmer(Flowering_duration_cwm ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
+                data=BB22.ID.cwm.sp)
+fix.check(M3.full) # looks ok
+vif(M3.full) # looks good
+summary(M3.full)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M3.full)
+BB22.ID.cwm.sp$site <- as.factor(BB22.ID.cwm.sp$site)
+simulationOutput <- recalculateResiduals(sims, group = BB22.ID.cwm.sp$site)
+testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M3.full.1 <- lmer(Flowering_duration_cwm ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.ID.cwm.sp)
+fix.check(M3.full.1)
+summary(M3.full.1)
+vif(M3.full.1) # looks good
+anova(M3.full.1, M3.full) # with intertegular_distance better fit than M3.full
+
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M3.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
+
+### Growth form ----------------------------------------------------------------------------------------
+# built an initial full model based on collinearity 
+M4.full <- lmer(growth_form_cwm ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
+                data=BB22.ID.cwm.sp) #boundary (singular) fit: see help('isSingular')
+fix.check(M4.full) # looks ok
+vif(M4.full) # looks good
+summary(M4.full)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M4.full)
+BB22.ID.cwm.sp$site <- as.factor(BB22.ID.cwm.sp$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.ID.cwm.sp$site)
+testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M4.full.1 <- lmer(growth_form_cwm ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.ID.cwm.sp) # boundary (singular) fit: see help('isSingular')
+fix.check(M4.full.1)
+summary(M4.full.1)
+vif(M4.full.1) # looks good
+anova(M4.full.1, M4.full) # with intertegular_distance not a better fit than M4.full
+
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M4.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
+
+### Structural blossom  ----------------------------------------------------------------------------------------
+# built an initial full model based on collinearity 
+M5.full <- lmer(structural_blossom_cwm ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
+                data=BB22.ID.cwm.sp) #boundary (singular) fit: see help('isSingular')
+fix.check(M5.full) # looks ok
+vif(M5.full) # looks good
+summary(M5.full)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M5.full)
+BB22.ID.cwm.sp$site <- as.factor(BB22.ID.cwm.sp$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.ID.cwm.sp$site)
+testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M5.full.1 <- lmer(structural_blossom_cwm ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.ID.cwm.sp) # boundary (singular) fit: see help('isSingular')
+fix.check(M5.full.1)
+summary(M5.full.1)
+vif(M5.full.1) # looks good
+anova(M5.full.1, M5.full) # with intertegular_distance not a better fit than M5.full
+
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M5.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
+
+
+### Sugar concentration ----------------------------------------------------------------------------------------
+# built an initial full model based on collinearity 
+M6.full <- lmer(sugar_concentration_cwm ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
+                data=BB22.ID.cwm.sp) #boundary (singular) fit: see help('isSingular')
+fix.check(M6.full) # looks ok
+vif(M6.full) # looks good
+summary(M6.full)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M6.full)
+BB22.ID.cwm.sp$site <- as.factor(BB22.ID.cwm.sp$site)
+simulationOutput = recalculateResiduals(sims, group = BB22.ID.cwm.sp$site)
+testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta$LV95_y, plot = FALSE)
+# there is no spatial autocorrelation
+
+# add intertegular distance to the model
+M6.full.1 <- lmer(sugar_concentration_cwm ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
+                    corbicula_ratio + (1|landscape),
+                  data=BB22.ID.cwm.sp) # boundary (singular) fit: see help('isSingular')
+fix.check(M6.full.1)
+summary(M6.full.1)
+vif(M6.full.1) # looks good
+anova(M6.full.1, M6.full) # with intertegular_distance not a better fit than M6.full
+
+# dredging
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M6.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
 
 
 
