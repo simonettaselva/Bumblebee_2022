@@ -37,9 +37,22 @@ BB22.bb.traits <- BB22.bb.traits %>%
   mutate(site = paste(location, landscape, replicate, sep = ""),
          region = paste(location, landscape, sep = "")) %>%
   dplyr::select(-NrSpecies, -Shannon)
+BB22.bb.traits$site <- as.factor(BB22.bb.traits$site)
+BB22.bb.traits$ID <- as.factor(BB22.bb.traits$ID)
+
+
+traits <- scale(BB22.bb.traits[, 7:15],center=TRUE,scale=TRUE)
+rownames(traits)  <- BB22.bb.traits$ID
+
 
 library(reshape2)
-wide <- dcast(BB22.bb.traits, site ~ plant.species, value.var="ab.new")[,-1]
-rownames(wide)  <- levels(BB22_full.ab.new[[j]])
-wide[is.na(wide)] <- 0
+sp.pa <- dcast(BB22.bb.traits, site ~ ID, length)[,-1]
+rownames(sp.pa)  <- levels(BB22.bb.traits$site)
+sp.pa[is.na(sp.pa)] <- 0
+sp.pa <- as.matrix(sp.pa)
+
+
+# compute FD
+library(FD)
+fd.df <- FD::dbFD(x = traits , a = sp.pa) # not weighted 
 
