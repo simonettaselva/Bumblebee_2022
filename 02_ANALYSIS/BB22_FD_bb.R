@@ -2,7 +2,7 @@
 # R compute Functional Diversity Bumblebees
 # by Simonetta Selva
 #
-# Created: December 14, 2022
+# Created: February 4th, 2022
 # Project: Bumblebee 2022
 ################################################
 rm(list=ls())
