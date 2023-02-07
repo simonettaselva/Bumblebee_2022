@@ -68,7 +68,7 @@ BB22_full.red <- BB22_full.numeric%>%
 #   for (j in c("ID.short", "site")) {
 
  j <- "site"
- i <- "B.pascuorum"
+ i <- "B.lapidarius"
 
 # remove plant species entries that do not have traits
 BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
@@ -82,7 +82,7 @@ BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
 # select columns used in computing FDs
 BB22_full.loop.species <- BB22_full.loop %>% 
   dplyr::select(plant.species, Flowering_duration, structural_blossom_numeric, 
-         sugar.concentration, growth_form_numeric) %>% 
+         sugar.concentration) %>% 
   distinct() # remove duplicates
 
 # impute missing data
@@ -123,7 +123,7 @@ sp.ab <- as.matrix(wide)
 # presence/absence
 sp.pa <- decostand(wide, "pa")
 sp.pa <- as.matrix(sp.pa) #turn into matrix
-  
+
 # compute FD
 library(FD)
 fd.weig <- FD::dbFD(x = traits , a = sp.ab, w.abun = T) # weighted 
@@ -148,7 +148,7 @@ cor(df.FD$FDiv, df.FD$FDiv.w, method=c("pearson"), use = "complete.obs") # 0.229
 
 # weighed FD are strongly different than non weighted --> makes sense to use weighted???
 
-# assign and export dataframe
+# assign and export data frame
 assign(paste("df.FD", i, sep="_"), df.FD[, c(1,3,5,7)])
 write.csv(assign(paste("df.FD",i,j, sep = "_"), df.FD[, c(1,3,5,7)]), file = paste("./FD/FD_package_", i, "_", j, ".csv", sep = ""))
 
