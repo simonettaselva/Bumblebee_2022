@@ -55,7 +55,6 @@ for (i in sitenames) {
   
   BB22_full.ab.new <- c()
   for (h in unique(BB22_full.ab$ID.short)) {
-    # h <- "36_ZHUA_p"
     temp <- BB22_full.ab[BB22_full.ab$ID.short==h,]
     perc <- sum(temp$abundance)
     for (k in 1:nrow(temp)) {
