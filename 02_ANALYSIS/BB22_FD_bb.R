@@ -67,12 +67,13 @@ fd.bb <- data_frame(site = names(fd.list$nbsp),
   mutate(landscape = substring(site, 3,3))
 
 # import FD of plants
-fd.plants <-  read_csv(paste("./FD/FD_package_B.pascuorum_site.csv", sep = "")) %>% 
+fd.plants.pasc <-  read_csv(paste("./FD/FD_package_B.pascuorum_site.csv", sep = "")) %>% 
   rename(site = ...1,
          nbsp = nbsp.w,
          FRic = FRic.w,
          FEve = FEve.w,
          FDiv = FDiv.w) 
+
 fd.all <- merge(fd.bb, fd.plants, by  = "site", all.x=TRUE)
 
 # relationship bumblebee FD and plant FD
@@ -195,4 +196,4 @@ annotate_figure(plot, top = text_grob("B.lapidarius: bumblebee FDs vs. plant FDs
 ggsave("./FD bumblebees/FD_B.lapidarius_bb_plants.png", width = 6, height = 24)
 setwd(input)
 
-
+# species combined no landscape ----

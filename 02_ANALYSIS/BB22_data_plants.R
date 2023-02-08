@@ -123,7 +123,7 @@ plants_meta <- JC_floral_traits %>%
 plants.nutrients <- read.csv2("phenology_pollen_nectar_sugar_database_copy.csv",sep = ",")
 str(plants.nutrients)
 plants.nutrients <- plants.nutrients%>% 
-  summarize(plant.species = plant.species,
+  dplyr::summarize(plant.species = plant.species,
             community = community,
             continent.region = continent.region,
             country = country,
@@ -157,8 +157,7 @@ plants.nutri.filter <- plants.nutrients %>%
 # summarize entries
 plants.nutri.filter <- plants.nutri.filter %>% 
   group_by(plant.species)%>%
-  summarize(plant.species = plant.species,
-            flowering.start = mean(flowering.start, na.rm=TRUE),
+  dplyr::summarize(flowering.start = mean(flowering.start, na.rm=TRUE),
             flowering.end = mean(flowering.end, na.rm=TRUE),
             flowering.peak = mean(flowering.peak, na.rm=TRUE),
             flowering.lenght = mean(flowering.lenght, na.rm=TRUE),
@@ -269,8 +268,10 @@ BB22_plants_abund_cut$sugar.data <- as.factor(BB22_plants_abund_cut$sugar.data)
 setwd(output)
 ggplot(BB22_plants_abund_cut, aes(x=reorder(OTU, -cum.rel.abundance), y=cum.rel.abundance, fill = sugar.data)) +
   geom_bar(stat="identity") +
-  labs(title="Abundance",x ="plant species", y = "sum of relative abundance") +  
-  theme_bw() + theme(axis.text.x = element_text(angle = 90))
+  labs(title="",x ="plant species", y = "sum of relative abundance") +  
+  theme_classic(base_size = 20) + 
+  theme(axis.text.x = element_text(angle = 90))+ 
+  scale_fill_discrete(name = "sugar data", labels=c('absent', 'present'))
 ggsave("plant_species_abundance_sugar.png", width = 15, height =8)
 setwd(input)
 

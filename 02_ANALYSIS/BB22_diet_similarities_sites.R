@@ -79,8 +79,6 @@ for (i in sitenames) {
   pasc.ID.mean[[i]] <- mean(dist)
 }
 
-pasc.ID$BSRE
-
 
 ## plotting ----
 # transform data
