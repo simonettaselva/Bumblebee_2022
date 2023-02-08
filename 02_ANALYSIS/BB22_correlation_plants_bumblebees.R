@@ -40,7 +40,8 @@ BB22.bb.traits <- BB22.bb.traits %>%
 BB22.bb.traits$site <- as.factor(BB22.bb.traits$site)
 BB22.bb.traits$ID <- as.factor(BB22.bb.traits$ID)
 
-# B.pascuorum ----
+# SITE LEVEL ----
+## B.pascuorum ----
 # select only B.pascuorum
 bb.traits <- BB22.bb.traits %>%
   filter(bbspecies == "B.pascuorum")%>%
@@ -126,7 +127,7 @@ annotate_figure(plot, top = text_grob("B.pascuorum: correlation bumblebee traits
 ggsave("./functional diversity/correlations/FD_B.pascuorum_bb_plants.png", width = 20, height = 20)
 setwd(input)
 
-# B.lapidarius ----
+## B.lapidarius ----
 # select only B.lapidarius
 bb.traits <- BB22.bb.traits %>%
   filter(bbspecies == "B.lapidarius")%>%
@@ -211,6 +212,110 @@ annotate_figure(plot, top = text_grob("B.lapidarius: correlation bumblebee trait
                                       face = "bold", size = 22))
 ggsave("./functional diversity/correlations/FD_B.lapidarius_bb_plants.png", width = 20, height = 20)
 setwd(input)
+
+
+# REGION LEVEL ----
+
+## B.pascuorum ----
+# select only B.pascuorum
+bb.traits <- BB22.bb.traits %>%
+  filter(bbspecies == "B.pascuorum")%>%
+  dplyr::select(site, region, intertegular_distance, glossa, prementum, proboscis_length, proboscis_ratio, fore_wing_length,
+                fore_wing_ratio, corbicula_length, corbicula_ratio)
+bb.traits <- bb.traits %>%
+  group_by(site) %>%
+  summarise(region = region,
+            intertegular_distance = mean(intertegular_distance),
+            glossa = mean(glossa),
+            prementum = mean(prementum),
+            proboscis_length = mean(proboscis_length),
+            proboscis_ratio = mean(proboscis_ratio),
+            fore_wing_length = mean(fore_wing_length),
+            fore_wing_ratio = mean(fore_wing_ratio),
+            corbicula_length = mean(corbicula_length),
+            corbicula_ratio = mean(corbicula_ratio))%>%
+  distinct()
+
+# import FD of plants
+fd.plants <-  read_csv(paste("./FD/FD_package_B.pascuorum_site.csv", sep = "")) %>% 
+  rename(site = ...1,
+         nbsp = nbsp.w,
+         FRic = FRic.w,
+         FEve = FEve.w,
+         FDiv = FDiv.w) 
+
+df.all <- merge(bb.traits, fd.plants, by  = "site", all.x=TRUE)
+
+regionnames <- unique(bb.traits$region)
+traits <- colnames(bb.traits[, -c(1,2)])
+metrics <- colnames(fd.plants[,-1])
+correlation.df <- c()
+
+for (h in regionnames) {
+  for (i in traits) {
+    for (j in metrics) {
+      # compute correlation and store them in a dataframe
+      df.all.reg <- df.all[df.all$region == h,]
+      correlation <- c(h, i, j, round(cor(df.all.reg[[i]], df.all.reg[[j]], method=c("pearson"), use = "complete.obs"),3))
+      correlation.df <- rbind(correlation.df, correlation)
+    }
+  }
+}
+
+correlation.df <- as.data.frame(correlation.df)%>%
+  rename(region = V1,
+         trait = V2,
+         metric = V3,
+         correlation = V4)
+
+library(rlist)
+library(ggcorrplot)
+pcorr.list <- list()
+
+for (i in regionnames) {
+  
+  correlation.df.site <- filter(correlation.df, region == i)
+  correlation.df.site$trait <- as.factor(correlation.df.site$trait)
+  matrix.site.species <- split(correlation.df.site, f = correlation.df.site$trait)
+  temp <- list.cbind(matrix.site.species)[, seq(4, 36, 4)]
+  colnames(temp) <- traits
+  rownames(temp) <- metrics
+  matrix.site.species <- as.matrix(temp[,match(traits, colnames(temp))])
+  class(matrix.site.species) <- "numeric"
+  matrix.site.species <- abs(matrix.site.species)
+  colnames(matrix.site.species) <- c("int", "glo", "pre", "pro len", "pro rat", "fwi len", "fwi rat", "cor len", "cor rat")
+  
+  pcorr <- ggcorrplot(matrix.site.species, hc.order = F,
+                      outline.col = "white")+ 
+    labs(title =i, fill = "", x = "", y = "") +
+    theme_classic(base_size = 20) +
+    theme(axis.text.x = element_text(angle = 90)) +
+    theme(aspect.ratio=1) +
+    scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
+  
+  pcorr.list[[i]] <- pcorr
+  
+}
+
+# arrange them into one file to export
+setwd(output)
+plot <- ggarrange(pcorr.list[[1]],pcorr.list[[2]],
+                  pcorr.list[[3]],pcorr.list[[4]],
+                  pcorr.list[[5]],pcorr.list[[6]],
+                  ncol = 2, nrow = 3,
+                  labels = LETTERS[1:9],
+                  common.legend = T)
+annotate_figure(plot, top = text_grob("B.pascuorum: correlation bumblebee traits vs. plant FDs", 
+                                      face = "bold", size = 22))
+ggsave("./functional diversity/correlations/FD_B.pascuorum_bb_plants_region.png", width = 20, height = 20)
+setwd(input)
+
+
+
+
+
+
+
 
 
 
