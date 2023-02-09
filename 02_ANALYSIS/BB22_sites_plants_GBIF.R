@@ -32,13 +32,13 @@ region <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
 
 BB22.full <- read_csv("BB22_full.csv") %>%
   mutate(site = as_factor(site),
-         species = as_factor(species),
+         plant.species = as_factor(plant.species),
          region = substr(site, 1, 3)) 
 
 # create species lists per site
 site.list <- list()
 for (i in sitenames) {
-  site.list[[i]]  <- unique(BB22.abund$species[BB22.abund$site == i]) %>%
+  site.list[[i]]  <- unique(BB22.full$plant.species[BB22.full$site == i]) %>%
     droplevels()
 }
 
@@ -47,7 +47,7 @@ saveRDS(site.list, file="site_list_bb.RData")
 # create species lists per region
 location.list <- list()
 for (i in region) {
-  location.list[[i]]  <- unique(BB22.abund$species[BB22.abund$region == i]) %>%
+  location.list[[i]]  <- unique(BB22.full$plant.species[BB22.full$region == i]) %>%
     droplevels()
 }
 
@@ -60,7 +60,7 @@ saveRDS(site.list, file="region_list_bb.RData")
 site.list.gbif <- list()
 
 for (i in sitenames) {
-  site.data.gbif  <- read_csv(paste("./sites_plant_list/03_GBIF/BB22_", i, ".csv", sep = "")) %>%
+  site.data.gbif  <- read_csv(paste("./sites_plant_list/01_GBIF/BB22_", i, ".csv", sep = "")) %>%
     mutate(species = as_factor(species)) %>%
     filter(class == "Magnoliopsida" | class == "Liliopsida")
   site.list.gbif [[i]] <- unique(site.data.gbif$species)

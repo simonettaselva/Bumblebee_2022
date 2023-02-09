@@ -82,19 +82,20 @@ BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE)
 
 ## look at data ----------------------------------------------------------------------------------------
 # FDis, FRic, FDiv, FEve, FSpe
-library(Hmisc)
-# hist.data.frame(BB22.ID[, c(17:20)])
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
 resp <- c("sp_richn", "fric", "fdiv", "feve")
 library(psych)
 library(rstatix)
 plot_list  <- list()
+w.test.list <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (j in resp) {
   gg.data <- data.frame(landscape=BB22.ID$landscape,value=BB22.ID[[j]])
   w.test <- wilcox_test(gg.data,value~landscape)
+  w.test.list[[j]] <- w.test
+  
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
     xlab("") +
@@ -607,12 +608,14 @@ resp <- c("sp_richn", "fric", "fdiv", "feve")
 library(psych)
 library(rstatix)
 plot_list  <- list()
+w.test.list <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (j in resp) {
   # j <- "sp_richn"
   gg.data <- data.frame(landscape=BB22.ID$landscape,value=BB22.ID[[j]])
   w.test <- wilcox_test(gg.data,value~landscape)
+  w.test.list[[j]] <- w.test
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
     xlab("") +
@@ -634,7 +637,7 @@ for (j in resp) {
   plot_list[[j]] <- p
   # describeBy(gg.data$value, gg.data$landscape)
 }
-
+w.test.list
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
@@ -1132,10 +1135,12 @@ metrics <- colnames(BB22.ID[, c(17:20)]) # plant FD to look at (see file BB22_co
 # wilcox test
 library(rstatix)
 plot_list  <- list()
+w.test.list <- list()
 
 for (j in metrics) {
   gg.data <- data.frame(species=BB22.ID$bbspecies,value=BB22.ID[[j]])
   w.test <- wilcox_test(gg.data,value~species)
+  w.test.list[[j]] <- w.test
   p <- ggplot(gg.data, aes(x=species, y = value, fill=species)) + 
     geom_boxplot(notch = T) + 
     xlab("") +

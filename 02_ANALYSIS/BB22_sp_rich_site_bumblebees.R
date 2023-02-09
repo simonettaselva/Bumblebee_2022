@@ -58,8 +58,8 @@ a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landsca
   theme_classic(base_size = 20) + 
   theme(aspect.ratio=1) + 
   scale_fill_manual(values=palette.landscape, guide = "none") + 
-  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep="")); a
-
+  labs(subtitle = paste("p = ", w.test$p, sep=""))+
+  ylim(300,2000)
 
 # compile species richness per site in dataframe
 rich.occ <- c()
@@ -94,16 +94,18 @@ b <- ggplot(df.site, aes(x = rich.bb , y = rich.occ)) +
   theme_classic(base_size = 20) + 
   theme(aspect.ratio=1) + 
   geom_smooth(method="lm", se = FALSE, col = "black") +
-  scale_color_manual(values = palette.landscape) +
+  scale_color_manual(values = palette.landscape, labels=c('rural', 'urban')) +
   stat_cor(
     aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
     label.x = 3,
-    size = 7); b
+    size = 7)+
+  labs(subtitle = paste(""))+
+  ylim(300,2000)
 
 # arrange them into one file to export
 setwd(output)
 ggarrange(a, b, ncol = 2, nrow = 1,
-          labels = c("A", "B"))
+          labels = c("A", "B"), common.legend = T)
 ggsave("./GBIF and InfoFlora/sp_rich_occ_bb.png", width = 20, height = 10)
 setwd(input)
 
