@@ -51,12 +51,16 @@ library(Hmisc)
 library(corrplot)
 res <- rcorr(as.matrix(BB22_full.numeric[,c(12:18)]),type="pearson")
 M <- cor(BB22_full.numeric[,c(12:18)], use = "complete.obs")
-corrplot::corrplot(M, type="upper", order="hclust", p.mat = res$P, sig.level = 0.05)
+corrplot::corrplot(M, type="upper", order="hclust", 
+                   p.mat = res$P, sig.level = 0.01, tl.col = "black",
+                   col = COL2('RdBu', 10)) # plot correlation with p-values
 
 # remove plant height, flowering start and symmetry and look at correlation
 res2 <- rcorr(as.matrix(BB22_full.numeric[,c(12, 14, 15, 16)]), type="pearson") # all p values are <0.05
 M <- cor(BB22_full.numeric[,c(12, 14, 15, 16)], use = "complete.obs")
-corrplot::corrplot(M, type="upper", order="hclust", p.mat = res2$P, sig.level = 0.05)
+corrplot::corrplot(M, type="upper", order="hclust", 
+                   p.mat = res$P, sig.level = 0.01, tl.col = "black",
+                   col = COL2('RdBu', 10)) # plot correlation with p-values
 
 # remove plant height, flowering start and symmetry from data set
 BB22_full.red <- BB22_full.numeric%>% 
