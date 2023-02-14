@@ -133,8 +133,7 @@ matrix.site.species <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(matrix.site.species) <- "numeric"
 
 # store in list
-pasc.site[["species"]] <- matrix.site.species
-
+pasc.site[["species"]] <- abs(matrix.site.species)
 
 
 ### genus ----
@@ -221,7 +220,7 @@ matrix.site.genus <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(matrix.site.genus) <- "numeric"
 
 # store in list
-pasc.site[["genus"]] <- matrix.site.genus
+pasc.site[["genus"]] <- abs(matrix.site.genus)
 
 
 ### family ----
@@ -308,30 +307,30 @@ matrix.site.family <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(matrix.site.family) <- "numeric"
 
 # store in list
-pasc.site[["family"]] <- matrix.site.family
+pasc.site[["family"]] <- abs(matrix.site.family)
 
 ### plotting ----
 library(ggcorrplot)
-a1 <- ggcorrplot(pasc.site[["species"]], hc.order = F, type = "lower", #method = "circle",
+a1 <- ggcorrplot(pasc.site[["species"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-a2 <- ggcorrplot(pasc.site[["genus"]], hc.order = F, type = "lower", #method = "circle",
+a2 <- ggcorrplot(pasc.site[["genus"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-a3 <- ggcorrplot(pasc.site[["family"]], hc.order = F, type = "lower", #method = "circle",
+a3 <- ggcorrplot(pasc.site[["family"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 # arrange them into one file to export
 setwd(output)
@@ -424,7 +423,7 @@ matrix.region.species <- as.matrix(temp[,match(regionnames, colnames(temp))])
 class(matrix.region.species) <- "numeric"
 
 # store in list
-pasc.region[["species"]] <- matrix.region.species
+pasc.region[["species"]] <- abs(matrix.region.species)
 
 
 ### genus ----
@@ -503,7 +502,7 @@ matrix.region.genus <- as.matrix(temp[,match(regionnames, colnames(temp))])
 class(matrix.region.genus) <- "numeric"
 
 # store in list
-pasc.region[["genus"]] <- matrix.region.genus
+pasc.region[["genus"]] <- abs(matrix.region.genus)
 
 
 
@@ -582,31 +581,31 @@ matrix.region.family <- as.matrix(temp[,match(regionnames, colnames(temp))])
 class(matrix.region.family) <- "numeric"
 
 # store in list
-pasc.region[["family"]] <- matrix.region.family
+pasc.region[["family"]] <- abs(matrix.region.family)
 
 ### plotting ----
 library(ggcorrplot)
-b1 <- ggcorrplot(pasc.region[["species"]], hc.order = F, type = "lower", #method = "circle",
+b1 <- ggcorrplot(pasc.region[["species"]], hc.order = F, type = "lower",
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 
-b2 <- ggcorrplot(pasc.region[["genus"]], hc.order = F, type = "lower", #method = "circle",
+b2 <- ggcorrplot(pasc.region[["genus"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-b3 <- ggcorrplot(pasc.region[["family"]], hc.order = F, type = "lower", #method = "circle",
+b3 <- ggcorrplot(pasc.region[["family"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 # arrange them into one file to export
 setwd(output)
@@ -716,9 +715,7 @@ matrix.site.species <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(matrix.site.species) <- "numeric"
 
 # store in list
-lapi.site[["species"]] <- matrix.site.species
-
-
+lapi.site[["species"]] <- abs(matrix.site.species)
 
 ### genus ----
 # convert into binary data frame
@@ -804,7 +801,7 @@ matrix.site.genus <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(matrix.site.genus) <- "numeric"
 
 # store in list
-lapi.site[["genus"]] <- matrix.site.genus
+lapi.site[["genus"]] <- abs(matrix.site.genus)
 
 
 ### family ----
@@ -891,30 +888,30 @@ matrix.site.family <- as.matrix(temp[,match(sitenames, colnames(temp))])
 class(matrix.site.family) <- "numeric"
 
 # store in list
-lapi.site[["family"]] <- matrix.site.family
+lapi.site[["family"]] <- abs(matrix.site.family)
 
 ### plotting ----
 library(ggcorrplot)
-c1 <- ggcorrplot(lapi.site[["species"]], hc.order = F, type = "lower", #method = "circle",
+c1 <- ggcorrplot(lapi.site[["species"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-c2 <- ggcorrplot(lapi.site[["genus"]], hc.order = F, type = "lower", #method = "circle",
+c2 <- ggcorrplot(lapi.site[["genus"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-c3 <- ggcorrplot(lapi.site[["family"]], hc.order = F, type = "lower", #method = "circle",
+c3 <- ggcorrplot(lapi.site[["family"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 # arrange them into one file to export
 setwd(output)
@@ -1007,7 +1004,7 @@ matrix.region.species <- as.matrix(temp[,match(regionnames, colnames(temp))])
 class(matrix.region.species) <- "numeric"
 
 # store in list
-lapi.region[["species"]] <- matrix.region.species
+lapi.region[["species"]] <- abs(matrix.region.species)
 
 
 ### genus ----
@@ -1086,9 +1083,7 @@ matrix.region.genus <- as.matrix(temp[,match(regionnames, colnames(temp))])
 class(matrix.region.genus) <- "numeric"
 
 # store in list
-lapi.region[["genus"]] <- matrix.region.genus
-
-
+lapi.region[["genus"]] <- abs(matrix.region.genus)
 
 ### family ----
 # convert into binary data frame
@@ -1165,31 +1160,31 @@ matrix.region.family <- as.matrix(temp[,match(regionnames, colnames(temp))])
 class(matrix.region.family) <- "numeric"
 
 # store in list
-lapi.region[["family"]] <- matrix.region.family
+lapi.region[["family"]] <- abs(matrix.region.family)
 
 ### plotting ----
 library(ggcorrplot)
-d1 <- ggcorrplot(lapi.region[["species"]], hc.order = F, type = "lower", #method = "circle",
+d1 <- ggcorrplot(lapi.region[["species"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 
-d2 <- ggcorrplot(lapi.region[["genus"]], hc.order = F, type = "lower", #method = "circle",
+d2 <- ggcorrplot(lapi.region[["genus"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-d3 <- ggcorrplot(lapi.region[["family"]], hc.order = F, type = "lower", #method = "circle",
+d3 <- ggcorrplot(lapi.region[["family"]], hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_gradient2(limit = c(-0.25,1), low = "#eb554d", high =  "#07575B", midpoint = 0)
+  scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 # arrange them into one file to export
 setwd(output)
