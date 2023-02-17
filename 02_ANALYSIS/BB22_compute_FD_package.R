@@ -7,6 +7,8 @@
 ################################################
 rm(list=ls())
 
+# Preparation ----
+
 #load libraries
 library(dplyr)
 library(tidyverse)
@@ -46,6 +48,7 @@ BB22_full.numeric <- BB22_full %>%
             plant_height_m = plant_height_m)
 BB22_full.numeric$Flowering_duration <- as.numeric(BB22_full.numeric$Flowering_duration)
 
+# Correlation analysis ----
 # correlation analysis of the variables
 library(Hmisc)
 library(corrplot)
@@ -68,36 +71,42 @@ BB22_full.red <- BB22_full.numeric%>%
          -symmetry_numeric,
          -plant_height_m) 
 
-# for (i in levels(BB22_full.red$bbspecies)) { #loop trough bumblebee species
-#   for (j in c("ID.short", "site")) {
+# compute FDs ----
+library(caret)
+library(vegan)
+library(reshape2)
+library(FD)
+library(GGally)
 
- j <- "site"
- i <- "B.lapidarius"
+# the following code has to be run 4 times with each time different input variables i and j 
+# to calculate FD for each bumblebee species and on a site or ID level
+# i = "B.lapidarius" or "B.pascuorum"
+# j = "site" or "ID.short"
+# It can also be performed in a loop, but due to computational time it is easier to them individually. 
 
-# remove plant species entries that do not have traits
+i <- "B.lapidarius"
+j <- "site"
+
+# filter for bumblebee species, remove plant species entries that do not have traits and prepare data
 BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
-  filter(plant.species!= "Fabaceae sp.",
+  filter(plant.species!= "Fabaceae sp.", 
          plant.species!= "Cyclamen sp.",
          plant.species!= "Petunia sp.",
          plant.species!= "Mandevilla atroviolacea" )%>%
   mutate(Flowering_duration = as.numeric(Flowering_duration))%>% 
-  droplevels()
+  droplevels() # remove duplicates
 
 # select columns used in computing FDs
 BB22_full.loop.species <- BB22_full.loop %>% 
-  dplyr::select(plant.species, Flowering_duration, structural_blossom_numeric, 
-         sugar.concentration) %>% 
+  dplyr::select(plant.species, Flowering_duration, structural_blossom_numeric, sugar.concentration) %>% 
   distinct() # remove duplicates
 
 # impute missing data
-library(caret)
-library(vegan)
-
 trt.mis.pred <- preProcess(as.data.frame(BB22_full.loop.species[,-c(1)]), "knnImpute")
 traits <- predict(trt.mis.pred, BB22_full.loop.species[,-c(1)]); head(trt.mis.pred)
 traits <- as.data.frame(traits)
 rownames(traits)  <- BB22_full.loop.species$plant.species
-traits <- traits[order(row.names(traits)), ] # reorder traits into alphabetical order
+traits <- traits[order(row.names(traits)), ] # reorder traits into alphabetical order (needed for FD package)
 
 # relative abundance data
 j.unquoted <- rlang::sym(j)
@@ -107,6 +116,7 @@ BB22_full.ab <- BB22_full.loop%>%
   summarise(abundance = sum(abundance))%>% 
   distinct() # remove duplicates
 
+# create new data frame that recalculates relative abundance data with sum of leg and bpdy pollen
 BB22_full.ab.new <- c()
 for (h in unique(BB22_full.ab[[j]])) {
   temp <- BB22_full.ab[BB22_full.ab[[j]]==h,]
@@ -117,11 +127,12 @@ for (h in unique(BB22_full.ab[[j]])) {
   BB22_full.ab.new <- rbind(BB22_full.ab.new, temp[, c(1,2,4)])
 }
 
-library(reshape2)
+# bring into wide format
 wide <- dcast(BB22_full.ab.new, BB22_full.ab.new[[j]] ~ plant.species, value.var="ab.new")[,-1]
 rownames(wide)  <- levels(BB22_full.ab.new[[j]])
 wide[is.na(wide)] <- 0
 
+# create matrix (weighted and binary)
 # abundance
 sp.ab <- as.matrix(wide)
 # presence/absence
@@ -129,7 +140,6 @@ sp.pa <- decostand(wide, "pa")
 sp.pa <- as.matrix(sp.pa) #turn into matrix
 
 # compute FD
-library(FD)
 fd.weig <- FD::dbFD(x = traits , a = sp.ab, w.abun = T) # weighted 
 fd.bino <- FD::dbFD(x = traits , a = sp.pa) # not weighted 
 
@@ -143,24 +153,15 @@ df.FD <- data.frame(nbsp.w = fd.weig$nbsp,
                     FDiv = fd.bino$FDiv)
 
 # look at possible correlation between weighted and non.weighted FDs
-library(GGally)
 ggpairs(df.FD)
 
-cor(df.FD$FRic, df.FD$FRic.w, method=c("pearson"), use = "complete.obs") # are the same
-cor(df.FD$FEve, df.FD$FEve.w, method=c("pearson"), use = "complete.obs") # 0.291
-cor(df.FD$FDiv, df.FD$FDiv.w, method=c("pearson"), use = "complete.obs") # 0.229
-
-# weighed FD are strongly different than non weighted --> makes sense to use weighted???
+cor(df.FD$FRic, df.FD$FRic.w, method=c("pearson"), use = "complete.obs")
+cor(df.FD$FEve, df.FD$FEve.w, method=c("pearson"), use = "complete.obs")
+cor(df.FD$FDiv, df.FD$FDiv.w, method=c("pearson"), use = "complete.obs")
+# weighed FD are strongly different than non weighted --> makes sense to use weighted
 
 # assign and export data frame
 assign(paste("df.FD", i, sep="_"), df.FD[, c(1,3,5,7)])
 write.csv(assign(paste("df.FD",i,j, sep = "_"), df.FD[, c(1,3,5,7)]), file = paste("./FD/FD_package_", i, "_", j, ".csv", sep = ""))
-
-
-
-
-
-
-
 
 

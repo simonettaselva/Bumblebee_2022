@@ -10,9 +10,6 @@ rm(list=ls())
 #load libraries
 library(dplyr)
 library(tidyverse)
-library(ggplot2)
-library(ggpubr)
-
 
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
@@ -60,9 +57,8 @@ BB22$OTU <- recode(BB22$OTU, # match plant names
                    "Nepeta spc" = "Nepeta sp.",
                    "x Chitalpa tashkentensis" = "xChitalpa tashkentensis")
 
-
 # 230 species
-# 47 famillies
+# 47 families
 
 #remove entries with abundance = 0
 setwd(input)
@@ -70,9 +66,10 @@ BB22.abund <- BB22%>%
   dplyr::filter(binom.abund == 1)
 
 # add information on plants species (file BB22_data_plants.R)
-BB22_plant_traits <- read_csv("BB22_plant_traits_added.csv")
+BB22_plant_traits <- read_csv("BB22_plant_traits.csv")
 BB22 <- BB22 %>% rename(plant.species = OTU)
 
+# join the two dataframes into one -> BB22_full
 BB22_full <- full_join(BB22, BB22_plant_traits, by = "plant.species")%>%
   dplyr::select(-Family, -Genus, -species)%>% 
   dplyr::rename(species = Sp2) %>% 
@@ -102,132 +99,5 @@ levels(BB22_full$symmetry_numeric) <- 1:3
 BB22_full$symmetry_numeric <- as.numeric(BB22_full$symmetry_numeric)
 # sigomorph = 1, actinomorph = 2, no_symmetry = 3
 
-# write.csv(BB22_full, "BB22_full.csv")
-
-# see how many NA in sugar concentration
-sum(is.na(BB22_full$sugar.concentration)) #around 1/5 of entries
-
-
-# summarize data COMMUNITY METRICS
-
-library(codyn)
-library(vegan)
-library(fundiversity)
-
-## CWM
-BB22.metrics <- BB22_full %>% 
-  group_by(ID) %>%
-  summarise(location = as.factor(location),
-            landscape = as.factor(landscape),
-            replicate = as.factor(replicate),
-            bbspecies = as.factor(bbspecies),
-            bborgan = as.factor(bborgan),
-            site = as.factor(paste(location, landscape, replicate, sep="")),
-            Shannon = diversity(Abundance),
-            NrSpecies=n_distinct(species),
-            Flowering_duration_cwm = weighted.mean(Flowering_months_duration, Abundance, na.rm=T),
-            Flowering_start_cwm = weighted.mean(start_flowering, Abundance, na.rm=T),
-            growth_form_cwm = weighted.mean(growth_form_numeric, Abundance, na.rm=T),
-            structural_blossom_cwm = weighted.mean(structural_blossom_numeric, Abundance, na.rm=T),
-            sugar_concentration_cwm = weighted.mean(sugar.concentration, Abundance, na.rm=T),
-            plant_height_cwm = weighted.mean(plant_height_m, Abundance, na.rm=T)
-            ) %>%
-  mutate(replicate = fct_relevel(replicate,"A", "B", "C", "D", "E", "F"),
-         landscape = fct_relevel(landscape, "U", "R")) %>%
-  distinct()
-
-setwd(input)
-# write_csv(BB22.metrics, "BB22.metrics.csv")
-
-# look at distributions of the CWM variables
-CWM <- colnames(BB22.metrics)[str_detect(colnames(BB22.metrics), "_cwm", negate = FALSE)]
-par(mfrow = c(2, 3))
-for (i in CWM){
-  hist(BB22.metrics[[i]], main = i)
-}
-par(mfrow = c(1,1))
-
-
-### Hahs and Fournier et al. 2022 - Compute functional diversity indices ------------
-### Script to calculate various functional diversity metrics
-### load useful function ("Toolkit") -------------------------------------------
-BB22_full.numeric <- BB22_full %>% 
-  summarise(ID = ID,
-            location = as.factor(location),
-            landscape = as.factor(landscape),
-            replicate = as.factor(replicate),
-            bbspecies = as.factor(bbspecies),
-            bborgan = as.factor(bborgan),
-            site = as.factor(paste(location, landscape, replicate, sep="")),
-            plant.species = plant.species,
-            binom.abund = binom.abund,
-            Flowering_duration = Flowering_months_duration,
-            Flowering_start = start_flowering,
-            growth_form_numeric = growth_form_numeric,
-            structural_blossom_numeric = structural_blossom_numeric,
-            sugar.concentration = sugar.concentration,
-            symmetry_numeric = symmetry_numeric,
-            plant_height_m = plant_height_m)
-
-library(reshape2)
-pascuroum <- BB22_full.numeric[BB22_full.numeric$bbspecies == "B.pascuorum",]
-BB22.full_wide.pasc <- dcast(pascuroum ,site ~ plant.species, value.var="binom.abund")
-# sp.pa <- decostand(BB22.full_wide[, -c(1,2)], "pa")
-sp.pa.pascuroum <- decostand(BB22.full_wide.pasc[,-1], "pa")
-source("Bertrand_Function_ToolKit.R")
-# Imput missing values and reduce data dimensionality using PCA 
-# -> enable to calculate FD metrics for sites with low diversity
-require(caret)
-require(vegan)
-BB22_full.numeric=BB22_full.numeric[BB22_full.numeric$plant.species!="Fabaceae sp.",] ## Remove this uninteresting entry, where no traits are found
-BB22_full.mis.model = preProcess(BB22_full.numeric[,8:13], "knnImpute")
-# preProcess not possible since to much missing data -> either delete rows aor use different approach
-BB22_full.mis.model = predict(BB22_full.mis.model, BB22_full.numeric[,8:13]); head(BB22_full.mis.model)
-#SS: does not work
-
-{### imputing Simos style (not correct probably)
-impute <- function(x){
-  x[is.na(x)] <- mean (x, na.rm = TRUE)
-  return(x)
-}
-df = NULL
-for (column in colnames(BB22_full.numeric[,9:15])) {
-  imputed <- impute(BB22_full.numeric[[column]])
-  df <- cbind(df, imputed)
-}
-colnames(df) <- colnames(BB22_full.numeric[,9:15])
-# trt.mis.pred <- cbind(BB22_full.numeric[, 1:8], df)
-trt.mis.pred <- df
-}
-
-# PCA -> reduce dimensionality
-trt.pca <- prcomp(BB22_full.mis.model[, -1], scale. = T, center = T)
-cumsum(trt.pca$sdev/sum(trt.pca$sdev))
-trt.scaled <- scores(trt.pca) # adjust number of axes for each group
-
-### FD incices from mFD package of Magneville et al. 2022 ------------------------
-### mFD
-library(mFD)
-
-fspaces_quality_fruits <- mFD::quality.fspaces(
-  sp_dist             = sp_dist_fruits,
-  maxdim_pcoa         = 10,
-  deviation_weighting = "absolute",
-  fdist_scaling       = FALSE,
-  fdendro             = "average")
-
-
-rownames(sp.pa.pascuroum)  = BB22.full_wide.pasc$site
-
-alpha_fd_indices_fruits <- mFD::alpha.fd.multidim(
-  sp_faxes_coord   = trt.scaled[ , c("PC1", "PC2", "PC3", "PC4", "PC5")],
-  asb_sp_w         = sp.pa.pascuroum,
-  ind_vect         = c("fdis", "fmpd", "fnnd", "feve", "fric", "fdiv", "fori", 
-                       "fspe", "fide"),
-  scaling          = TRUE,
-  check_input      = TRUE,
-  details_returned = TRUE)
-
-
-
-
+# export as csv
+write.csv(BB22_full, "BB22_full.csv")
