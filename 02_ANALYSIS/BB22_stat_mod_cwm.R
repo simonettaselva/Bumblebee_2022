@@ -38,7 +38,6 @@ fix.check <- function(mod){
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
 
-
 # load data
 setwd(input)
 
@@ -66,7 +65,6 @@ BB22.cwm <- BB22_full %>%
   mutate(replicate = fct_relevel(replicate,"A", "B", "C", "D", "E", "F"),
          landscape = fct_relevel(landscape, "R", "U")) %>%
   distinct()
-
 
 # combine trait and cwm in new dataframes
 BB22.bb.traits <- BB22.bb.traits %>% 
