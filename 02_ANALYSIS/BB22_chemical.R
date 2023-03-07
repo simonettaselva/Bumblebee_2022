@@ -227,5 +227,5 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
-#  no variable is signifact
+#  no variable is significant
 
