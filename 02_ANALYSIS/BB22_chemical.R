@@ -69,6 +69,7 @@ BB22.bb.traits.mean <- BB22.bb.traits %>%
             landscape = as.factor(landscape),
             replicate = as.factor(replicate),
             bbspecies = as.factor(bbspecies),
+            intertegular_distance.mean = mean(intertegular_distance),
             glossa.mean = mean(glossa),
             prementum.mean = mean(prementum),
             proboscis_length.mean = mean(proboscis_length),
@@ -79,8 +80,11 @@ BB22.bb.traits.mean <- BB22.bb.traits %>%
             corbicula_ratio.mean = mean(corbicula_ratio))%>%
   distinct()
 
-# combine traits and cwm in new dataframes
-BB22.chem.site <- merge(BB22.cwm, BB22.bb.traits.mean[, c(1,9:17)], by  = "ID.short", all.x=TRUE)
+# # combine traits and cwm in new dataframes
+# BB22.chem.site <- merge(BB22.chemical, BB22.bb.traits.mean[, c(1,6:14)], by  = "site", all.x=TRUE)
+
+# import data with spatial information on sites
+BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
 
 # B.PASCUORUM ----------------------------------------------------------------------------------------
 #only B.pascuroum 
@@ -88,7 +92,7 @@ BB22.bb.sp <- BB22.bb.traits.mean[BB22.bb.traits.mean$bbspecies == "B.pascuorum"
 BB22.chemical.sp <- BB22.chemical[BB22.chemical$bbspecies == "B.pascuorum",]
 
 # combine traits and cwm in new dataframes
-BB22.chem.site <- merge(BB22.chemical.sp, BB22.bb.sp[, c(1,6:13)], by  = "site", all.x=TRUE) %>%
+BB22.chem.site <- merge(BB22.chemical.sp, BB22.bb.sp[, c(1,6:14)], by  = "site", all.x=TRUE) %>%
   mutate(region = paste(location, landscape, sep=""))
 
 ## look at data ----------------------------------------------------------------------------------------
@@ -119,7 +123,7 @@ BB22.chem.site.comp <- BB22.chem.site %>%
   droplevels()
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
-traits.bb <- colnames(BB22.chem.site.comp[, 7:14]) # bumblebee traits to look at; prepare for loop
+traits.bb <- colnames(BB22.chem.site.comp[, 7:15]) # bumblebee traits to look at; prepare for loop
 plot_list <- list()
 
 for (i in traits.bb) {
@@ -137,13 +141,91 @@ for (i in traits.bb) {
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],plot_list[[3]],
                   plot_list[[4]],plot_list[[5]],plot_list[[6]],
-                  plot_list[[7]],plot_list[[8]],
-                  ncol = 4, nrow = 2, 
+                  plot_list[[7]],plot_list[[8]],plot_list[[9]],
+                  ncol = 3, nrow = 3, 
                   labels = c(LETTERS[1:8]),   
                   common.legend = TRUE)
 
 annotate_figure(plot, top = text_grob(paste("B.pascuorum: comparison of AS and traits across landscapes", sep = ""),
                                        face = "bold", size = 22))
-ggsave(paste("./chemical/pasc_site/chemical_pasc_AS_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./chemical/pasc_site/chemical_pasc_AS_BBtraits_landscapes.png", sep = ""), width = 10, height = 10)
 setwd(input)
+
+
+## modelling ----------------------------------------------------------------------------------------
+# center and scale all the variables
+BB22.chem.site.comp[, 6:14] <- scale(BB22.chem.site.comp[, 6:14],center=TRUE,scale=TRUE)
+
+# correlation analysis
+# look at the correlation between the explanatory variables
+library(corrplot)
+M<-cor(BB22.chem.site.comp[, 7:14], use = "complete.obs") # subset data; only explanatory variables
+
+# matrix of the p-value of the correlation
+p.mat <- cor.mtest(BB22.chem.site.comp[, 7:14])
+head(p.mat)
+
+#correlation plot
+corrplot::corrplot(M, type="upper", order="hclust", 
+                   p.mat = p.mat$p, sig.level = 0.01, tl.col = "black",
+                   col = COL2('RdBu', 10)) # plot correlation with p-values
+
+# !!! a lot are multicollinear. in the model only use: proboscis_ratio, fore_wing_ratio
+
+
+#  fit GLMM
+#load the libraries
+library(lme4)
+library(car)
+library(MuMIn)
+library(arm)
+
+### Species Richness ----------------------------------------------------------------------------------------
+
+# built an initial full model based on collinearity 
+M1.full <- lmer(AS.mean ~ proboscis_ratio.mean + fore_wing_ratio.mean + (1|landscape),
+                data = BB22.chem.site.comp)
+fix.check(M1.full) # looks ok
+vif(M1.full) # looks good
+
+# subset meta information on the sites based on sites, we have AS data on
+BB22.sites.meta.sub <- subset(BB22.sites.meta, site %in% BB22.chem.site.comp$site)
+
+# formal test for spatial correlation
+sims <- simulateResiduals(M1.full)
+BB22.chem.site.comp$site <- as.factor(BB22.chem.site.comp$site)
+simulationOutput <- recalculateResiduals(sims, group = BB22.chem.site.comp$site)
+testSpatialAutocorrelation(simulationOutput,
+                           x = BB22.sites.meta.sub$LV95_x, 
+                           y = BB22.sites.meta.sub$LV95_y, 
+                           plot = FALSE)
+# there is no spatial autocorrelation
+
+# update model: add intertegular distance to the model
+M1.full.1 <- lmer(AS.mean ~ intertegular_distance.mean + proboscis_ratio.mean + fore_wing_ratio.mean + 
+                    (1|landscape),
+                  data = BB22.chem.site.comp)
+fix.check(M1.full.1)
+summary(M1.full.1)
+vif(M1.full.1) # looks good
+anova(M1.full.1, M1.full) # better fit without intertegular
+
+# dredging
+# Things to take into account when dredging:
+# 1) epends on the models included in the candidate set. You can’t identify a model as being the 
+# “best” fit to the data if you didn’t include the model to begin with!
+# 2) The parameter estimates and predictions arising from the “best” model or set of best models 
+# should be biologically meaningful.
+
+options(na.action = "na.fail") # Required for dredge to run
+std.model <- MuMIn::dredge(M1.full.1)
+options(na.action = "na.omit") # set back to default
+# Get the top best models
+top.mod <- get.models(std.model, subset = delta < 6) ## Delta-AICc < 6 (Burnham et al., 2011)
+# Model averaging
+avg.model <- model.avg(top.mod,revised.var = TRUE)
+summary(avg.model)
+avg.model$sw
+
+#  no variable is signifact
 
