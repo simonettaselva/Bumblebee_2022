@@ -311,21 +311,31 @@ pasc.site[["family"]] <- abs(matrix.site.family)
 
 ### plotting ----
 library(ggcorrplot)
-a1 <- ggcorrplot(pasc.site[["species"]], hc.order = F, type = "lower", 
+axis.order.site <- c("BERD", 
+                     "BSRD", "BSRE", "BSRF",
+                     "ZHRD", "ZHRE", "ZHRF",
+                     "BEUA", "BEUB", "BEUC",
+                     "BSUA", "BSUB", "BSUC", 
+                     "ZHUA", "ZHUB", "ZHUC") # to consistenly order the axis
+
+a1 <- ggcorrplot(pasc.site[["species"]][axis.order.site, axis.order.site], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-a2 <- ggcorrplot(pasc.site[["genus"]], hc.order = F, type = "lower", 
+a2 <- ggcorrplot(pasc.site[["genus"]][axis.order.site, axis.order.site], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-a3 <- ggcorrplot(pasc.site[["family"]], hc.order = F, type = "lower", 
+a3 <- ggcorrplot(pasc.site[["family"]][axis.order.site, axis.order.site], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
@@ -585,7 +595,10 @@ pasc.region[["family"]] <- abs(matrix.region.family)
 
 ### plotting ----
 library(ggcorrplot)
-b1 <- ggcorrplot(pasc.region[["species"]], hc.order = F, type = "lower",
+axis.order.reg <- c("BER", "BSR", "ZHR", "BEU", "BSU", "ZHU") # to consistenly order the axis
+
+b1 <- ggcorrplot(pasc.region[["species"]][axis.order.reg, axis.order.reg], 
+                 hc.order = F, type = "lower",
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
@@ -593,14 +606,16 @@ b1 <- ggcorrplot(pasc.region[["species"]], hc.order = F, type = "lower",
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 
-b2 <- ggcorrplot(pasc.region[["genus"]], hc.order = F, type = "lower", 
+b2 <- ggcorrplot(pasc.region[["genus"]][axis.order.reg, axis.order.reg], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-b3 <- ggcorrplot(pasc.region[["family"]], hc.order = F, type = "lower", 
+b3 <- ggcorrplot(pasc.region[["family"]][axis.order.reg, axis.order.reg], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
@@ -892,21 +907,31 @@ lapi.site[["family"]] <- abs(matrix.site.family)
 
 ### plotting ----
 library(ggcorrplot)
-c1 <- ggcorrplot(lapi.site[["species"]], hc.order = F, type = "lower", 
+axis.order.site <- c("BERD", 
+                     "BSRD", "BSRE", "BSRF",
+                     "ZHRD", "ZHRE", "ZHRF",
+                     "BEUA", "BEUB", "BEUC",
+                     "BSUA", "BSUB", "BSUC", 
+                     "ZHUA", "ZHUB", "ZHUC") # to consistenly order the axis
+
+c1 <- ggcorrplot(lapi.site[["species"]][axis.order.site, axis.order.site], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-c2 <- ggcorrplot(lapi.site[["genus"]], hc.order = F, type = "lower", 
+c2 <- ggcorrplot(lapi.site[["genus"]][axis.order.site, axis.order.site], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-c3 <- ggcorrplot(lapi.site[["family"]], hc.order = F, type = "lower", 
+c3 <- ggcorrplot(lapi.site[["family"]][axis.order.site, axis.order.site], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
@@ -1164,7 +1189,10 @@ lapi.region[["family"]] <- abs(matrix.region.family)
 
 ### plotting ----
 library(ggcorrplot)
-d1 <- ggcorrplot(lapi.region[["species"]], hc.order = F, type = "lower", 
+axis.order.reg <- c("BER", "BSR", "ZHR", "BEU", "BSU", "ZHU") # to consistenly order the axis
+
+d1 <- ggcorrplot(lapi.region[["species"]][axis.order.reg, axis.order.reg], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='species', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
@@ -1172,14 +1200,16 @@ d1 <- ggcorrplot(lapi.region[["species"]], hc.order = F, type = "lower",
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
 
-d2 <- ggcorrplot(lapi.region[["genus"]], hc.order = F, type = "lower", 
+d2 <- ggcorrplot(lapi.region[["genus"]][axis.order.reg, axis.order.reg], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='genus', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-d3 <- ggcorrplot(lapi.region[["family"]], hc.order = F, type = "lower", 
+d3 <- ggcorrplot(lapi.region[["family"]][axis.order.reg, axis.order.reg], 
+                 hc.order = F, type = "lower", 
                 outline.col = "white")+ 
   labs(title ='family', fill = "", x = "", y = "") +
   theme_classic(base_size = 20) +

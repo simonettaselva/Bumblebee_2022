@@ -172,15 +172,12 @@ corrplot::corrplot(M, type="upper", order="hclust",
 
 # !!! a lot are multicollinear. in the model only use: proboscis_ratio, fore_wing_ratio
 
-
 #  fit GLMM
 #load the libraries
 library(lme4)
 library(car)
 library(MuMIn)
 library(arm)
-
-### Species Richness ----------------------------------------------------------------------------------------
 
 # built an initial full model based on collinearity 
 M1.full <- lmer(AS.mean ~ proboscis_ratio.mean + fore_wing_ratio.mean + (1|landscape),
@@ -228,4 +225,46 @@ summary(avg.model)
 avg.model$sw
 
 #  no variable is significant
+
+
+## relationship FDs & species richness vs. AS ----------------------------------------------------------------------------------------
+
+# import FDs on site level for B.pascuorum
+setwd(input)
+BB22.fd.sites <- read.csv("./FD/FD_package_B.pascuorum_site.csv") %>% 
+  rename(site = X) # ajust variable name of site
+
+# merge AS and FD into one dataframe
+BB22.fd.chem.sites <- merge(BB22.chemical.sp[, 1:6], BB22.fd.sites, by  = "site", all.x=TRUE) %>%
+  mutate(region = paste(location, landscape, sep="")) # add variable region
+
+ggplot(BB22.fd.chem.sites, aes(nbsp.w, AS.mean)) + 
+  geom_point() + 
+  ylim(25, 150) +
+  theme_classic(base_size = 20) + 
+  theme(aspect.ratio=1) + 
+  xlab("species richness per site") +
+  ylab("Aminoacid content (µg/mg)") +
+  geom_smooth(method="lm", se = FALSE) +
+  stat_cor(size = 5)
+
+ggplot(BB22.fd.chem.sites, aes(FRic.w, AS.mean)) + 
+  geom_point() + 
+  ylim(25, 150) +
+  theme_classic(base_size = 20) + 
+  theme(aspect.ratio=1) + 
+  xlab("species richness per site") +
+  ylab("Aminoacid content (µg/mg)") +
+  geom_smooth(method="lm", se = FALSE) +
+  stat_cor(size = 5)
+
+ggplot(BB22.fd.chem.sites, aes(FDiv.w, AS.mean)) + 
+  geom_point() + 
+  ylim(25, 150) +
+  theme_classic(base_size = 20) + 
+  theme(aspect.ratio=1) + 
+  xlab("species richness per site") +
+  ylab("Aminoacid content (µg/mg)") +
+  geom_smooth(method="lm", se = FALSE) +
+  stat_cor(size = 5)
 
