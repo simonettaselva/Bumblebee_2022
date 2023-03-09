@@ -25,20 +25,31 @@ setwd(input)
 # import phylo tree from (file "Goal 0")
 tree <- ape::read.tree("BB22_plant_tree.tre")
 
-# import communty matrices (file "compute FD package")
-pasc_id <- read.delim("./FD/community_matrix_ B.pascuorum _ ID.short .txt", sep = ",", check.names = F)
-colnames(pasc_id) <- sub(" ", "_", colnames(pasc_id))
+# the following code has to be run 4 times with each time different input variables i and j 
+# to calculate FD for each bumblebee species and on a site or ID level
+# i = "B.lapidarius" or "B.pascuorum"
+# j = "site" or "ID.short"
+# It can also be performed in a loop, but due to computational time it is easier to them individually. 
+
+# import community matrices (file "compute FD package")
+i <- "B.lapidarius"
+j <- "ID.short"
+
+sp.ab <- read.delim(paste("./FD/community_matrix_", i, "_", j, ".txt", sep=""), sep = ",", check.names = F)
+colnames(sp.ab) <- sub(" ", "_", colnames(sp.ab))
 
 library(psd)
 library(picante)
-PD_var <- psv(pasc_id,tree,compute.var=TRUE,scale.vcv=TRUE)
-PD_ric <- psr(pasc_id,tree,compute.var=TRUE,scale.vcv=TRUE)
-PD_eve <- pse(pasc_id,tree,scale.vcv=TRUE)
-PD_clu <- psc(pasc_id,tree,scale.vcv=TRUE)
+PD_var <- psv(sp.ab,tree,compute.var=TRUE,scale.vcv=TRUE)
+PD_ric <- psr(sp.ab,tree,compute.var=TRUE,scale.vcv=TRUE)
+PD_eve <- pse(sp.ab,tree,scale.vcv=TRUE)
+PD_clu <- psc(sp.ab,tree,scale.vcv=TRUE)
 
-PD <- data.frame(ID = rownames(PD_var),
+assign(paste("PD", i, j, sep = "_"), 
+       data.frame(ID = rownames(PD_var),
                   nbsp = PD_var$SR,
                   PVar = PD_var$PSVs,
                   PRic = PD_ric$PSR,
                   PEve = PD_eve$PSEs,
-                  PClu = PD_clu$PSCs)
+                  PClu = PD_clu$PSCs))
+

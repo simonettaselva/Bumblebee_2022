@@ -135,7 +135,7 @@ wide[is.na(wide)] <- 0
 # create matrix (weighted and binary)
 # abundance
 sp.ab <- as.matrix(wide)
-write.table(sp.ab, file = paste("./FD/community_matrix_", i, "_", j, ".txt"), sep = ",")
+write.table(sp.ab, file = paste("./FD/community_matrix_", i, "_", j, ".txt", sep=""), sep = ",")
 
 # presence/absence
 sp.pa <- decostand(wide, "pa")
