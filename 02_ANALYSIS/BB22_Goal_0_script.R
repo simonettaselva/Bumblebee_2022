@@ -6,7 +6,7 @@
 # Project: Bumblebee 2022
 ################################################
 
-# AIM: Characterize the diet compositional and structural (taxonomic, functional, and phylogenetic diversity) 
+# AIM: Characterize the diet composition and structural (taxonomic, functional, and phylogenetic diversity) 
 # and chemical properties of the two bumblebee species in both urban and rural landscapes.
 
 # information: every subsection works in itself
@@ -22,7 +22,8 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(pals)
-library(V.PhyloMaker)
+# library(V.PhyloMaker) old version
+library(V.PhyloMaker2)
 library(ape)
 
 # set working directory to main repository
@@ -47,10 +48,12 @@ for (i in 1:nrow(BB22.full)) {
 # 1. create a data frame with taxa (species, genus, family)
 phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
 
-
 # 2. phylogentic tree
 # phylogenetic hypotheses under three scenarios based on a backbone phylogeny 
-tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3"))
+# tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3")) # from old version
+
+tree.result <- phylo.maker(phylo) # new version of package
+write.tree(tree.result$scenario.3, "BB22_plant_tree.tre") # save for later purpose
 
 # plot the phylogenies with node ages displayed with sceanario 3
 tree <- plot.phylo(tree.result$scenario.3, cex = 0.5, main = "Phylogenetic tree of species in pollen"); tree
@@ -1151,5 +1154,4 @@ setwd(input)
                                          face = "bold", size = 22))
   ggsave("./01_Goal 0/Comparison_landcape_Body_Leg_Pollen.png", width = 16, height = 8)
   setwd(input)
-  
 

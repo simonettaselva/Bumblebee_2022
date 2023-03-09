@@ -316,7 +316,7 @@ axis.order.site <- c("BERD",
                      "ZHRD", "ZHRE", "ZHRF",
                      "BEUA", "BEUB", "BEUC",
                      "BSUA", "BSUB", "BSUC", 
-                     "ZHUA", "ZHUB", "ZHUC") # to consistenly order the axis
+                     "ZHUA", "ZHUB", "ZHUC") # to consistently order the axis
 
 a1 <- ggcorrplot(pasc.site[["species"]][axis.order.site, axis.order.site], 
                  hc.order = F, type = "lower", 

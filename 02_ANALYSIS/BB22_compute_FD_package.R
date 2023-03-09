@@ -62,7 +62,7 @@ corrplot::corrplot(M, type="upper", order="hclust",
 res2 <- rcorr(as.matrix(BB22_full.numeric[,c(12, 14, 15, 16)]), type="pearson") # all p values are <0.05
 M <- cor(BB22_full.numeric[,c(12, 14, 15, 16)], use = "complete.obs")
 corrplot::corrplot(M, type="upper", order="hclust", 
-                   p.mat = res$P, sig.level = 0.01, tl.col = "black",
+                   p.mat = res2$P, sig.level = 0.01, tl.col = "black",
                    col = COL2('RdBu', 10)) # plot correlation with p-values
 
 # remove plant height, flowering start and symmetry from data set
@@ -84,8 +84,8 @@ library(GGally)
 # j = "site" or "ID.short"
 # It can also be performed in a loop, but due to computational time it is easier to them individually. 
 
-i <- "B.lapidarius"
-j <- "site"
+i <- "B.pascuorum"
+j <- "ID.short"
 
 # filter for bumblebee species, remove plant species entries that do not have traits and prepare data
 BB22_full.loop <- BB22_full.red[BB22_full.red$bbspecies == i,]%>%
@@ -116,7 +116,7 @@ BB22_full.ab <- BB22_full.loop%>%
   summarise(abundance = sum(abundance))%>% 
   distinct() # remove duplicates
 
-# create new data frame that recalculates relative abundance data with sum of leg and bpdy pollen
+# create new data frame that recalculates relative abundance data with sum of leg and body pollen
 BB22_full.ab.new <- c()
 for (h in unique(BB22_full.ab[[j]])) {
   temp <- BB22_full.ab[BB22_full.ab[[j]]==h,]
@@ -135,6 +135,8 @@ wide[is.na(wide)] <- 0
 # create matrix (weighted and binary)
 # abundance
 sp.ab <- as.matrix(wide)
+write.table(sp.ab, file = paste("./FD/community_matrix_", i, "_", j, ".txt"), sep = ",")
+
 # presence/absence
 sp.pa <- decostand(wide, "pa")
 sp.pa <- as.matrix(sp.pa) #turn into matrix
@@ -163,5 +165,6 @@ cor(df.FD$FDiv, df.FD$FDiv.w, method=c("pearson"), use = "complete.obs")
 # assign and export data frame
 assign(paste("df.FD", i, sep="_"), df.FD[, c(1,3,5,7)])
 write.csv(assign(paste("df.FD",i,j, sep = "_"), df.FD[, c(1,3,5,7)]), file = paste("./FD/FD_package_", i, "_", j, ".csv", sep = ""))
+
 
 
