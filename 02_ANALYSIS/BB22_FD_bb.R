@@ -24,8 +24,10 @@ BB22.bb.traits <- read_csv("BB22_traits.csv")
 
 # data preparation -----
 # replace the names for urban and rural
+BB22.bb.traits <- BB22.bb.traits %>%
+  mutate(landscape.old = landscape)
 for (i in 1:nrow(BB22.bb.traits)) {
-  if (BB22.bb.traits$landscape[i] == "urban") {
+  if (BB22.bb.traits$landscape.old[i] == "urban") {
     BB22.bb.traits$landscape[i] = "U"
   } else {
     BB22.bb.traits$landscape[i] = "R"
@@ -36,7 +38,7 @@ for (i in 1:nrow(BB22.bb.traits)) {
 BB22.bb.traits <- BB22.bb.traits %>%
   mutate(site = paste(location, landscape, replicate, sep = ""),
          region = paste(location, landscape, sep = "")) %>%
-  dplyr::select(-NrSpecies, -Shannon)
+  dplyr::select(-landscape.old)
 BB22.bb.traits$site <- as.factor(BB22.bb.traits$site)
 BB22.bb.traits$ID <- as.factor(BB22.bb.traits$ID)
 
@@ -74,7 +76,7 @@ fd.plants.pasc <-  read_csv(paste("./FD/FD_package_B.pascuorum_site.csv", sep = 
          FEve = FEve.w,
          FDiv = FDiv.w) 
 
-fd.all <- merge(fd.bb, fd.plants, by  = "site", all.x=TRUE)
+fd.all <- merge(fd.bb, fd.plants.pasc, by  = "site", all.x=TRUE)
 
 # relationship bumblebee FD and plant FD
 fds <- c("FRic","FEve","FDiv")
@@ -196,4 +198,3 @@ annotate_figure(plot, top = text_grob("B.lapidarius: bumblebee FDs vs. plant FDs
 ggsave("./FD bumblebees/FD_B.lapidarius_bb_plants.png", width = 6, height = 24)
 setwd(input)
 
-# species combined no landscape ----
