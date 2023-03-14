@@ -43,7 +43,6 @@ for (i in species) {
     sp.ab <- read.delim(paste("./FD/community_matrix_", i, "_", j, ".txt", sep=""), sep = ",", check.names = F)
     colnames(sp.ab) <- sub(" ", "_", colnames(sp.ab))
     
-    library(psd)
     library(picante)
     PD_var <- psv(sp.ab,tree,compute.var=TRUE,scale.vcv=TRUE)
     PD_ric <- psr(sp.ab,tree,compute.var=TRUE,scale.vcv=TRUE)

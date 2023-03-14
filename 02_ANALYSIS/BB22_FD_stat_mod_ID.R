@@ -58,6 +58,155 @@ BB22.bb.traits <- BB22.bb.traits %>%
   dplyr::select(-NrSpecies, -Shannon)
 
 
+
+# combined species ----
+
+## data preparation ----
+
+# load data
+setwd(input)
+BB22.bb.traits <- read_csv("BB22_traits.csv")
+
+# replace the names for urban and rural
+for (i in 1:nrow(BB22.bb.traits)) {
+  if (BB22.bb.traits$landscape[i] == "urban") {
+    BB22.bb.traits$landscape[i] = "U"
+  } else {
+    BB22.bb.traits$landscape[i] = "R"
+  }
+}
+
+# rename column site to match other dataframes
+BB22.bb.traits <- BB22.bb.traits %>%
+  mutate(site = paste(location, landscape, replicate, sep = ""),
+         region = paste(location, landscape, sep = "")) 
+
+# import data with spatial information on sites
+BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
+
+# import data with functional diversity of plants per site
+BB22.fun.ID.pasc <- read_csv("./FD/FD_package_B.pascuorum_ID.short.csv")%>% 
+  rename_with(.cols = 1, ~"ID")%>%
+  rename_with(.cols = 2, ~"sp_richn")%>%
+  rename_with(.cols = 3, ~"fric")%>%
+  rename_with(.cols = 5, ~"fdiv")%>%
+  rename_with(.cols = 4, ~"feve")
+BB22.fun.ID.pasc <- BB22.fun.ID.pasc%>%
+  mutate(species = rep("B.pascuorum", length(BB22.fun.ID.pasc$ID)))
+
+BB22.fun.ID.lapi <- read_csv("./FD/FD_package_B.lapidarius_ID.short.csv")%>% 
+  rename_with(.cols = 1, ~"ID")%>%
+  rename_with(.cols = 2, ~"sp_richn")%>%
+  rename_with(.cols = 3, ~"fric")%>%
+  rename_with(.cols = 5, ~"fdiv")%>%
+  rename_with(.cols = 4, ~"feve")
+BB22.fun.ID.lapi <- BB22.fun.ID.lapi%>%
+  mutate(species = rep("B.lapidarius", length(BB22.fun.ID.lapi$ID)))
+
+# combine both species
+BB22.fun.ID <- rbind(BB22.fun.ID.pasc, BB22.fun.ID.lapi)
+
+# filter functional metrics of plant traits to compare with traits per individual
+BB22.fun.ID <- subset(BB22.fun.ID, ID %in% BB22.bb.traits$ID)
+
+# add site coordinates to the trait data frame (in LV95)
+BB22.ID <- merge(BB22.bb.traits, BB22.fun.ID, by  = "ID", all.x=TRUE)
+BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
+
+BB22.ID$bbspecies <- as.factor(BB22.ID$bbspecies)
+levels(BB22.ID$bbspecies)
+
+# plot the relationship of plants traits of one site and bumblebee traits of one site
+traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for loop
+metrics <- colnames(BB22.ID[, c(17:20)]) # plant FD to look at (see file BB22_compute_FD); prepare for loop
+
+# wilcox test
+library(rstatix)
+plot_list  <- list()
+w.test.list <- list()
+mean.lapi <- list()
+mean.pasc <- list()
+
+for (j in metrics) {
+  gg.data <- data.frame(species=BB22.ID$bbspecies,value=BB22.ID[[j]])
+  w.test <- wilcox_test(gg.data,value~species)
+  w.test.list[[j]] <- w.test
+  mean.lapi[[j]] <- mean(gg.data$value[gg.data$species == "B.lapidarius"], na.rm=TRUE)
+  mean.pasc[[j]] <- mean(gg.data$value[gg.data$species == "B.pascuorum"], na.rm=TRUE)
+  
+  p <- ggplot(gg.data, aes(x=species, y = value, fill=species)) + 
+    geom_boxplot(notch = T) + 
+    xlab("") +
+    scale_x_discrete(labels=c("B.lapidarius", "B.pascuroum")) +
+    theme_classic(base_size = 20) +     
+    theme(aspect.ratio=1) + 
+    guides(alpha = "none") +
+    scale_fill_manual(values=c("#291600","#e0b802"), guide = "none") + 
+    labs(subtitle = paste("p = ", w.test$p, sep=""))
+  if (j == "sp_richn") {
+    p <- p + ylim(0, 18) + ylab("species richness")
+  } else if (j == "fric") {
+    p <- p + ylim(0, 1) + ylab("funtional richness")
+  } else if (j == "fdiv") {
+    p <- p + ylim(0.6, 0.85) + ylab("funtional divergence")
+  } else {
+    p <- p + ylim(0.5, 0.75) + ylab("funtional evenness")
+  }
+  plot_list[[j]] <- p
+}
+
+# arrange them into one file to export
+setwd(output)
+plot <- ggarrange(plot_list[[1]],plot_list[[2]],
+                  plot_list[[3]],plot_list[[4]],
+                  ncol = 1, nrow = 4,
+                  labels = c("A", "B", "C", "D"))
+annotate_figure(plot, top = text_grob("species richness and funtional diversity between species", 
+                                      face = "bold", size = 22))
+ggsave("./functional diversity/FD_box_BBtraits_species.png", width = 6, height = 24)
+setwd(input)
+
+# export statistics of W tests
+w.stats <- rbind(c(mean.lapi$sp_richn, mean.pasc$sp_richn, w.test.list$sp_richn),
+                 c(mean.lapi$fric, mean.pasc$fric, w.test.list$fric),
+                 c(mean.lapi$feve, mean.pasc$feve, w.test.list$feve),
+                 c(mean.lapi$fdiv, mean.pasc$fdiv, w.test.list$fdiv))
+setwd(output)
+write_csv(as.data.frame(w.stats),"./functional diversity/FD_W_BBtraits_species.csv")
+setwd(input)
+
+# explore relationships
+library(nlme)
+
+# perform loop to output plots per relationship summarized per FD
+for (i in metrics) {
+  x <- 1 # for naming the plots
+  for (j in traits) {
+    f <- formula(paste(i,"~", j))
+    fit <- lme(f, random=~1|bbspecies, data = BB22.ID, na.action=na.omit)
+    assign(paste("a", x, sep=""), # assign the ggplot to plot name
+           # define the ggplot
+           ggplot(BB22.ID, aes_string(j, i, colour = "bbspecies")) + 
+             geom_point() + 
+             theme_classic(base_size = 20) + 
+             theme(aspect.ratio=1) + 
+             geom_smooth(method="lm", se = FALSE) +
+             scale_color_manual(values=c("#291600","#e0b802"), labels=c("B.lapidarius", "B.pascuroum")) + 
+             stat_cor(aes(color = bbspecies), size = 5))
+    x <- x+1
+  } # end loop j
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
+                     ncol = 5, nrow = 2, 
+                     labels = c(LETTERS[1:9]),   
+                     common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("comparison of ", i, " and traits between species", sep = ""),
+                                         face = "bold", size = 22))
+  ggsave(paste("./functional diversity/FD_corr_", i, "_BBtraits_species.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+} # end loop i
+
+
 # B.PASCUORUM ---- 
 #only B.pascuroum 
 BB22.bb.traits.sp <- BB22.bb.traits[BB22.bb.traits$bbspecies == "B.pascuorum",]
@@ -81,7 +230,6 @@ BB22.ID <- merge(BB22.bb.traits.sp, BB22.fun.ID, by  = "ID", all.x=TRUE)
 BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
 
 ## look at data ----------------------------------------------------------------------------------------
-# FDis, FRic, FDiv, FEve, FSpe
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
 resp <- c("sp_richn", "fric", "fdiv", "feve")
@@ -89,12 +237,16 @@ library(psych)
 library(rstatix)
 plot_list  <- list()
 w.test.list <- list()
+mean.rural <- list()
+mean.urban <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (j in resp) {
   gg.data <- data.frame(landscape=BB22.ID$landscape,value=BB22.ID[[j]])
   w.test <- wilcox_test(gg.data,value~landscape)
   w.test.list[[j]] <- w.test
+  mean.rural[[j]] <- mean(gg.data$value[gg.data$landscape == "R"], na.rm=TRUE)
+  mean.urban[[j]] <- mean(gg.data$value[gg.data$landscape == "U"], na.rm=TRUE)
   
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
@@ -129,7 +281,14 @@ annotate_figure(plot, top = text_grob("B.pascuorum: species richness and funtion
 ggsave("./functional diversity/pasc_ID/FD_B.pascuorum_ID.png", width = 6, height = 24)
 setwd(input)
 
-
+# export statistics of W tests
+w.stats.pasc <- rbind(c(mean.rural$sp_richn, mean.urban$sp_richn, w.test.list$sp_richn),
+                 c(mean.rural$fric, mean.urban$fric, w.test.list$fric),
+                 c(mean.rural$feve, mean.urban$feve, w.test.list$feve),
+                 c(mean.rural$fdiv, mean.urban$fdiv, w.test.list$fdiv))
+setwd(output)
+write.csv(w.stats.pasc,"./functional diversity/pasc_ID/FD_W_pasc_BBtraits_species.csv")
+setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
 traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for loop
@@ -599,16 +758,15 @@ BB22.ID <- merge(BB22.bb.traits.sp, BB22.fun.ID, by  = "ID", all.x=TRUE)
 BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
 
 ## look at data ----------------------------------------------------------------------------------------
-# FDis, FRic, FDiv, FEve, FSpe
-# library(Hmisc)
-# hist.data.frame(BB22.ID[, c(17:20)])
 
 # Boxplots for all the variables we want to look at with Wilcoxon test
 resp <- c("sp_richn", "fric", "fdiv", "feve")
 library(psych)
 library(rstatix)
 plot_list  <- list()
-w.test.list <- list()
+w.test.list <-  list()
+mean.rural <- list()
+mean.urban <- list()
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 for (j in resp) {
@@ -616,6 +774,8 @@ for (j in resp) {
   gg.data <- data.frame(landscape=BB22.ID$landscape,value=BB22.ID[[j]])
   w.test <- wilcox_test(gg.data,value~landscape)
   w.test.list[[j]] <- w.test
+  mean.rural[[j]] <- mean(gg.data$value[gg.data$landscape == "R"], na.rm=TRUE)
+  mean.urban[[j]] <- mean(gg.data$value[gg.data$landscape == "U"], na.rm=TRUE)
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
     xlab("") +
@@ -637,7 +797,7 @@ for (j in resp) {
   plot_list[[j]] <- p
   # describeBy(gg.data$value, gg.data$landscape)
 }
-w.test.list
+
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
@@ -649,7 +809,14 @@ annotate_figure(plot, top = text_grob("B.lapidarius: species richness and funtio
 ggsave("./functional diversity/lapi_ID/FD_B.lapidarius_ID.png", width = 6, height = 24)
 setwd(input)
 
-
+# export statistics of W tests
+w.stats.lapi <- rbind(c(mean.rural$sp_richn, mean.urban$sp_richn, w.test.list$sp_richn),
+                      c(mean.rural$fric, mean.urban$fric, w.test.list$fric),
+                      c(mean.rural$feve, mean.urban$feve, w.test.list$feve),
+                      c(mean.rural$fdiv, mean.urban$fdiv, w.test.list$fdiv))
+setwd(output)
+write.csv(w.stats.lapi,"./functional diversity/lapi_ID/FD_lapi_W_BBtraits_species.csv")
+setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
 traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for loop
@@ -1068,142 +1235,4 @@ for (i in metrics) {
   setwd(input)
   
 } # end i loop
-
-
-# combined species ----
-
-## data preparation ----
-
-# load data
-setwd(input)
-BB22.bb.traits <- read_csv("BB22_traits.csv")
-
-# replace the names for urban and rural
-for (i in 1:nrow(BB22.bb.traits)) {
-  if (BB22.bb.traits$landscape[i] == "urban") {
-    BB22.bb.traits$landscape[i] = "U"
-  } else {
-    BB22.bb.traits$landscape[i] = "R"
-  }
-}
-
-# rename column site to match other dataframes
-BB22.bb.traits <- BB22.bb.traits %>%
-  mutate(site = paste(location, landscape, replicate, sep = ""),
-         region = paste(location, landscape, sep = "")) %>%
-  dplyr::select(-NrSpecies, -Shannon)
-
-# import data with spatial information on sites
-BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
-
-# import data with functional diversity of plants per site
-BB22.fun.ID.pasc <- read_csv("./FD/FD_package_B.pascuorum_ID.short.csv")%>% 
-  rename_with(.cols = 1, ~"ID")%>%
-  rename_with(.cols = 2, ~"sp_richn")%>%
-  rename_with(.cols = 3, ~"fric")%>%
-  rename_with(.cols = 5, ~"fdiv")%>%
-  rename_with(.cols = 4, ~"feve")
-BB22.fun.ID.pasc <- BB22.fun.ID.pasc%>%
-  mutate(species = rep("B.pascuorum", length(BB22.fun.ID.pasc$ID)))
-
-BB22.fun.ID.lapi <- read_csv("./FD/FD_package_B.lapidarius_ID.short.csv")%>% 
-  rename_with(.cols = 1, ~"ID")%>%
-  rename_with(.cols = 2, ~"sp_richn")%>%
-  rename_with(.cols = 3, ~"fric")%>%
-  rename_with(.cols = 5, ~"fdiv")%>%
-  rename_with(.cols = 4, ~"feve")
-BB22.fun.ID.lapi <- BB22.fun.ID.lapi%>%
-  mutate(species = rep("B.lapidarius", length(BB22.fun.ID.lapi$ID)))
-
-# combine both species
-BB22.fun.ID <- rbind(BB22.fun.ID.pasc, BB22.fun.ID.lapi)
-
-# filter functional metrics of plant traits to compare with traits per individual
-BB22.fun.ID <- subset(BB22.fun.ID, ID %in% BB22.bb.traits$ID)
-
-# add site coordinates to the trait data frame (in LV95)
-BB22.ID <- merge(BB22.bb.traits, BB22.fun.ID, by  = "ID", all.x=TRUE)
-BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
-
-BB22.ID$bbspecies <- as.factor(BB22.ID$bbspecies)
-levels(BB22.ID$bbspecies)
-
-# plot the relationship of plants traits of one site and bumblebee traits of one site
-traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for loop
-metrics <- colnames(BB22.ID[, c(17:20)]) # plant FD to look at (see file BB22_compute_FD); prepare for loop
-
-# wilcox test
-library(rstatix)
-plot_list  <- list()
-w.test.list <- list()
-
-for (j in metrics) {
-  gg.data <- data.frame(species=BB22.ID$bbspecies,value=BB22.ID[[j]])
-  w.test <- wilcox_test(gg.data,value~species)
-  w.test.list[[j]] <- w.test
-  p <- ggplot(gg.data, aes(x=species, y = value, fill=species)) + 
-    geom_boxplot(notch = T) + 
-    xlab("") +
-    scale_x_discrete(labels=c("B.lapidarius", "B.pascuroum")) +
-    theme_classic(base_size = 20) +     
-    theme(aspect.ratio=1) + 
-    guides(alpha = "none") +
-    scale_fill_manual(values=c("#291600","#e0b802"), guide = "none") + 
-    labs(subtitle = paste("p = ", w.test$p, sep=""))
-  if (j == "sp_richn") {
-    p <- p + ylim(0, 18) + ylab("species richness")
-  } else if (j == "fric") {
-    p <- p + ylim(0, 1) + ylab("funtional richness")
-  } else if (j == "fdiv") {
-    p <- p + ylim(0.6, 0.85) + ylab("funtional divergence")
-  } else {
-    p <- p + ylim(0.5, 0.75) + ylab("funtional evenness")
-  }
-  plot_list[[j]] <- p
-}
-
-# arrange them into one file to export
-setwd(output)
-plot <- ggarrange(plot_list[[1]],plot_list[[2]],
-                  plot_list[[3]],plot_list[[4]],
-                  ncol = 1, nrow = 4,
-                  labels = c("A", "B", "C", "D"))
-annotate_figure(plot, top = text_grob("species richness and funtional diversity between species", 
-                                      face = "bold", size = 22))
-ggsave("./functional diversity/FD_box_BBtraits_species.png", width = 6, height = 24)
-setwd(input)
-
-
-# explore relationships
-
-library(nlme)
-
-# perform loop to output plots per relationship summarized per FD
-for (i in metrics) {
-  x <- 1 # for naming the plots
-  for (j in traits) {
-    f <- formula(paste(i,"~", j))
-    fit <- lme(f, random=~1|bbspecies, data = BB22.ID, na.action=na.omit)
-    assign(paste("a", x, sep=""), # assign the ggplot to plot name
-           # define the ggplot
-           ggplot(BB22.ID, aes_string(j, i, colour = "bbspecies")) + 
-             geom_point() + 
-             theme_classic(base_size = 20) + 
-             theme(aspect.ratio=1) + 
-             geom_smooth(method="lm", se = FALSE) +
-             scale_color_manual(values=c("#291600","#e0b802"), labels=c("B.lapidarius", "B.pascuroum")) + 
-             stat_cor(aes(color = bbspecies), size = 5))
-    x <- x+1
-  } # end loop j
-  setwd(output)
-  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
-                     ncol = 5, nrow = 2, 
-                     labels = c(LETTERS[1:9]),   
-                     common.legend = TRUE)
-  annotate_figure(plot4, top = text_grob(paste("comparison of ", i, " and traits between species", sep = ""),
-                                         face = "bold", size = 22))
-  ggsave(paste("./functional diversity/FD_corr_", i, "_BBtraits_species.png", sep = ""), width = 16, height = 8)
-  setwd(input)
-} # end loop i
-
 
