@@ -128,7 +128,8 @@ mean.lapi <- list()
 mean.pasc <- list()
 
 for (j in metrics) {
-  gg.data <- data.frame(species=BB22.ID$bbspecies,value=BB22.ID[[j]])
+  gg.data <- data.frame(species = BB22.ID$bbspecies, 
+                        value = BB22.ID[[j]])
   w.test <- wilcox_test(gg.data,value~species)
   w.test.list[[j]] <- w.test
   mean.lapi[[j]] <- mean(gg.data$value[gg.data$species == "B.lapidarius"], na.rm=TRUE)
@@ -172,7 +173,7 @@ w.stats <- rbind(c(mean.lapi$sp_richn, mean.pasc$sp_richn, w.test.list$sp_richn)
                  c(mean.lapi$feve, mean.pasc$feve, w.test.list$feve),
                  c(mean.lapi$fdiv, mean.pasc$fdiv, w.test.list$fdiv))
 setwd(output)
-write_csv(as.data.frame(w.stats),"./functional diversity/FD_W_BBtraits_species.csv")
+write.csv(w.stats,"./functional diversity/FD_W_BBtraits_species.csv")
 setwd(input)
 
 # explore relationships
@@ -267,7 +268,6 @@ for (j in resp) {
     p <- p + ylim(0.5, 0.75) + ylab("funtional evenness")
   }
   plot_list[[j]] <- p
-  # describeBy(gg.data$value, gg.data$landscape)
 }
 
 # arrange them into one file to export
@@ -776,6 +776,7 @@ for (j in resp) {
   w.test.list[[j]] <- w.test
   mean.rural[[j]] <- mean(gg.data$value[gg.data$landscape == "R"], na.rm=TRUE)
   mean.urban[[j]] <- mean(gg.data$value[gg.data$landscape == "U"], na.rm=TRUE)
+  
   p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
     geom_boxplot(notch = T) + 
     xlab("") +
@@ -795,7 +796,6 @@ for (j in resp) {
     p <- p + ylim(0.5, 0.75) + ylab("funtional evenness")
   }
   plot_list[[j]] <- p
-  # describeBy(gg.data$value, gg.data$landscape)
 }
 
 # arrange them into one file to export
