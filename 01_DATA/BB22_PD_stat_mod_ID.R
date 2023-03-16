@@ -31,7 +31,6 @@ fix.check <- function(mod){
   par(mfrow = c(1,1))
 }
 
-
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
 output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"

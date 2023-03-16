@@ -124,12 +124,12 @@ for (j in resp) {
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
-                   plot_list[[3]],plot_list[[4]],
+                  plot_list[[3]],plot_list[[4]],
                   ncol = 1, nrow = 6,
                   labels = c("A", "B", "C", "D"))
 annotate_figure(plot, top = text_grob("B.pascuorum: species richness and funtional diversity across landscapes", 
                                        face = "bold", size = 22))
-# ggsave("./functional diversity/pasc_site/FD_B.pascuorum.png", width = 6, height = 24)
+ggsave("./functional diversity/pasc_site/FD_B.pascuorum.png", width = 6, height = 24)
 setwd(input)
 
 # plot the relationship of plants traits of one site and bumblebee traits of one site
@@ -143,7 +143,7 @@ for (i in metrics) {
   x <- 1 # for naming the plots
   for (j in traits) {
     f <- formula(paste(i,"~", j))
-    fit <- lme(f, random=~1|landscape, data = BB22.sites)
+    fit <- lme(f, random = ~1|landscape, data = BB22.sites)
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
            # define the ggplot
            ggplot(BB22.sites, aes_string(j, i, colour = "landscape")) + 
@@ -156,13 +156,14 @@ for (i in metrics) {
     x <- x+1
   } # end loop j
   setwd(output)
-  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8, # arrange to plots nicely and export them 
+  plot4 <- ggarrange(a1, a2, a3, a4,
+                     a5, a6, a7, a8, # arrange to plots nicely and export them 
                      ncol = 4, nrow=2, 
                      labels = c(LETTERS[1:8]),   
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
                                          face = "bold", size = 22))
-  # ggsave(paste("./functional diversity/pasc_site/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("./functional diversity/pasc_site/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
   setwd(input)
 } # end loop i
 

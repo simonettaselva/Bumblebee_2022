@@ -196,11 +196,18 @@ library(tidyverse)
 library(rstatix)
 library(ggpubr)
 
+# compile sd and mean for both species in one dataframe and export it
 site.summary <- data.frame(site = rep(lapi.ID.df.site$site, 2))
 site.summary <- site.summary %>%
   mutate(bbspecies = c(rep("B.lapidarius", 16), rep("B.pascuorum", 16)),
-         landscape = substring(site, 3,3),
-         mean = c(lapi.ID.df.site$mean.lapi, pasc.ID.df.site$mean.pasc))
+         landscape = as_factor(substring(site, 3,3)),
+         mean = c(lapi.ID.df.site$mean.lapi, pasc.ID.df.site$mean.pasc),
+         sd = c(lapi.ID.df.site$sd.lapi, pasc.ID.df.site$sd.pasc)) %>%
+  mutate(landscape = fct_relevel(landscape, c("R", "U")))
+
+setwd(output)
+write.csv(site.summary, "./01_Goal 0/distances/distance_summary_statistics.csv")
+setwd(input)
 
 # subset for different comparisons
 site.summary.lapi <- site.summary %>% filter(bbspecies == "B.lapidarius")
@@ -225,7 +232,8 @@ plot.list[[1]] <-
   stat_pvalue_manual(pwc1, label = "p.adj", tip.length = 0, step.increase = 0.1) +
   labs(subtitle = get_test_label(res.aov1, detailed = TRUE)) +
   ggtitle("B.lapidarius") + # for the main title
-  xlab("landscape")+
+  xlab("landscape") +
+  ylab("Mean") +
   scale_x_discrete(labels=c('rural', 'urban'))+
   theme_classic(base_size = 20) +     
   theme(aspect.ratio=1)+
@@ -245,12 +253,12 @@ plot.list[[2]] <-
   stat_pvalue_manual(pwc2, label = "p.adj", tip.length = 0, step.increase = 0.1) +
   labs(subtitle = get_test_label(res.aov2, detailed = TRUE)) +
   ggtitle("B.pascuorum") + # for the main title
-  xlab("landscape")+
+  xlab("landscape") +
+  ylab("Mean") +
   scale_x_discrete(labels=c('rural', 'urban'))+
   theme_classic(base_size = 20) +     
   theme(aspect.ratio=1)+
   scale_fill_manual(values=c("#E69F00", "#56B4E9")) 
-
 
 ## compare the mean of species in urban areas ----
 res.aov3 <- site.summary.urban %>% anova_test(mean ~ bbspecies)
@@ -266,7 +274,8 @@ plot.list[[3]] <-
   stat_pvalue_manual(pwc3, label = "p.adj", tip.length = 0, step.increase = 0.1) +
   labs(subtitle = get_test_label(res.aov3, detailed = TRUE)) +
   ggtitle("Urban areas") + # for the main title
-  xlab("Bumblebee species")+
+  xlab("Bumblebee species") +
+  ylab("Mean") +
   scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum'))+
   theme_classic(base_size = 20) +     
   theme(aspect.ratio=1)+
@@ -286,17 +295,114 @@ plot.list[[4]] <-
   stat_pvalue_manual(pwc4, label = "p.adj", tip.length = 0, step.increase = 0.1) +
   labs(subtitle = get_test_label(res.aov4, detailed = TRUE)) +
   ggtitle("Rural areas") + # for the main title
-  xlab("Bumblebee species")+
+  xlab("Bumblebee species") +
+  ylab("Mean") +
   scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum'))+
   theme_classic(base_size = 20) +     
   theme(aspect.ratio=1)+
   scale_fill_manual(values=c("#291600","#e0b802")) 
 
 # arrange them into one file to export
+setwd(output)
 plot <- ggarrange(plot.list[[1]], plot.list[[2]],
                   plot.list[[3]], plot.list[[4]],
                   ncol = 2, nrow = 2,
                   labels = c("A", "B", "C", "D"))
-ggsave("./01_Goal 0/distances/summary_stats_overview.png", width = 20, height = 20)
+ggsave("./01_Goal 0/distances/summary_stats_mean_overview.png", width = 20, height = 20)
+setwd(input)
+
+
+## compare the sd of landscape for B.lapidarius ----
+res.aov5 <- site.summary.lapi %>% anova_test(sd ~ landscape)
+res.aov5
+pwc5 <- site.summary.lapi %>%
+  pairwise_t_test(sd ~ landscape, p.adjust.method = "bonferroni")
+pwc5
+
+# Show adjusted p-values
+pwc5 <- pwc5 %>% add_xy_position(x = "landscape")
+plot.list[[5]] <-
+  ggboxplot(site.summary.lapi, x = "landscape", y = "sd", fill = "landscape", notch = TRUE) +
+  stat_pvalue_manual(pwc5, label = "p.adj", tip.length = 0, step.increase = 0.1) +
+  labs(subtitle = get_test_label(res.aov5, detailed = TRUE)) +
+  ggtitle("B.lapidarius") + # for the main title
+  xlab("landscape") +
+  ylab("Standard deviation") +
+  scale_x_discrete(labels=c('rural', 'urban'))+
+  theme_classic(base_size = 20) +     
+  theme(aspect.ratio=1)+
+  scale_fill_manual(values=c("#E69F00", "#56B4E9"))
+
+## compare the sd of landscape for B.pascuorum ----
+res.aov6 <- site.summary.pasc %>% anova_test(sd ~ landscape)
+res.aov6
+pwc6 <- site.summary.pasc %>%
+  pairwise_t_test(sd ~ landscape, p.adjust.method = "bonferroni")
+pwc6
+
+# Show adjusted p-values
+pwc6 <- pwc6 %>% add_xy_position(x = "landscape")
+plot.list[[6]] <-
+  ggboxplot(site.summary.pasc, x = "landscape", y = "sd", fill = "landscape", notch = TRUE) +
+  stat_pvalue_manual(pwc6, label = "p.adj", tip.length = 0, step.increase = 0.1) +
+  labs(subtitle = get_test_label(res.aov6, detailed = TRUE)) +
+  ggtitle("B.pascuorum") + # for the main title
+  xlab("landscape") +
+  ylab("Standard deviation") +
+  scale_x_discrete(labels=c('rural', 'urban'))+
+  theme_classic(base_size = 20) +     
+  theme(aspect.ratio=1)+
+  scale_fill_manual(values=c("#E69F00", "#56B4E9")) 
+
+
+## compare the sd of species in urban areas ----
+res.aov7 <- site.summary.urban %>% anova_test(sd ~ bbspecies)
+res.aov7
+pwc7 <- site.summary.urban %>%
+  pairwise_t_test(sd ~ bbspecies, p.adjust.method = "bonferroni")
+pwc7
+
+# Show adjusted p-values
+pwc7 <- pwc7 %>% add_xy_position(x = "bbspecies")
+plot.list[[7]] <-
+  ggboxplot(site.summary.urban, x = "bbspecies", y = "sd", fill = "bbspecies", notch = TRUE) +
+  stat_pvalue_manual(pwc7, label = "p.adj", tip.length = 0, step.increase = 0.1) +
+  labs(subtitle = get_test_label(res.aov7, detailed = TRUE)) +
+  ggtitle("Urban areas") + # for the main title
+  xlab("Bumblebee species") +
+  ylab("Standard deviation") +
+  scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum'))+
+  theme_classic(base_size = 20) +     
+  theme(aspect.ratio=1)+
+  scale_fill_manual(values=c("#291600","#e0b802")) 
+
+## compare the sd of species in rural areas ----
+res.aov8 <- site.summary.rural %>% anova_test(sd ~ bbspecies)
+res.aov8
+pwc8 <- site.summary.rural %>%
+  pairwise_t_test(sd ~ bbspecies, p.adjust.method = "bonferroni")
+pwc8
+
+# Show adjusted p-values
+pwc8 <- pwc8 %>% add_xy_position(x = "bbspecies")
+plot.list[[8]] <-
+  ggboxplot(site.summary.rural, x = "bbspecies", y = "sd", fill = "bbspecies", notch = TRUE) +
+  stat_pvalue_manual(pwc8, label = "p.adj", tip.length = 0, step.increase = 0.1) +
+  labs(subtitle = get_test_label(res.aov8, detailed = TRUE)) +
+  ggtitle("Rural areas") + # for the main title
+  xlab("Bumblebee species") +
+  ylab("Standard deviation") +
+  scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum'))+
+  theme_classic(base_size = 20) +     
+  theme(aspect.ratio=1)+
+  scale_fill_manual(values=c("#291600","#e0b802")) 
+
+# arrange them into one file to export
+setwd(output)
+plot <- ggarrange(plot.list[[5]], plot.list[[6]],
+                  plot.list[[7]], plot.list[[8]],
+                  ncol = 2, nrow = 2,
+                  labels = c("A", "B", "C", "D"))
+ggsave("./01_Goal 0/distances/summary_stats_sd_overview.png", width = 20, height = 20)
 setwd(input)
 

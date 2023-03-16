@@ -54,10 +54,7 @@ for (i in 1:nrow(BB22.bb.traits)) {
 # rename column site to match other dataframes
 BB22.bb.traits <- BB22.bb.traits %>%
   mutate(site = paste(location, landscape, replicate, sep = ""),
-         region = paste(location, landscape, sep = "")) %>%
-  dplyr::select(-NrSpecies, -Shannon)
-
-
+         region = paste(location, landscape, sep = "")) 
 
 # combined species ----
 
@@ -828,9 +825,6 @@ library(nlme)
 for (i in metrics) {
   x <- 1 # for naming the plots
   for (j in traits) {
-    
-    i <- "fric"
-    j <- "corbicula_ratio"
     f <- formula(paste(i,"~", j))
     fit <- lme(f, random=~1|landscape, data = BB22.ID, na.action=na.omit)
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
@@ -851,7 +845,7 @@ for (i in metrics) {
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("B.lapidarius: comparison of ", i, " and traits across landscapes", sep = ""),
                                          face = "bold", size = 22))
-  # ggsave(paste("./functional diversity/lapi_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("./functional diversity/lapi_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
   setwd(input)
 } # end loop i
 
