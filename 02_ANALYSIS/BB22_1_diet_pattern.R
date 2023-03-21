@@ -1,8 +1,8 @@
 ################################################
-# GOAL 0: Species Diet Analysis
+# Foraging patterns of the two bumblebee species
 # by Simonetta Selva
 #
-# Created: December 14, 2022
+# Created: May 2nd, 2023
 # Project: Bumblebee 2022
 ################################################
 
