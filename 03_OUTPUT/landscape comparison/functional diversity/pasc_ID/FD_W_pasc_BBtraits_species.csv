@@ -1,0 +1,5 @@
+"","","",".y.","group1","group2","n1","n2","statistic","p"
+"1",NaN,NaN,value,rural,urban,243,292,c(W = 21197),5.31e-16
+"2",NaN,NaN,value,rural,urban,110,223,c(W = 9495),0.000802
+"3",NaN,NaN,value,rural,urban,110,223,c(W = 10745),0.0659
+"4",NaN,NaN,value,rural,urban,110,223,c(W = 15581),6.01e-05
