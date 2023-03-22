@@ -129,32 +129,46 @@ metrics <- colnames(BB22.ID[, c(16:19)]) # plant FD to look at (see file BB22_co
 library(nlme)
 
 # perform loop to output plots per relationship summarized per FD
+# preparation for caption string
+fmt <- "%s: adj.R^2 = %.3f, p = %.3f"
+
 for (i in metrics) {
   x <- 1 # for naming the plots
   for (j in traits) {
     f <- formula(paste(i,"~", j))
-    fit <- lme(f, random = ~1|landscape, 
-               data = BB22.ID, 
-               na.action=na.omit)
+    
+    # fit lm for urban and get R2 and p
+    lm.urban<- lm (f, data = BB22.ID[BB22.ID$landscape == "urban",])
+    sum.urban <- summary(lm.urban)
+    lab.urban <- sprintf(fmt, "urban", sum.urban$adj.r.squared, coef(sum.urban)[2, 4])
+    
+    # fit lm for rural and get R2 and p
+    lm.rural <- lm (f, data = BB22.ID[BB22.ID$landscape == "rural",])
+    sum.rural <- summary(lm.rural)
+    lab.rural <- sprintf(fmt, "rural", sum.rural$adj.r.squared, coef(sum.rural)[2, 4])
+    
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
            # define the ggplot
            ggplot(BB22.ID, aes_string(j, i, colour = "landscape")) + 
              geom_point() + 
              theme_classic(base_size = 20) + 
              theme(aspect.ratio=1) + 
+             labs(caption = paste(lab.urban, "\n", lab.rural)) +
              geom_smooth(method="lm", se = FALSE) +
-             scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
-             stat_cor(aes(color = landscape), size = 5))
+             scale_color_manual(values=palette.landscape, labels=c("rural", "urban"))
+    )
+             # scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
+             # stat_cor(aes(color = landscape), size = 5))
     x <- x+1
   } # end loop j
   setwd(output)
   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
-                     ncol = 5, nrow = 2, 
+                     ncol = 3, nrow = 3, 
                      labels = c(LETTERS[1:9]),   
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
                                          face = "bold", size = 22))
-  ggsave(paste("./landscape comparison/functional diversity/pasc_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("./landscape comparison/functional diversity/pasc_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 15, height = 15)
   setwd(input)
 } # end loop i
 
@@ -248,32 +262,44 @@ metrics <- colnames(BB22.ID[, c(16:19)]) # plant FD to look at (see file BB22_co
 library(nlme)
 
 # perform loop to output plots per relationship summarized per FD
+# preparation for caption string
+fmt <- "%s: adj.R^2 = %.3f, p = %.3f"
+
 for (i in metrics) {
   x <- 1 # for naming the plots
   for (j in traits) {
     f <- formula(paste(i,"~", j))
-    fit <- lme(f, random = ~1|landscape, 
-               data = BB22.ID, 
-               na.action=na.omit)
+    
+    # fit lm for urban and get R2 and p
+    lm.urban<- lm (f, data = BB22.ID[BB22.ID$landscape == "urban",])
+    sum.urban <- summary(lm.urban)
+    lab.urban <- sprintf(fmt, "urban", sum.urban$adj.r.squared, coef(sum.urban)[2, 4])
+    
+    # fit lm for rural and get R2 and p
+    lm.rural <- lm (f, data = BB22.ID[BB22.ID$landscape == "rural",])
+    sum.rural <- summary(lm.rural)
+    lab.rural <- sprintf(fmt, "rural", sum.rural$adj.r.squared, coef(sum.rural)[2, 4])
+    
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
            # define the ggplot
            ggplot(BB22.ID, aes_string(j, i, colour = "landscape")) + 
              geom_point() + 
              theme_classic(base_size = 20) + 
              theme(aspect.ratio=1) + 
+             labs(caption = paste(lab.urban, "\n", lab.rural)) +
              geom_smooth(method="lm", se = FALSE) +
-             scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
-             stat_cor(aes(color = landscape), size = 5))
+             scale_color_manual(values=palette.landscape, labels=c("rural", "urban"))
+    )
     x <- x+1
   } # end loop j
   setwd(output)
   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
-                     ncol = 5, nrow = 2, 
+                     ncol = 3, nrow = 3, 
                      labels = c(LETTERS[1:9]),   
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("B.lapidarius: comparison of ", i, " and traits across landscapes", sep = ""),
                                          face = "bold", size = 22))
-  ggsave(paste("./landscape comparison/functional diversity/lapi_ID/FD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("./landscape comparison/functional diversity/lapi_ID/FD_lapi_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 15, height = 15)
   setwd(input)
 } # end loop i
 

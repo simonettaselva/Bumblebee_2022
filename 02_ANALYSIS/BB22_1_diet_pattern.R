@@ -1132,6 +1132,7 @@ setwd(input)
 library(nlme)
 
 #### FIGURE SXX ----
+# preparation for caption string
 fmt <- "%s: adj.R^2 = %.3f, p = %.3f"
 
 # perform loop to output plots per relationship summarized per FD
@@ -1160,9 +1161,6 @@ for (i in metrics) {
              geom_smooth(method="lm", se = FALSE) +
              scale_color_manual(values=c("#291600","#e0b802"), labels=c("B.lapidarius", "B.pascuorum"))
            )
-           #+ 
-             # stat_cor(aes(color = bbspecies), size = 5))
-           
     x <- x+1
   } # end loop j
   
