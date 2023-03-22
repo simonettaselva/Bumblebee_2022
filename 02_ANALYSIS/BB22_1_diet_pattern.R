@@ -1107,7 +1107,7 @@ for (j in metrics) {
   plot_list[[j]] <- p
 }
 
-#### FIGURE SXX ----
+#### FIGURE 2 ----
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
@@ -1125,38 +1125,55 @@ w.stats <- rbind(c(mean.lapi$sp_richn, mean.pasc$sp_richn, w.test.list$sp_richn)
                  c(mean.lapi$feve, mean.pasc$feve, w.test.list$feve),
                  c(mean.lapi$fdiv, mean.pasc$fdiv, w.test.list$fdiv))
 setwd(output)
-write.csv(w.stats,"./diet pattern/FD_W_BBtraits_species.csv")
+write.csv(w.stats,"./diet pattern/FD/FD_W_BBtraits_species.csv")
 setwd(input)
 
 # explore relationships
 library(nlme)
 
 #### FIGURE SXX ----
+fmt <- "%s: adj.R^2 = %.3f, p = %.3f"
+
 # perform loop to output plots per relationship summarized per FD
 for (i in metrics) {
   x <- 1 # for naming the plots
   for (j in traits) {
     f <- formula(paste(i,"~", j))
-    fit <- lme(f, random=~1|bbspecies, data = BB22.ID, na.action=na.omit)
+    
+    # fit lm for lapi and get R2 and p
+    lm.lapi <- lm (f, data = BB22.ID[BB22.ID$bbspecies == "B.lapidarius",])
+    sum.lapi <- summary(lm.lapi)
+    lab.lapi <- sprintf(fmt, "B.lapidarius", sum.lapi$adj.r.squared, coef(sum.lapi)[2, 4])
+    
+    # fit lm for pasc and get R2 and p
+    lm.pasc <- lm (f, data = BB22.ID[BB22.ID$bbspecies == "B.pascuorum",])
+    sum.pasc <- summary(lm.pasc)
+    lab.pasc <- sprintf(fmt, "B.pascuorum", sum.pasc$adj.r.squared, coef(sum.pasc)[2, 4])
+    
     assign(paste("a", x, sep=""), # assign the ggplot to plot name
            # define the ggplot
            ggplot(BB22.ID, aes_string(j, i, colour = "bbspecies")) + 
              geom_point() + 
              theme_classic(base_size = 20) + 
              theme(aspect.ratio=1) + 
+             labs(caption = paste(lab.lapi, "\n", lab.pasc)) +
              geom_smooth(method="lm", se = FALSE) +
-             scale_color_manual(values=c("#291600","#e0b802"), labels=c("B.lapidarius", "B.pascuroum")) + 
-             stat_cor(aes(color = bbspecies), size = 5))
+             scale_color_manual(values=c("#291600","#e0b802"), labels=c("B.lapidarius", "B.pascuorum"))
+           )
+           #+ 
+             # stat_cor(aes(color = bbspecies), size = 5))
+           
     x <- x+1
   } # end loop j
+  
   setwd(output)
   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
-                     ncol = 5, nrow = 2, 
+                     ncol = 3, nrow = 3, 
                      labels = c(LETTERS[1:9]),   
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("comparison of ", i, " and traits between species", sep = ""),
                                          face = "bold", size = 22))
-  ggsave(paste("./functional diversity/FD_corr_", i, "_BBtraits_species.png", sep = ""), width = 16, height = 8)
+  ggsave(paste("./diet pattern/FD/FD_corr_", i, "_BBtraits_species.png", sep = ""), width = 15, height = 15)
   setwd(input)
 } # end loop i
 
