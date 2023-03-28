@@ -24,7 +24,6 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(glmmTMB)
-library(DHARMa)
 
 # set working directory to main repository
 input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
@@ -157,8 +156,6 @@ for (i in metrics) {
              geom_smooth(method="lm", se = FALSE) +
              scale_color_manual(values=palette.landscape, labels=c("rural", "urban"))
     )
-             # scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
-             # stat_cor(aes(color = landscape), size = 5))
     x <- x+1
   } # end loop j
   setwd(output)
@@ -305,7 +302,204 @@ for (i in metrics) {
 
 
 # PHYLOGENETIC SPECIES VARIABILITY ----
+## preparation ----
+# clear work environment
+rm(list=ls()) 
 
+#load libraries
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(glmmTMB)
+
+# set working directory to main repository
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+
+# load data
+setwd(input)
+BB22.bb.traits <- read_csv("BB22_traits.csv")
+
+# replace the names for urban and rural
+for (i in 1:nrow(BB22.bb.traits)) {
+  if (BB22.bb.traits$landscape[i] == "urban") {
+    BB22.bb.traits$landscape[i] = "U"
+  } else {
+    BB22.bb.traits$landscape[i] = "R"
+  }
+}
+
+# rename column site to match other dataframes
+BB22.bb.traits <- BB22.bb.traits %>%
+  mutate(site = paste(location, landscape, replicate, sep = ""),
+         region = paste(location, landscape, sep = "")) 
+
+
+## B.pascuorum ----
+#only B.pascuroum 
+BB22.bb.traits.sp <- BB22.bb.traits[BB22.bb.traits$bbspecies == "B.pascuorum",]
+
+# import data with spatial information on sites
+BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
+
+# import data with phylogenetic diversity of plants per site
+BB22.fun.ID <- read_csv("./PD/PD_B.pascuorum_ID.short.csv")%>% 
+  dplyr::select(-1)%>%
+  rename_with(.cols = 1, ~"ID")%>%
+  rename_with(.cols = 2, ~"sp_richn")%>%
+  rename_with(.cols = 3, ~"pvar")%>%
+  rename_with(.cols = 4, ~"pric")%>%
+  rename_with(.cols = 5, ~"peve")%>%
+  rename_with(.cols = 6, ~"pclu")
+
+# filter functional metrics of plant traits to compare with traits per individual
+BB22.fun.ID <- subset(BB22.fun.ID, ID %in% BB22.bb.traits.sp$ID)
+
+# add site coordinates to the trait data frame (in LV95)
+BB22.ID <- merge(BB22.bb.traits.sp, BB22.fun.ID, by  = "ID", all.x=TRUE)%>%
+  mutate(site = paste(location, landscape, replicate, sep=""))
+BB22.ID <- merge(BB22.ID, BB22.sites.meta[, c(1,2,3)], by  = "site", all.x=TRUE) 
+
+## look at data ----------------------------------------------------------------------------------------
+
+# Boxplots for all the variables we want to look at with Wilcoxon test
+metrics <- colnames(BB22.ID[, c(18:21)]) # plant PD to look at; prepare for loop
+
+library(rstatix)
+plot_list  <- list()
+w.test.list <- list()
+mean.rural <- list()
+mean.urban <- list()
+palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
+
+for (j in metrics) {
+  gg.data <- data.frame(landscape=BB22.ID$landscape,value=BB22.ID[[j]])
+  w.test <- wilcox_test(gg.data,value~landscape)
+  w.test.list[[j]] <- w.test
+  mean.rural[[j]] <- mean(gg.data$value[gg.data$landscape == "R"], na.rm=TRUE)
+  mean.urban[[j]] <- mean(gg.data$value[gg.data$landscape == "U"], na.rm=TRUE)
+  
+  p <- ggplot(gg.data, aes(x=landscape, y = value, fill=landscape)) + 
+    geom_boxplot(notch = T) + 
+    xlab("") +
+    scale_x_discrete(labels=c('rural', 'urban'))+
+    theme_classic(base_size = 20) +     
+    theme(aspect.ratio=1) + 
+    guides(alpha = "none") +
+    scale_fill_manual(values=palette.landscape, guide = "none") + 
+    labs(subtitle = paste("p = ", w.test$p, sep=""))
+  if (j == "pric") {
+    p <- p + ylim(0, 1) + ylab("phylogenetic species richness")
+  } else if (j == "pclu") {
+    p <- p + ylim(0, 1) + ylab("phylogenetic species clustering")
+  } else if (j == "peve") {
+    p <- p + ylim(0, 1) + ylab("phylogenetic species evenness")
+  } else {
+    p <- p + ylim(0, 1) + ylab("phylogenetic species variability")
+  }
+  plot_list[[j]] <- p
+}
+
+# arrange them into one file to export
+setwd(output)
+plot <- ggarrange(plot_list[[1]],plot_list[[2]],
+                  plot_list[[3]],plot_list[[4]],
+                  ncol = 1, nrow = 4,
+                  labels = c("A", "B", "C", "D"))
+annotate_figure(plot, top = text_grob("B.pascuorum: phylogenetic diversity across landscapes", 
+                                      face = "bold", size = 22))
+ggsave("./landscape comparison/phylogenetic diversity/pasc_ID/PD_B.pascuorum_ID.png", width = 6, height = 24)
+setwd(input)
+
+# export statistics of W tests
+w.stats.pasc <- rbind(c(mean.rural$pvar, mean.urban$pvar, w.test.list$pvar),
+                      c(mean.rural$pric, mean.urban$pric, w.test.list$pric),
+                      c(mean.rural$pclu, mean.urban$pclu, w.test.list$pclu),
+                      c(mean.rural$peve, mean.urban$peve, w.test.list$peve))
+setwd(output)
+write.csv(w.stats.pasc,"./landscape comparison/phylogenetic diversity/pasc_ID/PD_W_pasc_BBtraits_species.csv")
+setwd(input)
+
+# plot the relationship of plants traits of one site and bumblebee traits of one site
+traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for loop
+
+library(nlme)
+
+# perform loop to output plots per relationship summarized per PD
+
+# perform loop to output plots per relationship summarized per FD
+# preparation for caption string
+fmt <- "%s: adj.R^2 = %.3f, p = %.3f"
+
+#ACHTUNG FUNKTIONIERT NOCH NICHT!!!!! ----
+for (i in metrics) {
+  x <- 1 # for naming the plots
+  for (j in traits) {
+    f <- formula(paste(i,"~", j))
+    
+    BB22.ID$intertegular_distance
+    
+    # fit lm for urban and get R2 and p
+    lm.urban <- lm (f, data = BB22.ID[BB22.ID$landscape == "urban",], na.action=na.exclude)
+    sum.urban <- summary(lm.urban)
+    lab.urban <- sprintf(fmt, "urban", sum.urban$adj.r.squared, coef(sum.urban)[2, 4])
+    
+    # fit lm for rural and get R2 and p
+    lm.rural <- lm (f, data = BB22.ID[BB22.ID$landscape == "rural",], na.action=na.exclude)
+    sum.rural <- summary(lm.rural)
+    lab.rural <- sprintf(fmt, "rural", sum.rural$adj.r.squared, coef(sum.rural)[2, 4])
+    
+    assign(paste("a", x, sep=""), # assign the ggplot to plot name
+           # define the ggplot
+           ggplot(BB22.ID, aes_string(j, i, colour = "landscape")) + 
+             geom_point() + 
+             theme_classic(base_size = 20) + 
+             theme(aspect.ratio=1) + 
+             labs(caption = paste(lab.urban, "\n", lab.rural)) +
+             geom_smooth(method="lm", se = FALSE) +
+             scale_color_manual(values=palette.landscape, labels=c("rural", "urban"))
+    )
+    x <- x+1
+  } # end loop j
+  setwd(output)
+  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
+                     ncol = 3, nrow = 3, 
+                     labels = c(LETTERS[1:9]),   
+                     common.legend = TRUE)
+  annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
+                                         face = "bold", size = 22))
+#   
+#   
+# for (i in metrics) {
+#   x <- 1 # for naming the plots
+#   for (j in traits) {
+#     f <- formula(paste(i,"~", j))
+#     fit <- lme(f, random=~1|landscape, data = BB22.ID, na.action=na.omit)
+#     assign(paste("a", x, sep=""), # assign the ggplot to plot name
+#            # define the ggplot
+#            ggplot(BB22.ID, aes_string(j, i, colour = "landscape")) + 
+#              geom_point() + 
+#              theme_classic(base_size = 20) + 
+#              theme(aspect.ratio=1) + 
+#              geom_smooth(method="lm", se = FALSE) +
+#              scale_color_manual(values=palette.landscape, labels=c("rural", "urban")) + 
+#              stat_cor(aes(color = landscape), size = 5))
+#     x <- x+1
+#   } # end loop j
+#   setwd(output)
+#   plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
+#                      ncol = 5, nrow = 2, 
+#                      labels = c(LETTERS[1:9]),   
+#                      common.legend = TRUE)
+#   annotate_figure(plot4, top = text_grob(paste("B.pascuorum: comparison of ", i, " and traits across landscapes", sep = ""),
+#                                          face = "bold", size = 22))
+  ggsave(paste("./landscape comparison/phylogenetic diversity/pasc_ID/PD_pasc_corr_", i, "_BBtraits_landscapes.png", sep = ""), width = 16, height = 8)
+  setwd(input)
+} # end loop i
+
+
+#ACHTUNG B.LAPI FEHLT!!!!  ----
 
 # DIET CONSISTENCY ----
 
