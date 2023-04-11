@@ -6,10 +6,10 @@
 # Project: Bumblebee 2022
 ################################################
 
-# AIM: Characterize the diet composition and structural (taxonomic, functional, and phylogenetic diversity) 
+# AIM: Characterize the diet composition and structural (taxonomic, functional, and phylogenetic diversity)
 # and chemical properties of the two bumblebee species in both urban and rural landscapes.
 
-# information: 
+# information:
 # 1) every subsection works in itself
 # 2) all the plots not used in the main work are in the script but # are used to not print them
 
@@ -17,7 +17,7 @@
 # SPECIES ABBUNDANCES IN POLLEN AND PHYLOGENETIC TREE ----
 ## preparation ----
 # clear environment
-rm(list=ls())
+rm(list = ls())
 
 # load required library
 library(dplyr)
@@ -34,15 +34,15 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 
 # load data
 setwd(input) # set working directory
-BB22.full <- read_csv("BB22_full.csv") # import data set with 
+BB22.full <- read_csv("BB22_full.csv") # import data set with
 
 # initialize region as column
-BB22.full$region <- c() 
+BB22.full$region <- c()
 
 # add site and region as columns
 for (i in 1:nrow(BB22.full)) {
-  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
-  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
+  BB22.full$site[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep = "")
+  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep = "")
 }
 
 ## body and corbicula pollen ----
@@ -51,25 +51,24 @@ for (i in 1:nrow(BB22.full)) {
 phylo <- data.frame(species = BB22.full$plant.species, genus = BB22.full$genus, family = BB22.full$family)
 
 # 2. phylogentic tree
-# phylogenetic hypotheses under three scenarios based on a backbone phylogeny 
-# tree.result <- phylo.maker(phylo, scenarios=c("S1","S2","S3")) # from old version
-
+# phylogenetic hypotheses under three scenarios based on a backbone phylogeny
 tree.result <- phylo.maker(phylo) # new version of package
 write.tree(tree.result$scenario.3, "BB22_plant_tree.tre") # save for later purpose
 
 # plot the phylogenies with node ages displayed with sceanario 3
-tree <- plot.phylo(tree.result$scenario.3, 
-                   cex = 0.5, 
-                   main = "Phylogenetic tree of species in pollen"); tree
+tree <- plot.phylo(tree.result$scenario.3,
+                   cex = 0.5,
+                   main = "Phylogenetic tree of species in pollen")
+tree # print the tree
 
 # get order of species in tree
-phylo.order <- data.frame(sps=tree.result$scenario.3$tip.label)
+phylo.order <- data.frame(sps = tree.result$scenario.3$tip.label)
 phylo.order$order <- seq(1, length(phylo.order$sps))
-colnames(phylo.order) <- c("plant.species", " order")
+colnames(phylo.order) <- c("plant.species", "order")
 phylo.order$plant.species <- sub("_", " ", phylo.order$plant.species)
 
 # create new data frame with needed variables
-BB22.full.bubble <- BB22.full%>%
+BB22.full.bubble <- BB22.full %>%
   dplyr::group_by(site, plant.species, bbspecies) %>%
   dplyr::summarise(Abundance = sum(Abundance),
                    region = region,
@@ -81,7 +80,7 @@ BB22.full.taxa <- BB22.full.bubble %>%
   dplyr::summarise(plant.species = plant.species) %>%
   distinct()
 
-BB22.full.taxa <- BB22.full.taxa%>%
+BB22.full.taxa <- BB22.full.taxa %>%
   dplyr::summarise(Nr.taxa = n())
 
 write_csv(BB22.full.taxa, "BB22_NrTaxa_region.csv")
@@ -92,27 +91,15 @@ write_csv(BB22.full.taxa, "BB22_NrTaxa_region.csv")
 # merge two data frames and order along plant species in phylo-tree
 BB22.full.bubble_ordered <- merge(x = BB22.full.bubble, y = phylo.order, by.x = "plant.species") %>%
   mutate(plant.species = as_factor(plant.species))
-BB22.full.bubble_ordered <- BB22.full.bubble_ordered[order(BB22.full.bubble_ordered$` order`),]
-BB22.full.bubble_ordered$plant.species <- factor(BB22.full.bubble_ordered$plant.species, 
+BB22.full.bubble_ordered <- BB22.full.bubble_ordered[order(BB22.full.bubble_ordered$` order`), ]
+BB22.full.bubble_ordered$plant.species <- factor(BB22.full.bubble_ordered$plant.species,
                                                  levels = unique(BB22.full.bubble_ordered$plant.species[order(BB22.full.bubble_ordered$` order`)]))
 
 # plot bubble plot with relative abundances along order of species in tree
 setwd(output)
 
 # on site level
-# palette.site <- kelly(18)[3:18] #create color palette for sites
-# ggplot(BB22.full.bubble_ordered, aes(x = site, y =BB22.full.bubble_ordered$plant.species, color = site)) + 
-#   geom_point(aes(size = Abundance, fill = site, alpha=0.5)) + 
-#   facet_wrap(~bbspecies) +
-#   labs(y = "plant species") +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   theme_classic(base_size = 20) + guides(alpha = "none") +
-#   scale_color_manual(values = palette.site, guide = "none") + #no legend
-#   scale_fill_manual(values = palette.site, guide = "none") + #no legend
-#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-# ggsave(paste("./diet pattern/species abundance/Phylo_Bubble_Site.png", sep = ""), width = 16, height = 16)
-
-### FIGURE 1 ####
+### FIGURE 1 ----
 # region level
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 ggplot(BB22.full.bubble_ordered, aes(x = region, y =BB22.full.bubble_ordered$plant.species)) + 
@@ -143,7 +130,7 @@ ggsave(paste("./diet pattern/species abundance/Phylo_Bubble_Region.png", sep = "
 ## preparation ----
 
 # reset environment
-rm(list=ls())
+rm(list = ls())
 
 #load libraries
 library(dplyr)
@@ -164,8 +151,8 @@ BB22.full$region <- c()
 
 # add site and region as columns
 for (i in 1:nrow(BB22.full)) {
-  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep="")
-  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep="")
+  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep = "")
+  BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep = "")
 }
 
 ## analysis ----
@@ -211,7 +198,7 @@ families.site$family.agg <- as.factor(families.site$family.agg)
 # color palette for families
 palette.fams=c("#07575B", "#5D535E", "#C4DFE6", "#336B87", "#FAAF08", "#DFE166", "#1995AD", 
                 "#4897D8", "#80BD9E", "#FA812F", "#66A5AD", "#F34A4A", "#375E97", "#258039",  
-                "#73605B", "#DDBC95" "#A3A599", "#A1D6E2", "#88A550", "#75B1A9", "#D9B44A", 
+                "#73605B", "#DDBC95", "#A3A599", "#A1D6E2", "#88A550", "#75B1A9", "#D9B44A", 
                 "#4F6457", "#ACD0C0", "#0F1B07", "#F7EFE2", "#D09683", "#F62A00", "#A1BE95", 
                 "#20948B", "#9B4F0F", "#CB0000")
 
@@ -390,7 +377,7 @@ setwd(input)
 # TEST FAMILY, FLOWER, GRWOTH FORM, EXOTIC/NATIVE PROPORTIONS URBAN vs. RURAL ----
 ## preparation ----
 # clear work environment
-rm(list=ls()) 
+rm(list = ls()) 
 
 #load libraries
 library(dplyr)
@@ -463,7 +450,7 @@ write.table(chisq.summary.1, file = "chisq_Blapidarius.txt", sep = "\t", row.nam
 
 ## preparation ----
 # clear work environment
-rm(list=ls()) 
+rm(list = ls()) 
 
 #load libraries
 library(dplyr)
@@ -523,7 +510,7 @@ a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landsca
   theme(aspect.ratio=1) + 
   scale_fill_manual(values = palette.landscape, 
                     guide = "none") + 
-  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep="")); a
+  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep = "")); a
 
 # compile species richness per site in dataframe
 rich.occ <- c()
@@ -580,7 +567,7 @@ setwd(input)
 
 ## preparation ----
 # clear work environment
-rm(list=ls()) 
+rm(list = ls()) 
 
 #load libraries
 library(dplyr)
@@ -991,7 +978,7 @@ setwd(input)
 
 ## preparation ----
 # clear work environment
-rm(list=ls()) 
+rm(list = ls()) 
 
 #load libraries
 library(dplyr)
@@ -1094,7 +1081,7 @@ for (j in metrics) {
     theme(aspect.ratio=1) + 
     guides(alpha = "none") +
     scale_fill_manual(values=c("#291600","#e0b802"), guide = "none") + 
-    labs(subtitle = paste("p = ", w.test$p, sep=""))
+    labs(subtitle = paste("p = ", w.test$p, sep = ""))
   if (j == "sp_richn") {
     p <- p + ylim(0, 18) + ylab("species richness")
   } else if (j == "fric") {
@@ -1151,7 +1138,7 @@ for (i in metrics) {
     sum.pasc <- summary(lm.pasc)
     lab.pasc <- sprintf(fmt, "B.pascuorum", sum.pasc$adj.r.squared, coef(sum.pasc)[2, 4])
     
-    assign(paste("a", x, sep=""), # assign the ggplot to plot name
+    assign(paste("a", x, sep = ""), # assign the ggplot to plot name
            # define the ggplot
            ggplot(BB22.ID, aes_string(j, i, colour = "bbspecies")) + 
              geom_point() + 
@@ -1174,10 +1161,4 @@ for (i in metrics) {
   ggsave(paste("./diet pattern/FD/FD_corr_", i, "_BBtraits_species.png", sep = ""), width = 15, height = 15)
   setwd(input)
 } # end loop i
-
-
-
-
-
-
 
