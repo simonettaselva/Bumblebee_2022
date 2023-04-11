@@ -6,6 +6,8 @@
 # Project: Bumblebee 2022
 ################################################
 
+
+# PREPARE FULL DATASET ----
 # clear work environment
 rm(list = ls())
 
@@ -14,8 +16,8 @@ library(dplyr)
 library(tidyverse)
 
 # set working directory to main repository
-input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/01_DATA"
-output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/Bumblebee_2022/03_OUTPUT"
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/bumblebee_try/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/bumblebee_try/03_OUTPUT"
 
 # load data
 setwd(input)
@@ -104,3 +106,128 @@ BB22_full$symmetry_numeric <- as.numeric(BB22_full$symmetry_numeric)
 
 # export as csv
 write.csv(BB22_full, "BB22_full.csv")
+
+
+# PREPARE SITE PLANT OCCURANCES FROM GBIF AND INFOFLORA ----
+
+# note: the code above needs to have run already!!
+
+# clear work environment
+rm(list=ls())
+
+#load libraries
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+
+## set working directory to main repository
+input <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/bumblebee_try/01_DATA"
+output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/Master Thesis/bumblebee_try/03_OUTPUT"
+setwd(input)
+
+## species list per site from pollen data ----
+# bumblebee data: create species lists for each site and save in list()
+sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", 
+               "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+# region <- c("ZHU", "ZHR", "BSU", "BSR", "BEU", "BER")
+
+BB22.full <- read_csv("BB22_full.csv") %>%
+  mutate(site = as_factor(site),
+         plant.species = as_factor(plant.species),
+         region = substr(site, 1, 3)) 
+
+# create species lists of pollen per site
+site.list <- list()
+for (i in sitenames) {
+  site.list[[i]]  <- unique(BB22.full$plant.species[BB22.full$site == i]) %>%
+    droplevels()
+}
+
+saveRDS(site.list, file = "site_list_bb.RData")
+
+
+## GBIF and InfoFlora per site in 1500m Buffer ----
+sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", 
+               "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+
+### InfoFlora ----
+# prepare list to store
+site.list.InfoFlora.1500 <- list()
+
+# create species list per site for InfoFlora
+for (i in sitenames) {
+  # import InfoFlora data and clean it
+  site.data.InfoFlora.1500  <- read_csv(paste("./GBIF and InfoFlora/InfoFlora_",i , "_1500.csv", sep = "")) 
+  site.data.InfoFlora.1500 <- site.data.InfoFlora.1500 %>%
+    summarise(Species = Taxon,
+              site = rep(i, nrow(site.data.InfoFlora.1500)),
+              region = rep(substr(i, 1, 3), nrow(site.data.InfoFlora.1500)))
+  j <- 0
+  site.data.InfoFlora.1500$species <- c()
+  for (j in 1:nrow(site.data.InfoFlora.1500)){
+    # adjust the plant species names since they dont match between GBIF and InfoFlora
+    site.data.InfoFlora.1500$species[j] <- paste(unlist(strsplit(site.data.InfoFlora.1500$Species[j], 
+                                                                 split=' ', fixed=TRUE))[1],
+                                                 unlist(strsplit(site.data.InfoFlora.1500$Species[j], 
+                                                                 split=' ', fixed=TRUE))[2])
+  }
+  # store in list
+  site.list.InfoFlora.1500[[i]] <- unique(site.data.InfoFlora.1500$species)
+}
+
+### GBIF ----
+# prepare list to store
+site.list.gbif.1500 <- list()
+
+# create species list per site for GBIF
+for (i in sitenames) {
+  # import GBIF data and clean it
+  site.data.gbif.1500  <- read_csv(paste("./GBIF and InfoFlora/GBIF_", i, "_1500.csv", sep = "")) %>%
+    mutate(species = as_factor(species)) %>%
+    filter(class == "Magnoliopsida" | class == "Liliopsida") # filter for classes that are potentially visited from bumblebees
+  # store in list
+  site.list.gbif.1500[[i]] <- unique(site.data.gbif.1500$species) 
+}
+
+# combine species list GBIF and InfoFlora (site level)
+site.list.1500 <- list()
+for (i in sitenames) {
+  x <- as.factor(site.list.InfoFlora.1500 [[i]])
+  y <- as.factor(site.list.gbif.1500 [[i]])
+  site.list.1500[[i]] <- unique(c(x,y)) %>%
+    droplevels()
+}
+# save list
+saveRDS(site.list.1500, file="sp_list_gbif_infoflora.RData")
+
+
+## plot of overview of percentage of visited plant by the bumblebees ----
+# prepare list
+ratios.1500 <- c()
+
+# create data frame with ratios (visited/non-visited)
+for (i in sitenames) {
+  shared <- length(intersect(site.list[[i]], site.list.1500[[i]]))
+  occured <- length(site.list.1500[[i]])
+  first <- c(i, shared/occured, "percentage of plants visited by bumblebees")
+  second<- c(i, (occured-shared)/occured, "GBIF and InfoFlora (1500m)")
+  ratios.1500 <- rbind(ratios.1500, first, second)
+  colnames(ratios.1500)<- c("site", "percentage", "group")
+  ratios.1500 <- as.data.frame(ratios.1500)%>% 
+    mutate(percentage = as.numeric(percentage))
+}
+
+# plot and export
+setwd(output)
+ggplot(ratios.1500, aes(fill=group, y=percentage, x=site)) + 
+  geom_bar(position="fill", stat="identity") + xlab("sites") +
+  ggtitle("Comparison of avaible plants species and plants visited by bumblebees") + theme_classic()+
+  theme(axis.text.x = element_text(angle = 90))
+ggsave("./preparation/GBIF and InfoFlora/Comp_1500_visited_per_site.jpeg", width = 8, height = 8)
+setwd(input)
+
+
+
+
+

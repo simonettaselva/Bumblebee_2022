@@ -102,29 +102,15 @@ setwd(output)
 ### FIGURE 1 ----
 # region level
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-ggplot(BB22.full.bubble_ordered, aes(x = region, y =BB22.full.bubble_ordered$plant.species)) + 
-  geom_point(aes(size = Abundance, color = landscape), alpha=0.5) + 
+ggplot(BB22.full.bubble_ordered, aes(x = region, y = BB22.full.bubble_ordered$plant.species)) +
+  geom_point(aes(size = Abundance, color = landscape), alpha = 0.5) +
   facet_wrap(~bbspecies) +
-  labs(y = "plant species") +    
-  theme_classic(base_size = 20) + 
+  labs(y = "plant species") +
+  theme_classic(base_size = 20) +
   guides(alpha = "none") +
   scale_color_manual(values = palette.landscape, labels = c("rural", "urban"), name = "Landscape") +
-  guides(color = guide_legend(override.aes=list(alpha = 1)))
+  guides(color = guide_legend(override.aes = list(alpha = 1)))
 ggsave(paste("./diet pattern/species abundance/Phylo_Bubble_Region.png", sep = ""), width = 16, height = 16)
-
-# landscape level
-# palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-# ggplot(BB22.full.bubble_ordered, aes(x = landscape, y =BB22.full.bubble_ordered$plant.species, color = landscape)) + 
-#   geom_point(aes(size = Abundance, fill = landscape, alpha=0.5)) + 
-#   facet_wrap(~bbspecies) +
-#   labs(y = "plant species") + 
-#   scale_x_discrete(labels=c('rural', 'urban')) +
-#   theme_classic(base_size = 20) + guides(alpha = "none") +
-#   scale_color_manual(values = palette.landscape, guide = "none") +
-#   scale_fill_manual(values = palette.landscape, guide = "none")
-# ggsave(paste("./diet pattern/species abundance/Phylo_Bubble_Landscape.png", sep = ""), width = 16, height = 16)
-# setwd(input)
-
 
 # POLLEN COMPOSITION ----
 ## preparation ----
@@ -144,45 +130,46 @@ output <- "~/Library/CloudStorage/GoogleDrive-simo1996s@gmail.com/My Drive/ETH/M
 
 # load data
 setwd(input) # set working directory
-BB22.full <- read_csv("BB22_full.csv") # import data set 
+BB22.full <- read_csv("BB22_full.csv") # import data set
 
 # initialize region as column
-BB22.full$region <- c() 
+BB22.full$region <- c()
 
 # add site and region as columns
 for (i in 1:nrow(BB22.full)) {
-  BB22.full$site[i] <-paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep = "")
+  BB22.full$site[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], BB22.full$replicate[i], sep = "")
   BB22.full$region[i] <- paste(BB22.full$location[i], BB22.full$landscape[i], sep = "")
 }
 
 ## analysis ----
 # divide data set into leg and body pollen
-BB22.full.leg <- BB22.full[BB22.full$bborgan=="L",]
-BB22.full.body <- BB22.full[BB22.full$bborgan=="B",]
+BB22.full.leg <- BB22.full[BB22.full$bborgan == "L", ]
+BB22.full.body <- BB22.full[BB22.full$bborgan == "B", ]
 
 ## body and corbicula pollen ----
 ### plant families per site, region and species ----
 
 # 1. find the 30 most abundant families
-families.overview <- BB22.full%>%
+families.overview <- BB22.full %>%
   dplyr::group_by(family) %>%
   dplyr::summarise(cum.abund = sum(Abundance))
 tot <- sum(families.overview$cum.abund)
 families.overview <- families.overview %>%
   dplyr::summarise(family = family,
                    cum.abund = cum.abund,
-                   rel.abund = cum.abund/tot)
+                   rel.abund = cum.abund / tot)
 # plot family abundance
-ggplot(families.overview, aes(y=reorder(family, -cum.abund), x=cum.abund)) + 
-  geom_bar(stat="identity") + theme_classic()
+ggplot(families.overview, aes(y = reorder(family, -cum.abund), x = cum.abund)) +
+  geom_bar(stat = "identity") + theme_classic()
 
 # use cumulative abundance to select 30 most abundant species
-rare.families <- families.overview %>% top_n(nrow(families.overview)-30, -cum.abund)
+rare.families <- families.overview %>%
+  top_n(nrow(families.overview) - 30, -cum.abund)
 BB22.full$family.agg <- BB22.full$family
 # group all rare families into "other families"
-for(h in rare.families$family){
-  for(i in 1:nrow(BB22.full)){
-    if(BB22.full$family.agg[i] == h){
+for(h in rare.families$family) {
+  for(i in 1:nrow(BB22.full)) {
+    if(BB22.full$family.agg[i] == h) {
       BB22.full$family.agg[i] <- "Other families"
     } 
   } # end loop i
@@ -196,25 +183,11 @@ families.site$family.agg <- as.factor(families.site$family.agg)
 
 # 3. plot families per site
 # color palette for families
-palette.fams=c("#07575B", "#5D535E", "#C4DFE6", "#336B87", "#FAAF08", "#DFE166", "#1995AD", 
-                "#4897D8", "#80BD9E", "#FA812F", "#66A5AD", "#F34A4A", "#375E97", "#258039",  
-                "#73605B", "#DDBC95", "#A3A599", "#A1D6E2", "#88A550", "#75B1A9", "#D9B44A", 
-                "#4F6457", "#ACD0C0", "#0F1B07", "#F7EFE2", "#D09683", "#F62A00", "#A1BE95", 
-                "#20948B", "#9B4F0F", "#CB0000")
-
-# filled bar plot per site with abundance of families
-# setwd(output)
-# ggplot(families.site, aes(fill=family.agg, y=cum.abund, x=site)) + 
-#   geom_bar(position="fill", stat="identity") + 
-#   theme_classic(base_size = 20) +
-#   facet_wrap(~bbspecies) + 
-#   ggtitle("Plant families per site") +
-#   labs(fill='Plant families',
-#      x = "sites", 
-#      y = "relative abundance") +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   scale_fill_manual(values=palette.fams, name = "Plant families")
-# ggsave(paste("./diet pattern/pollen composition/PlantFamilies_per_Site.png", sep = ""), width = 16, height = 8, device = "png")
+palette.fams = c("#07575B", "#5D535E", "#C4DFE6", "#336B87", "#FAAF08", "#DFE166", "#1995AD", 
+                        "#4897D8", "#80BD9E", "#FA812F", "#66A5AD", "#F34A4A", "#375E97", "#258039",  
+                        "#73605B", "#DDBC95", "#A3A599", "#A1D6E2", "#88A550", "#75B1A9", "#D9B44A", 
+                        "#4F6457", "#ACD0C0", "#0F1B07", "#F7EFE2", "#D09683", "#F62A00", "#A1BE95", 
+                        "#20948B", "#9B4F0F", "#CB0000")
 
 # 4. produce data frame with families' abundances per region
 families.region <- BB22.full %>%
@@ -225,17 +198,19 @@ families.region$family.agg <- as.factor(families.region$family.agg)
 ### FIGURE S XXX ####
 # 5. plot families per region
 setwd(output) 
-ggplot(families.region, aes(fill=family.agg, y=cum.abund, x=region)) + 
+ggplot(families.region, aes(fill = family.agg, y = cum.abund, x = region)) + 
   geom_bar(position="fill", stat="identity") + 
   theme_classic(base_size = 20) +
   facet_wrap(~bbspecies) + 
   ggtitle("Plant families per region") +
-  labs(fill='Plant families', 
+  labs(fill = 'Plant families', 
        x = "regions", 
        y = "relative abundance") +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_manual(values=palette.fams, name = "Plant families")
-ggsave(paste("./diet pattern/pollen composition/PlantFamilies_per_Region.png", sep = ""), width = 16, height = 8, device = "png", )
+  scale_fill_manual(values = palette.fams, 
+                    name = "Plant families")
+ggsave(paste("./diet pattern/pollen composition/PlantFamilies_per_Region.png", sep = ""), 
+       width = 16, height = 8, device = "png", )
 setwd(input) 
 
 ### origin status per site, region and species ----
@@ -249,18 +224,6 @@ ex.nat.site$native_exotic <- as.factor(ex.nat.site$native_exotic)
 # create color palette
 palette.ex =c("#518A45", "#BDA509")
 
-# setwd(output)
-# ggplot(ex.nat.site, aes(fill=native_exotic, y=abund, x=site)) + 
-#   geom_bar(position="fill", stat="identity") + 
-#   theme_classic(base_size = 20) +
-#   facet_wrap(~bbspecies) + 
-#   ggtitle("Origin status per site LEG") + 
-#   ylab("Proportion of species in the pollen") +
-#   labs(fill='Origin status') +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'), name = "")
-# ggsave(paste("./diet pattern/pollen composition/OriginStatus_per_Site.png", sep = ""), width = 16, height = 8)
-
 # 3. produce data frame with exotic/native per region
 ex.nat.region <- BB22.full %>%
   dplyr::group_by(native_exotic, region, bbspecies) %>%
@@ -270,7 +233,7 @@ ex.nat.region$native_exotic <- as.factor(ex.nat.region$native_exotic)
 ### FIGURE S XXX ####
 # 4. plot native/exotic per region    
 setwd(output)
-ggplot(ex.nat.region, aes(fill=native_exotic, y=abund, x=region)) + 
+ggplot(ex.nat.region, aes(fill = native_exotic, y = abund, x = region)) + 
   geom_bar(position="fill", stat="identity") + 
   theme_classic(base_size = 20) +
   facet_wrap(~bbspecies) + 
@@ -278,8 +241,11 @@ ggplot(ex.nat.region, aes(fill=native_exotic, y=abund, x=region)) +
   ylab("Proportion of species in the pollen") +
   labs(fill='Origin status') +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_manual(values=palette.ex, labels=c('Exotic', 'Native'), name="")
-ggsave(paste("./diet pattern/pollen composition/OriginStatus_per_Region.png", sep = ""), width = 16, height = 8)
+  scale_fill_manual(values = palette.ex, 
+                    labels = c('Exotic', 'Native'), 
+                    name = "")
+ggsave(paste("./diet pattern/pollen composition/OriginStatus_per_Region.png", sep = ""), 
+       width = 16, height = 8)
 setwd(input)
 
 ### growth form per site, region and species ----
@@ -293,18 +259,6 @@ growth.site$growth_form_category <- as.factor(growth.site$growth_form_category)
 # create color palette
 palette.growth =c("#375E97", "#518A45", "#FA812F", "#F34A4A", "#5A99AD", "#A3A3A3")
 
-# setwd(output)
-# ggplot(growth.site, aes(fill=growth_form_category, y=abund, x=site)) + 
-#   geom_bar(position="fill", stat="identity") + 
-#   theme_classic(base_size = 20) +
-#   facet_wrap(~bbspecies) + 
-#   ggtitle("Growth Form LEG") + y
-#   lab("Proportion of species in the pollen") + 
-#   labs(fill='Growth form') +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   scale_fill_manual(values=palette.growth, name="")
-# ggsave(paste("./diet pattern/pollen composition/GrowthForm_per_Site.png", sep = ""), width = 16, height = 8)
-
 # 3. produce data frame with growth form per region
 growth.region <- BB22.full %>%
   dplyr::group_by(growth_form_category, region, bbspecies) %>%
@@ -314,16 +268,17 @@ growth.region$growth_form_category <- as.factor(growth.region$growth_form_catego
 ### FIGURE S XXX ####
 # 4. plot growth form per region   
 setwd(output)
-ggplot(growth.region, aes(fill=growth_form_category, y=abund, x=region)) + 
-  geom_bar(position="fill", stat="identity") + 
+ggplot(growth.region, aes(fill = growth_form_category, y = abund, x = region)) + 
+  geom_bar(position = "fill", stat = "identity") + 
   theme_classic(base_size = 20) +
   facet_wrap(~bbspecies) + 
   ggtitle("Growth Form LEG") + 
   ylab("Proportion of species in the pollen") + 
   labs(fill='Growth form') +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_manual(values=palette.growth, name="")
-ggsave(paste("./diet pattern/pollen composition/GrowthForm_per_Region.png", sep = ""), width = 16, height = 8)
+  scale_fill_manual(values = palette.growth, name = "")
+ggsave(paste("./diet pattern/pollen composition/GrowthForm_per_Region.png", sep = ""), 
+       width = 16, height = 8)
 setwd(input)
 
 ### blossom class per site, region and species ----
@@ -337,19 +292,6 @@ blossom.site$structural_blossom_class <- as.factor(blossom.site$structural_bloss
 # create color palette
 palette.bloss=c("#375E97", "#80BD9E", "#FA812F", "#758A30", "#07575B", "#D95F56", "#C4DFE6")
 
-# setwd(output)
-# ggplot(blossom.site, aes(fill=structural_blossom_class, y=abund, x=site)) + 
-#   geom_bar(position="fill", stat="identity") + 
-#   theme_classic(base_size = 20) +
-#   facet_wrap(~bbspecies) + 
-#   ggtitle("Blossom Class per site LEG") + 
-#   ylab("Proportion of species in the pollen") +
-#   labs(fill='Blossom Class') +
-#   theme(axis.text.x = element_text(angle = 90)) +
-#   scale_fill_manual(values=palette.bloss, labels=c('Bell Trumpet', 'Brush', "Dish Bowl", "Flag", "Gullet", "Stalk Disk", "Tube"),
-#                     name = "")
-# ggsave(paste("./diet pattern/pollen composition/BlossomClass_per_Site.png", sep = ""), width = 16, height = 8)
-
 # 3. produce data frame with blossom class per region
 blossom.region <- BB22.full %>%
   dplyr::group_by(structural_blossom_class, region, bbspecies) %>%
@@ -359,19 +301,20 @@ blossom.region$structural_blossom_class <- as.factor(blossom.region$structural_b
 ### FIGURE S XXX ####
 # 4. plot blossom class per region
 setwd(output)
-ggplot(blossom.region, aes(fill=structural_blossom_class, y=abund, x=region)) + 
-  geom_bar(position="fill", stat="identity") + 
+ggplot(blossom.region, aes(fill = structural_blossom_class, y = abund, x = region)) + 
+  geom_bar(position = "fill", stat = "identity") + 
   theme_classic(base_size = 20) +
   facet_wrap(~bbspecies) + 
   ggtitle("Blossom Class per site LEG") + 
   ylab("Proportion of species in the pollen") +
   labs(fill='Blossom Class') +
   theme(axis.text.x = element_text(angle = 90)) +
-  scale_fill_manual(values=palette.bloss, 
-                    labels=c('Bell Trumpet', 'Brush', "Dish Bowl",
+  scale_fill_manual(values = palette.bloss, 
+                    labels = c('Bell Trumpet', 'Brush', "Dish Bowl",
                              "Flag", "Gullet", "Stalk Disk", "Tube"),
                     name = "")
-ggsave(paste("./diet pattern/pollen composition/BlossomClass_per_Region.png", sep = ""), width = 16, height = 8)
+ggsave(paste("./diet pattern/pollen composition/BlossomClass_per_Region.png", sep = ""), 
+       width = 16, height = 8)
 setwd(input)
 
 # TEST FAMILY, FLOWER, GRWOTH FORM, EXOTIC/NATIVE PROPORTIONS URBAN vs. RURAL ----
@@ -397,9 +340,9 @@ BB22.full.family <- read_csv("BB22.full.family")
 
 ## analysis ----
 
-BB.pasc <- BB22.full.family %>% 
+BB.pasc <- BB22.full.family %>%
   filter(bbspecies == "B.pascuorum")
-BB.lapi <- BB22.full.family %>% 
+BB.lapi <- BB22.full.family %>%
   filter(bbspecies == "B.lapidarius")
 
 # define vectors to loop over
@@ -410,8 +353,9 @@ fun.trait <- c("family.agg", "native_exotic", "growth_form_category", "structura
 chisq.summary <- NULL
 for (i in resolution) {
   for (j in fun.trait) {
-    chisq <- chisq.test(BB.pasc[[i]], BB.pasc[[j]]); chisq
-    summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3), chisq$parameter, chisq$p.value)
+    chisq <- chisq.test(BB.pasc[[i]], BB.pasc[[j]])
+    chisq
+    summary <- c(paste(i, j, sep = "~"), round(chisq$statistic, 3), chisq$parameter, chisq$p.value)
     chisq.summary <- rbind(chisq.summary, summary)
   } # end loop j
 } # end loop i
@@ -430,7 +374,8 @@ write.table(chisq.summary, file = "chisq_Bpascuorum.txt", sep = "\t", row.names 
 chisq.summary.1 <- NULL
 for (i in resolution) {
   for (j in fun.trait) {
-    chisq <- chisq.test(BB.lapi[[i]], BB.lapi[[j]]); chisq
+    chisq <- chisq.test(BB.lapi[[i]], BB.lapi[[j]])
+    chisq
     summary <- c(paste(i, j, sep ="~"), round(chisq$statistic, 3),chisq$parameter,chisq$p.value)
     chisq.summary.1 <- rbind(chisq.summary.1, summary)
   } # end loop j
@@ -444,7 +389,8 @@ chisq.summary.1 <- chisq.summary.1 %>%
   format_table()
 
 # export the summary of the tests
-write.table(chisq.summary.1, file = "chisq_Blapidarius.txt", sep = "\t", row.names = TRUE, col.names = NA)
+write.table(chisq.summary.1, file = "chisq_Blapidarius.txt", 
+            sep = "\t", row.names = TRUE, col.names = NA)
 
 # DOCUMENTED PLANT SPECIES PER SITE AND FOUND IN POLLEN ----
 
@@ -466,10 +412,10 @@ setwd(input)
 
 ## analysis ----
 
-# import species lists form GBIF and InfoFlora (file BB22_sites_plants_GBIF.R)
+# import species lists form GBIF and InfoFlora (file data preparation)
 site.list.occ <- readRDS("sp_list_gbif_infoflora.RData")
 
-# load data on pollen (file BB22_sites_plants_GBIF.R)
+# load data on pollen (file file data preparation)
 site.list.bb <- readRDS("site_list_bb.RData")
 
 # combine occurrence data with species found in pollen per site
@@ -480,7 +426,7 @@ sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB",
 for (i in sitenames) {
   x <- as.factor(site.list.occ [[i]])
   y <- as.factor(site.list.bb [[i]])
-  site.list[[i]] <- unique(c(x,y)) %>% 
+  site.list[[i]] <- unique(c(x,y)) %>%
     droplevels()
 }
 
@@ -499,18 +445,19 @@ str(mean.landsacpe)
 
 # perform t-test and display it in a boxplot
 library(rstatix)
-w.test <- wilcox_test(mean.landsacpe, species_richness~landscape, paired = F)
+w.test <- wilcox_test(mean.landsacpe, species_richness ~ landscape, paired = F)
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
-a <- ggplot(mean.landsacpe, aes(x=landscape, y = species_richness,  fill=landscape)) + 
-  geom_boxplot(notch = T) + 
+a <- ggplot(mean.landsacpe, aes(x = landscape, y = species_richness,  fill = landscape)) +
+  geom_boxplot(notch = T) +
   ylab("plant diversity of sites") +
   xlab("") +
-  scale_x_discrete(labels=c('rural', 'urban')) +
-  theme_classic(base_size = 20) + 
-  theme(aspect.ratio=1) + 
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
   scale_fill_manual(values = palette.landscape, 
-                    guide = "none") + 
-  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep = "")); a
+                    guide = "none") +
+  labs(subtitle = paste("W = ", w.test$statistic, ", p = ", w.test$p, sep = ""))
+a # print the plot
 
 # compile species richness per site in dataframe
 rich.occ <- c()
@@ -531,7 +478,7 @@ df.site <- data_frame(site = sitenames,
                       rich.bb = rich.bb)
 
 # plot the relationship of species richness of data bases and species collected by the bumblebees
-ggplot(df.site, aes(x = rich.occ, y = rich.bb)) + 
+ggplot(df.site, aes(x = rich.occ, y = rich.bb)) +
   geom_point()
 
 # test the relationship with a model
@@ -544,8 +491,8 @@ b <- ggplot(df.site, aes(x = rich.bb , y = rich.occ)) +
   labs(x ="species richness in pollen" , 
        y = "plant diversity of sites") +
   theme_classic(base_size = 20) + 
-  theme(aspect.ratio=1) + 
-  geom_smooth(method="lm", 
+  theme(aspect.ratio = 1) + 
+  geom_smooth(method = "lm", 
               se = FALSE, 
               col = "black") +
   scale_color_manual(values = palette.landscape) +
@@ -559,7 +506,8 @@ b <- ggplot(df.site, aes(x = rich.bb , y = rich.occ)) +
 setwd(output)
 ggarrange(a, b, ncol = 2, nrow = 1,
           labels = c("A", "B"))
-ggsave("./diet pattern/plant richness landscape/sp_rich_occ_bb.png", width = 20, height = 10)
+ggsave("./diet pattern/plant richness landscape/sp_rich_occ_bb.png", 
+       width = 20, height = 10)
 setwd(input)
 
 
@@ -590,7 +538,8 @@ BB22.full <- read_csv("BB22_full.csv") %>%
 BB22.full$ID.short = as.factor(substring(BB22.full$ID,1, nchar(BB22.full$ID)-1)) 
 
 # sites' names for looping
-sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
+sitenames <- c("ZHUA", "ZHUB", "ZHUC", "ZHRD", "ZHRE", "ZHRF", "BEUA", "BEUB", 
+               "BEUC", "BERD", "BSUA", "BSUB", "BSUC", "BSRD", "BSRE", "BSRF")
 
 ## B.pascuorum ----
 # only use B.pascuorum
@@ -607,17 +556,17 @@ for (i in sitenames) {
   BB22.full.species.site <- BB22.full.species[BB22.full.species$site == i,] %>%
     droplevels()
   
-  BB22_full.ab <- BB22.full.species.site%>%
+  BB22_full.ab <- BB22.full.species.site %>%
     group_by(ID.short, family) %>%
-    summarise(abundance = sum(Abundance)) %>% 
+    summarise(abundance = sum(Abundance)) %>%
     distinct() # remove duplicates
   
   BB22_full.ab.new <- c()
   for (h in unique(BB22_full.ab$ID.short)) {
-    temp <- BB22_full.ab[BB22_full.ab$ID.short==h,]
+    temp <- BB22_full.ab[BB22_full.ab$ID.short == h,]
     perc <- sum(temp$abundance)
     for (k in 1:nrow(temp)) {
-      temp$ab.new[k] <- 100/perc*temp$abundance[k]/100
+      temp$ab.new[k] <- 100 / perc * temp$abundance[k]/100
     }
     BB22_full.ab.new <- rbind(BB22_full.ab.new, temp[, c(1,2,4)])
   }
@@ -625,14 +574,14 @@ for (i in sitenames) {
   # ON FAMILY
   # convert into matrix
   library(reshape2)
-  BB22.full.table <- dcast(BB22_full.ab.new, ID.short ~ family, value.var="ab.new")
+  BB22.full.table <- dcast(BB22_full.ab.new, ID.short ~ family, value.var = "ab.new")
   rownames(BB22.full.table) <- BB22.full.table$ID.short
   BB22.full.table[is.na(BB22.full.table)] <- 0
   BB22.full.table <- BB22.full.table[, -1]
   
   # compute measures of distance (or resemblance) and store them in list
   library(vegan)
-  dist <- vegdist(BB22.full.table,method="bray")
+  dist <- vegdist(BB22.full.table,method = "bray")
   pasc.ID[[i]] <- as.numeric(dist[1:1000])
   pasc.ID.mean[[i]] <- mean(dist)
 }
@@ -648,20 +597,22 @@ pasc.ID.df$landscape <- substr(pasc.ID.df$site, 3, 3)
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 #### FIGURE SXX ----
-ggplot(pasc.ID.df, aes(x=site, y = dist, fill=landscape)) + 
-  geom_boxplot(notch = T) + 
-  xlab("") + ylab("distance") +
+ggplot(pasc.ID.df, aes(x = site, y = dist, fill = landscape)) +
+  geom_boxplot(notch = T) +
+  xlab("") +
+  ylab("distance") +
   ggtitle("B.pascuorum: distance between individuals per site") +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) + 
-  scale_fill_manual(values=palette.landscape, guide = "none") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = palette.landscape, guide = "none") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 setwd(output)
-ggsave("./diet pattern/distances/pasc_dist_family.png", width = 10, height = 10)
+ggsave("./diet pattern/distances/pasc_dist_family.png", 
+       width = 10, height = 10)
 setwd(input)
 
-# add mean and SD of distance to a dataframe and export it
+# add mean and SD of distance to a data frame and export it
 pasc.ID.df.site <- pasc.ID.df %>%
   group_by(site) %>%
   summarise(mean.pasc = mean(dist, na.rm = TRUE), 
@@ -681,23 +632,20 @@ lapi.ID.mean <- list()
 
 ### calculate distance ----
 for (i in sitenames) {
-  # select a site
-  # i <- "BSRE"
   BB22.full.species.site <- BB22.full.species[BB22.full.species$site == i,] %>%
     droplevels()
   
-  BB22_full.ab <- BB22.full.species.site%>%
+  BB22_full.ab <- BB22.full.species.site %>%
     group_by(ID.short, family) %>%
-    summarise(abundance = sum(Abundance)) %>% 
+    summarise(abundance = sum(Abundance)) %>%
     distinct() # remove duplicates
   
   BB22_full.ab.new <- c()
   for (h in unique(BB22_full.ab$ID.short)) {
-    # h <- "36_ZHUA_p"
-    temp <- BB22_full.ab[BB22_full.ab$ID.short==h,]
+    temp <- BB22_full.ab[BB22_full.ab$ID.short == h,]
     perc <- sum(temp$abundance)
     for (k in 1:nrow(temp)) {
-      temp$ab.new[k] <- 100/perc*temp$abundance[k]/100
+      temp$ab.new[k] <- 100 / perc * temp$abundance[k] / 100
     }
     BB22_full.ab.new <- rbind(BB22_full.ab.new, temp[, c(1,2,4)])
   }
@@ -705,14 +653,14 @@ for (i in sitenames) {
   # ON FAMILY
   # convert into matrix
   library(reshape2)
-  BB22.full.table <- dcast(BB22_full.ab.new, ID.short ~ family, value.var="ab.new")
+  BB22.full.table <- dcast(BB22_full.ab.new, ID.short ~ family, value.var = "ab.new")
   rownames(BB22.full.table) <- BB22.full.table$ID.short
   BB22.full.table[is.na(BB22.full.table)] <- 0
   BB22.full.table <- BB22.full.table[, -1]
   
   # compute measures of distance (or resemblance) and store them in list
   library(vegan)
-  dist <- vegdist(BB22.full.table,method="bray")
+  dist <- vegdist(BB22.full.table,method = "bray")
   lapi.ID[[i]] <- as.numeric(dist[1:1000])
   lapi.ID.mean[[i]] <- mean(dist)
 }
@@ -727,17 +675,20 @@ lapi.ID.df$landscape <- substr(lapi.ID.df$site, 3, 3)
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
 #### FIGURE SXX ----
-ggplot(lapi.ID.df, aes(x=site, y = dist, fill=landscape)) + 
-  geom_boxplot(notch = T) + 
-  xlab("") + ylab("distance") +
+ggplot(lapi.ID.df, aes(x = site, y = dist, fill = landscape)) +
+  geom_boxplot(notch = T) +
+  xlab("") +
+  ylab("distance") +
   ggtitle("B.lapidarius: distance between individuals per site") +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) + 
-  scale_fill_manual(values=palette.landscape, guide = "none") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = palette.landscape, 
+                    guide = "none") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 setwd(output)
-ggsave("./diet pattern/distances/lapi_dist_family.png", width = 10, height = 10)
+ggsave("./diet pattern/distances/lapi_dist_family.png", 
+       width = 10, height = 10)
 setwd(input)
 
 # add mean and SD of distance to a dataframe and export it
@@ -750,7 +701,6 @@ setwd(output)
 write.csv(lapi.ID.df.site, "./diet pattern/distances/statistics_lapi.csv")
 setwd(input)
 
-
 # compare species summary statistics ----
 library(stats)
 library(tidyverse)
@@ -761,7 +711,7 @@ library(ggpubr)
 site.summary <- data.frame(site = rep(lapi.ID.df.site$site, 2))
 site.summary <- site.summary %>%
   mutate(bbspecies = c(rep("B.lapidarius", 16), rep("B.pascuorum", 16)),
-         landscape = as_factor(substring(site, 3,3)),
+         landscape = as_factor(substring(site, 3, 3)),
          mean = c(lapi.ID.df.site$mean.lapi, pasc.ID.df.site$mean.pasc),
          sd = c(lapi.ID.df.site$sd.lapi, pasc.ID.df.site$sd.pasc)) %>%
   mutate(landscape = fct_relevel(landscape, c("R", "U")))
@@ -795,10 +745,10 @@ plot.list[[1]] <-
   ggtitle("B.lapidarius") + # for the main title
   xlab("landscape") +
   ylab("Mean") +
-  scale_x_discrete(labels=c('rural', 'urban')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#E69F00", "#56B4E9"))
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9"))
 
 ### compare the mean of landscape for B.pascuorum ----
 res.aov2 <- site.summary.pasc %>% anova_test(mean ~ landscape)
@@ -816,10 +766,10 @@ plot.list[[2]] <-
   ggtitle("B.pascuorum") + # for the main title
   xlab("landscape") +
   ylab("Mean") +
-  scale_x_discrete(labels=c('rural', 'urban')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#E69F00", "#56B4E9")) 
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9"))
 
 ### compare the mean of species in urban areas ----
 res.aov3 <- site.summary.urban %>% anova_test(mean ~ bbspecies)
@@ -837,10 +787,10 @@ plot.list[[3]] <-
   ggtitle("Urban areas") + # for the main title
   xlab("Bumblebee species") +
   ylab("Mean") +
-  scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#291600","#e0b802")) 
+  scale_x_discrete(labels = c('B.lapidarius', 'B.pascuorum')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#291600", "#e0b802"))
 
 ### compare the mean of species in rural areas ----
 res.aov4 <- site.summary.rural %>% anova_test(mean ~ bbspecies)
@@ -858,10 +808,10 @@ plot.list[[4]] <-
   ggtitle("Rural areas") + # for the main title
   xlab("Bumblebee species") +
   ylab("Mean") +
-  scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#291600","#e0b802")) 
+  scale_x_discrete(labels = c('B.lapidarius', 'B.pascuorum')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio =1 ) +
+  scale_fill_manual(values = c("#291600","#e0b802")) 
 
 
 ### plotting ----
@@ -873,7 +823,8 @@ plot <- ggarrange(plot.list[[1]], plot.list[[2]],
                   plot.list[[3]], plot.list[[4]],
                   ncol = 2, nrow = 2,
                   labels = c("A", "B", "C", "D"))
-ggsave("./diet pattern/distances/summary_stats_mean_overview.png", width = 20, height = 20)
+ggsave("./diet pattern/distances/summary_stats_mean_overview.png", 
+       width = 20, height = 20)
 setwd(input)
 
 
@@ -893,10 +844,10 @@ plot.list[[5]] <-
   ggtitle("B.lapidarius") + # for the main title
   xlab("landscape") +
   ylab("Standard deviation") +
-  scale_x_discrete(labels=c('rural', 'urban')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#E69F00", "#56B4E9"))
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9"))
 
 ### compare the sd of landscape for B.pascuorum ----
 res.aov6 <- site.summary.pasc %>% anova_test(sd ~ landscape)
@@ -914,10 +865,10 @@ plot.list[[6]] <-
   ggtitle("B.pascuorum") + # for the main title
   xlab("landscape") +
   ylab("Standard deviation") +
-  scale_x_discrete(labels=c('rural', 'urban')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#E69F00", "#56B4E9")) 
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9")) 
 
 
 ### compare the sd of species in urban areas ----
@@ -936,10 +887,10 @@ plot.list[[7]] <-
   ggtitle("Urban areas") + # for the main title
   xlab("Bumblebee species") +
   ylab("Standard deviation") +
-  scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#291600","#e0b802")) 
+  scale_x_discrete(labels = c('B.lapidarius', 'B.pascuorum')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#291600","#e0b802")) 
 
 ### compare the sd of species in rural areas ----
 res.aov8 <- site.summary.rural %>% anova_test(sd ~ bbspecies)
@@ -957,10 +908,10 @@ plot.list[[8]] <-
   ggtitle("Rural areas") + # for the main title
   xlab("Bumblebee species") +
   ylab("Standard deviation") +
-  scale_x_discrete(labels=c('B.lapidarius', 'B.pascuorum')) +
-  theme_classic(base_size = 20) +     
-  theme(aspect.ratio=1) +
-  scale_fill_manual(values=c("#291600","#e0b802")) 
+  scale_x_discrete(labels = c('B.lapidarius', 'B.pascuorum')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#291600","#e0b802")) 
 
 ### plotting ----
 #### FIGURE SXX ----
@@ -971,7 +922,8 @@ plot <- ggarrange(plot.list[[5]], plot.list[[6]],
                   plot.list[[7]], plot.list[[8]],
                   ncol = 2, nrow = 2,
                   labels = c("A", "B", "C", "D"))
-ggsave("./diet pattern/distances/summary_stats_sd_overview.png", width = 20, height = 20)
+ggsave("./diet pattern/distances/summary_stats_sd_overview.png", 
+       width = 20, height = 20)
 setwd(input)
 
 # FUNCTIONAL DIVERSITY METRICS BETWEEN SPECIES ----
@@ -1022,22 +974,22 @@ BB22.bb.traits <- BB22.bb.traits %>%
 BB22.sites.meta <- read_csv("BB22_sites_2016.csv")
 
 # import data with functional diversity of plants per site
-BB22.fun.ID.pasc <- read_csv("./FD/FD_package_B.pascuorum_ID.short.csv")%>% 
-  rename_with(.cols = 1, ~"ID")%>%
-  rename_with(.cols = 2, ~"sp_richn")%>%
-  rename_with(.cols = 3, ~"fric")%>%
-  rename_with(.cols = 5, ~"fdiv")%>%
+BB22.fun.ID.pasc <- read_csv("./FD/FD_package_B.pascuorum_ID.short.csv") %>%
+  rename_with(.cols = 1, ~"ID") %>%
+  rename_with(.cols = 2, ~"sp_richn") %>%
+  rename_with(.cols = 3, ~"fric") %>%
+  rename_with(.cols = 5, ~"fdiv") %>%
   rename_with(.cols = 4, ~"feve")
-BB22.fun.ID.pasc <- BB22.fun.ID.pasc%>%
+BB22.fun.ID.pasc <- BB22.fun.ID.pasc %>%
   mutate(species = rep("B.pascuorum", length(BB22.fun.ID.pasc$ID)))
 
-BB22.fun.ID.lapi <- read_csv("./FD/FD_package_B.lapidarius_ID.short.csv")%>% 
-  rename_with(.cols = 1, ~"ID")%>%
-  rename_with(.cols = 2, ~"sp_richn")%>%
-  rename_with(.cols = 3, ~"fric")%>%
-  rename_with(.cols = 5, ~"fdiv")%>%
+BB22.fun.ID.lapi <- read_csv("./FD/FD_package_B.lapidarius_ID.short.csv") %>%
+  rename_with(.cols = 1, ~"ID") %>%
+  rename_with(.cols = 2, ~"sp_richn") %>%
+  rename_with(.cols = 3, ~"fric") %>%
+  rename_with(.cols = 5, ~"fdiv") %>%
   rename_with(.cols = 4, ~"feve")
-BB22.fun.ID.lapi <- BB22.fun.ID.lapi%>%
+BB22.fun.ID.lapi <- BB22.fun.ID.lapi %>%
   mutate(species = rep("B.lapidarius", length(BB22.fun.ID.lapi$ID)))
 
 ### analysis ----
@@ -1060,7 +1012,7 @@ metrics <- colnames(BB22.ID[, c(17:20)]) # plant FD to look at (see file BB22_co
 
 # wilcox test
 library(rstatix)
-plot_list  <- list()
+plot_list <- list()
 w.test.list <- list()
 mean.lapi <- list()
 mean.pasc <- list()
@@ -1073,14 +1025,15 @@ for (j in metrics) {
   mean.lapi[[j]] <- mean(gg.data$value[gg.data$species == "B.lapidarius"], na.rm=TRUE)
   mean.pasc[[j]] <- mean(gg.data$value[gg.data$species == "B.pascuorum"], na.rm=TRUE)
   
-  p <- ggplot(gg.data, aes(x=species, y = value, fill=species)) + 
-    geom_boxplot(notch = T) + 
+  p <- ggplot(gg.data, aes(x = species, y = value, fill = species)) + 
+    geom_boxplot(notch = T) +
     xlab("") +
-    scale_x_discrete(labels=c("B.lapidarius", "B.pascuroum")) +
-    theme_classic(base_size = 20) +     
-    theme(aspect.ratio=1) + 
+    scale_x_discrete(labels = c("B.lapidarius", "B.pascuroum")) +
+    theme_classic(base_size = 20) +
+    theme(aspect.ratio = 1) +
     guides(alpha = "none") +
-    scale_fill_manual(values=c("#291600","#e0b802"), guide = "none") + 
+    scale_fill_manual(values = c("#291600","#e0b802"), 
+                      guide = "none") + 
     labs(subtitle = paste("p = ", w.test$p, sep = ""))
   if (j == "sp_richn") {
     p <- p + ylim(0, 18) + ylab("species richness")
@@ -1103,7 +1056,8 @@ plot <- ggarrange(plot_list[[1]],plot_list[[2]],
                   labels = c("A", "B", "C", "D"))
 annotate_figure(plot, top = text_grob("species richness and funtional diversity between species", 
                                       face = "bold", size = 22))
-ggsave("./diet pattern/FD/FD_box_BBtraits_species.png", width = 6, height = 24)
+ggsave("./diet pattern/FD/FD_box_BBtraits_species.png", 
+       width = 6, height = 24)
 setwd(input)
 
 # export statistics of W tests
@@ -1143,22 +1097,23 @@ for (i in metrics) {
            ggplot(BB22.ID, aes_string(j, i, colour = "bbspecies")) + 
              geom_point() + 
              theme_classic(base_size = 20) + 
-             theme(aspect.ratio=1) + 
+             theme(aspect.ratio = 1) + 
              labs(caption = paste(lab.lapi, "\n", lab.pasc)) +
              geom_smooth(method="lm", se = FALSE) +
-             scale_color_manual(values=c("#291600","#e0b802"), labels=c("B.lapidarius", "B.pascuorum"))
+             scale_color_manual(values = c("#291600","#e0b802"), labels = c("B.lapidarius", "B.pascuorum"))
            )
     x <- x+1
   } # end loop j
   
   setwd(output)
-  plot4 <- ggarrange(a1,a2,a3,a4,a5,a6,a7,a8,a9, # arrange to plots nicely and export them 
-                     ncol = 3, nrow = 3, 
-                     labels = c(LETTERS[1:9]),   
+  plot4 <- ggarrange(a1, a2, a3, a4, a5, a6, a7, a8, a9, # arrange to plots nicely and export them
+                     ncol = 3, nrow = 3,
+                     labels = c(LETTERS[1:9]),
                      common.legend = TRUE)
   annotate_figure(plot4, top = text_grob(paste("comparison of ", i, " and traits between species", sep = ""),
                                          face = "bold", size = 22))
-  ggsave(paste("./diet pattern/FD/FD_corr_", i, "_BBtraits_species.png", sep = ""), width = 15, height = 15)
+  ggsave(paste("./diet pattern/FD/FD_corr_", i, "_BBtraits_species.png", sep = ""),
+         width = 15, height = 15)
   setwd(input)
 } # end loop i
 
