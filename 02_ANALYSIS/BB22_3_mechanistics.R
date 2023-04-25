@@ -1,5 +1,5 @@
 ################################################
-# Foraging patterns of the two bumblebee species
+# Mechansims Shaping the Diet
 # by Simonetta Selva
 #
 # Created: May 2nd, 2023
@@ -120,9 +120,21 @@ library(arm)
 M1.full <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
                 data=BB22.ID)
-fix.check(M1.full) # looks ok
-vif(M1.full) # looks good
+summary(M1.full)
 
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M1.full) # looks ok
+vif <- vif(M1.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+            paste(names(vif)[2], round(vif[2], 3), sep=": "),
+            paste(names(vif)[3], round(vif[3], 3), sep=": "),
+            sep = ", "), sep = " ")
+      )
+      
 # formal test for spatial correlation
 sims <- simulateResiduals(M1.full)
 BB22.ID$site <- as.factor(BB22.ID$site)
@@ -134,14 +146,28 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M1.full.1 <- lmer(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID)
-fix.check(M1.full.1)
 summary(M1.full.1)
-vif(M1.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M1.full.1) # looks ok
+vif <- vif(M1.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M1.full.1, M1.full) # with intertegular_distance better fit than M1.full
 
 # dredging
 # Things to take into account when dredging:
-# 1) epends on the models included in the candidate set. You can’t identify a model as being the 
+# 1) depends on the models included in the candidate set. You can’t identify a model as being the 
 # “best” fit to the data if you didn’t include the model to begin with!
 # 2) The parameter estimates and predictions arising from the “best” model or set of best models 
 # should be biologically meaningful.
@@ -163,9 +189,20 @@ avg.model$sw
 M2.full <- lmer(fric ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
                 data=BB22.ID)
-fix.check(M2.full) # looks ok
-vif(M2.full) # looks good
 summary(M2.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M2.full) # looks ok
+vif <- vif(M2.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M2.full)
@@ -178,9 +215,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M2.full.1 <- lmer(fric ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID) # boundary (singular) fit: see help('isSingular')
-fix.check(M2.full.1)
 summary(M2.full.1)
-vif(M2.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M2.full.1) # looks ok
+vif <- vif(M2.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M2.full.1, M2.full) # with intertegular_distance better fit than M1.full
 
 # dredging
@@ -198,9 +249,20 @@ avg.model$sw
 # built an initial full model based on collinearity 
 M3.full <- lmer(fdiv ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.ID)
-fix.check(M3.full) # looks ok
-vif(M3.full) # looks good
 summary(M3.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M3.full) # looks ok
+vif <- vif(M3.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M3.full)
@@ -213,9 +275,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M3.full.1 <- lmer(fdiv ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID)
-fix.check(M3.full.1)
 summary(M3.full.1)
-vif(M3.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M3.full.1) # looks ok
+vif <- vif(M3.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M3.full.1, M3.full) # with intertegular_distance not a better fit than M1.full
 
 # dredging
@@ -233,9 +309,20 @@ avg.model$sw
 # built an initial full model based on collinearity 
 M4.full <- lmer(feve ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.ID) #boundary (singular) fit: see help('isSingular')
-fix.check(M4.full) # looks ok
-vif(M4.full) # looks good
 summary(M4.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M4.full) # looks ok
+vif <- vif(M4.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M4.full)
@@ -248,9 +335,23 @@ testSpatialAutocorrelation(sims, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta
 M4.full.1 <- lmer(feve ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID) # boundary (singular) fit: see help('isSingular')
-fix.check(M4.full.1)
 summary(M4.full.1)
-vif(M4.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M4.full.1) # looks ok
+vif <- vif(M4.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M4.full.1, M4.full) # with intertegular_distance not a better fit than M1.full
 
 # dredging
@@ -264,14 +365,14 @@ avg.model <- model.avg(top.mod,revised.var = TRUE)
 summary(avg.model)
 avg.model$sw
 
-# # save the last eight produced plots in a selected path
-# plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE);
-# plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
-# file.copy(from = plots.png.paths,
-#           to= paste(output, "/mechanistics/functional diversity/pasc_ID/models", sep = ""))
-# 
-# #clear all plots
-# dev.off(dev.list()["RStudioGD"]) 
+# save the last eight produced plots in a selected path
+plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE);
+plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
+file.copy(from = plots.png.paths,
+          to= paste(output, "/mechanistics/functional diversity/pasc_ID/models", sep = ""))
+
+#clear all plots
+dev.off(dev.list()["RStudioGD"])
 
 ### Model testing ----------------------------------------------------------------------------------------
 
@@ -531,8 +632,20 @@ library(arm)
 M1.full <- lmer(sp_richn ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
                 data=BB22.ID)
+summary(M1.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
 fix.check(M1.full) # looks ok
-vif(M1.full) # looks good
+vif <- vif(M1.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M1.full)
@@ -545,9 +658,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M1.full.1 <- lmer(sp_richn ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID)
-fix.check(M1.full.1)
 summary(M1.full.1)
-vif(M1.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M1.full.1) # looks ok
+vif <- vif(M1.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M1.full.1, M1.full) # with intertegular_distance better fit than M1.full
 
 # dredging
@@ -574,9 +701,20 @@ avg.model$sw
 M2.full <- lmer(fric ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
                 data=BB22.ID)
-fix.check(M2.full) # looks ok
-vif(M2.full) # looks good
 summary(M2.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M2.full) # looks ok
+vif <- vif(M2.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M2.full)
@@ -589,9 +727,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M2.full.1 <- lmer(fric ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID) # boundary (singular) fit: see help('isSingular')
-fix.check(M2.full.1)
 summary(M2.full.1)
-vif(M2.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M2.full.1) # looks ok
+vif <- vif(M2.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M2.full.1, M2.full) # with intertegular_distance better fit than M1.full
 
 # dredging
@@ -609,9 +761,20 @@ avg.model$sw
 # built an initial full model based on collinearity 
 M3.full <- lmer(fdiv ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.ID)
-fix.check(M3.full) # looks ok
-vif(M3.full) # looks good
 summary(M3.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M3.full) # looks ok
+vif <- vif(M3.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M3.full)
@@ -624,9 +787,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M3.full.1 <- lmer(fdiv ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID)
-fix.check(M3.full.1)
 summary(M3.full.1)
-vif(M3.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M3.full.1) # looks ok
+vif <- vif(M3.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M3.full.1, M3.full) # with intertegular_distance not a better fit than M1.full
 
 # dredging
@@ -644,9 +821,20 @@ avg.model$sw
 # built an initial full model based on collinearity 
 M4.full <- lmer(feve ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + (1|landscape),
                 data=BB22.ID) #boundary (singular) fit: see help('isSingular')
-fix.check(M4.full) # looks ok
-vif(M4.full) # looks good
 summary(M4.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M4.full) # looks ok
+vif <- vif(M4.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M4.full)
@@ -659,9 +847,23 @@ testSpatialAutocorrelation(sims, x = BB22.sites.meta$LV95_x, y = BB22.sites.meta
 M4.full.1 <- lmer(feve ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID) # boundary (singular) fit: see help('isSingular')
-fix.check(M4.full.1)
 summary(M4.full.1)
-vif(M4.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M4.full.1) # looks ok
+vif <- vif(M4.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M4.full.1, M4.full) # with intertegular_distance not a better fit than M1.full
 
 # dredging
@@ -676,11 +878,11 @@ summary(avg.model)
 avg.model$sw
 
 
-# # save the last eight produced plots in a selected path
-# plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE);
-# plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
-# file.copy(from = plots.png.paths,
-#           to= paste(output, "/mechanistics/functional diversity/lapi_ID/models", sep = ""))
+# save the last eight produced plots in a selected path
+plots.dir.path <- list.files(tempdir(), pattern="rs-graphics", full.names = TRUE);
+plots.png.paths <- list.files(plots.dir.path, pattern=".png", full.names = TRUE)
+file.copy(from = plots.png.paths,
+          to= paste(output, "/mechanistics/functional diversity/lapi_ID/models", sep = ""))
 
 ### Model testing ----------------------------------------------------------------------------------------
 
