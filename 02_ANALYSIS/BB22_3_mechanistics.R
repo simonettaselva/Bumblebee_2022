@@ -1193,8 +1193,20 @@ library(arm)
 M1.full <- lmer(pvar ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
                 data=BB22.ID)
+summary(M1.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
 fix.check(M1.full) # looks ok
-vif(M1.full) # looks good
+vif <- vif(M1.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M1.full)
@@ -1207,9 +1219,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M1.full.1 <- lmer(pvar ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID)
-fix.check(M1.full.1)
 summary(M1.full.1)
-vif(M1.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M1.full.1) # looks ok
+vif <- vif(M1.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M1.full.1, M1.full) # without intertegular_distance better fit than M1.full
 
 # dredging
@@ -1495,8 +1521,20 @@ library(arm)
 M1.full <- lmer(pvar ~ proboscis_ratio + fore_wing_ratio + corbicula_ratio + 
                   (1|landscape),
                 data=BB22.ID)
+summary(M1.full)
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
 fix.check(M1.full) # looks ok
-vif(M1.full) # looks good
+vif <- vif(M1.full)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
 
 # formal test for spatial correlation
 sims <- simulateResiduals(M1.full)
@@ -1509,9 +1547,23 @@ testSpatialAutocorrelation(simulationOutput, x = BB22.sites.meta$LV95_x, y = BB2
 M1.full.1 <- lmer(pvar ~ intertegular_distance + proboscis_ratio + fore_wing_ratio + 
                     corbicula_ratio + (1|landscape),
                   data=BB22.ID)
-fix.check(M1.full.1)
 summary(M1.full.1)
-vif(M1.full.1) # looks good
+
+# check model assumptions
+par(mar = c(8, 2, 5, 2))
+fix.check(M1.full.1) # looks ok
+vif <- vif(M1.full.1)
+vif # looks good
+mtext(side = 1, line = 6, adj = 0,
+      paste("VIF:",
+            paste(paste(names(vif)[1], round(vif[1], 3), sep=": "),
+                  paste(names(vif)[2], round(vif[2], 3), sep=": "),
+                  paste(names(vif)[3], round(vif[3], 3), sep=": "),
+                  paste(names(vif)[4], round(vif[4], 3), sep=": "),
+                  sep = ", "), sep = " ")
+)
+
+# check which models fits better
 anova(M1.full.1, M1.full) # without intertegular_distance better fit than M1.full
 
 # dredging
