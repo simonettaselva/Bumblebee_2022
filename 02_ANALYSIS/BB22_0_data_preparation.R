@@ -6,8 +6,10 @@
 # Project: Bumblebee 2022
 ################################################
 
-
 # PREPARE FULL DATASET ----
+
+# Here, the data set calles BB22_full is prepared. It is needed for all other scripts
+
 # clear work environment
 rm(list = ls())
 
@@ -109,6 +111,8 @@ write.csv(BB22_full, "BB22_full.csv")
 
 
 # PREPARE SITE PLANT OCCURANCES FROM GBIF AND INFOFLORA ----
+
+# Here, combined data sets form the GBIF and InfoFlora data per site is generated and exported.
 
 # note: the code above needs to have run already!!
 

@@ -6,8 +6,9 @@
 # Project: Bumblebee 2022
 ################################################
 
-# AIM: Characterize the diet composition and structural (taxonomic, functional, and phylogenetic diversity)
-# and chemical properties of the two bumblebee species in both urban and rural landscapes.
+# HYPOTHESIS: The diet of bumblebees in urban areas are more diverse compared 
+# to rural areas and consequent-ly bumblebees in cities will be less dependent 
+# on the presence of certain plant species
 
 # information:
 # 1) every subsection works in itself
@@ -195,7 +196,7 @@ families.region <- BB22.full %>%
   dplyr::summarise(cum.abund = sum(Abundance))
 families.region$family.agg <- as.factor(families.region$family.agg)
 
-### FIGURE S XXX ####
+### FIGURE S5 ####
 # 5. plot families per region
 setwd(output) 
 ggplot(families.region, aes(fill = family.agg, y = cum.abund, x = region)) + 
@@ -230,7 +231,7 @@ ex.nat.region <- BB22.full %>%
   dplyr::summarise(abund = sum(binom.abund))
 ex.nat.region$native_exotic <- as.factor(ex.nat.region$native_exotic)
 
-### FIGURE S XXX ####
+### FIGURE S6c ####
 # 4. plot native/exotic per region    
 setwd(output)
 ggplot(ex.nat.region, aes(fill = native_exotic, y = abund, x = region)) + 
@@ -265,7 +266,7 @@ growth.region <- BB22.full %>%
   dplyr::summarise(abund = sum(binom.abund))
 growth.region$growth_form_category <- as.factor(growth.region$growth_form_category)
 
-### FIGURE S XXX ####
+### FIGURE S6b ####
 # 4. plot growth form per region   
 setwd(output)
 ggplot(growth.region, aes(fill = growth_form_category, y = abund, x = region)) + 
@@ -298,7 +299,7 @@ blossom.region <- BB22.full %>%
   dplyr::summarise(abund = sum(binom.abund))
 blossom.region$structural_blossom_class <- as.factor(blossom.region$structural_blossom_class)
 
-### FIGURE S XXX ####
+### FIGURE S6a ####
 # 4. plot blossom class per region
 setwd(output)
 ggplot(blossom.region, aes(fill = structural_blossom_class, y = abund, x = region)) + 
@@ -596,7 +597,7 @@ pasc.ID.df$landscape <- substr(pasc.ID.df$site, 3, 3)
 
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
-#### FIGURE SXX ----
+#### FIGURE S7 ----
 ggplot(pasc.ID.df, aes(x = site, y = dist, fill = landscape)) +
   geom_boxplot(notch = T) +
   xlab("") +
@@ -674,7 +675,7 @@ lapi.ID.df$landscape <- substr(lapi.ID.df$site, 3, 3)
 
 palette.landscape <- c("#E69F00", "#56B4E9") #create color palette for landscape
 
-#### FIGURE SXX ----
+#### FIGURE S7 ----
 ggplot(lapi.ID.df, aes(x = site, y = dist, fill = landscape)) +
   geom_boxplot(notch = T) +
   xlab("") +
@@ -738,6 +739,8 @@ pwc1
 
 # Show adjusted p-values
 pwc1 <- pwc1 %>% add_xy_position(x = "landscape")
+
+#### FIGURE S8a ----
 plot.list[[1]] <-
   ggboxplot(site.summary.lapi, x = "landscape", y = "mean", fill = "landscape", notch = TRUE) +
   stat_pvalue_manual(pwc1, label = "p.adj", tip.length = 0, step.increase = 0.1) +
@@ -759,6 +762,8 @@ pwc2
 
 # Show adjusted p-values
 pwc2 <- pwc2 %>% add_xy_position(x = "landscape")
+
+#### FIGURE S8b ----
 plot.list[[2]] <-
   ggboxplot(site.summary.pasc, x = "landscape", y = "mean", fill = "landscape", notch = TRUE) +
   stat_pvalue_manual(pwc2, label = "p.adj", tip.length = 0, step.increase = 0.1) +
@@ -771,6 +776,64 @@ plot.list[[2]] <-
   theme(aspect.ratio = 1) +
   scale_fill_manual(values = c("#E69F00", "#56B4E9"))
 
+### compare the sd of landscape for B.lapidarius ----
+res.aov5 <- site.summary.lapi %>% anova_test(sd ~ landscape)
+res.aov5
+pwc5 <- site.summary.lapi %>%
+  pairwise_t_test(sd ~ landscape, p.adjust.method = "bonferroni")
+pwc5
+
+# Show adjusted p-values
+pwc5 <- pwc5 %>% add_xy_position(x = "landscape")
+
+#### FIGURE S8c ----
+plot.list[[3]] <-
+  ggboxplot(site.summary.lapi, x = "landscape", y = "sd", fill = "landscape", notch = TRUE) +
+  stat_pvalue_manual(pwc5, label = "p.adj", tip.length = 0, step.increase = 0.1) +
+  labs(subtitle = get_test_label(res.aov5, detailed = TRUE)) +
+  ggtitle("B.lapidarius") + # for the main title
+  xlab("landscape") +
+  ylab("Standard deviation") +
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9"))
+### compare the sd of landscape for B.pascuorum ----
+res.aov6 <- site.summary.pasc %>% anova_test(sd ~ landscape)
+res.aov6
+pwc6 <- site.summary.pasc %>%
+  pairwise_t_test(sd ~ landscape, p.adjust.method = "bonferroni")
+pwc6
+
+# Show adjusted p-values
+pwc6 <- pwc6 %>% add_xy_position(x = "landscape")
+
+#### FIGURE S8d ----
+plot.list[[4]] <-
+  ggboxplot(site.summary.pasc, x = "landscape", y = "sd", fill = "landscape", notch = TRUE) +
+  stat_pvalue_manual(pwc6, label = "p.adj", tip.length = 0, step.increase = 0.1) +
+  labs(subtitle = get_test_label(res.aov6, detailed = TRUE)) +
+  ggtitle("B.pascuorum") + # for the main title
+  xlab("landscape") +
+  ylab("Standard deviation") +
+  scale_x_discrete(labels = c('rural', 'urban')) +
+  theme_classic(base_size = 20) +
+  theme(aspect.ratio = 1) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9")) 
+
+### plotting ----
+#### FIGURE S8 ----
+
+# arrange them into one file to export
+setwd(output)
+plot <- ggarrange(plot.list[[1]], plot.list[[2]],
+                  plot.list[[3]], plot.list[[4]],
+                  ncol = 2, nrow = 2,
+                  labels = c("A", "B", "C", "D"))
+ggsave("./diet pattern/distances/summary_stats_mean_overview.png", 
+       width = 20, height = 20)
+setwd(input)
+
 ### compare the mean of species in urban areas ----
 res.aov3 <- site.summary.urban %>% anova_test(mean ~ bbspecies)
 res.aov3
@@ -780,7 +843,9 @@ pwc3
 
 # Show adjusted p-values
 pwc3 <- pwc3 %>% add_xy_position(x = "bbspecies")
-plot.list[[3]] <-
+
+#### FIGURE S9a ----
+plot.list[[5]] <-
   ggboxplot(site.summary.urban, x = "bbspecies", y = "mean", fill = "bbspecies", notch = TRUE) +
   stat_pvalue_manual(pwc3, label = "p.adj", tip.length = 0, step.increase = 0.1) +
   labs(subtitle = get_test_label(res.aov3, detailed = TRUE)) +
@@ -801,7 +866,9 @@ pwc4
 
 # Show adjusted p-values
 pwc4 <- pwc4 %>% add_xy_position(x = "bbspecies")
-plot.list[[4]] <-
+
+#### FIGURE S9b ----
+plot.list[[6]] <-
   ggboxplot(site.summary.rural, x = "bbspecies", y = "mean", fill = "bbspecies", notch = TRUE) +
   stat_pvalue_manual(pwc4, label = "p.adj", tip.length = 0, step.increase = 0.1) +
   labs(subtitle = get_test_label(res.aov4, detailed = TRUE)) +
@@ -813,64 +880,6 @@ plot.list[[4]] <-
   theme(aspect.ratio =1 ) +
   scale_fill_manual(values = c("#291600","#e0b802")) 
 
-
-### plotting ----
-#### FIGURE SXX ----
-
-# arrange them into one file to export
-setwd(output)
-plot <- ggarrange(plot.list[[1]], plot.list[[2]],
-                  plot.list[[3]], plot.list[[4]],
-                  ncol = 2, nrow = 2,
-                  labels = c("A", "B", "C", "D"))
-ggsave("./diet pattern/distances/summary_stats_mean_overview.png", 
-       width = 20, height = 20)
-setwd(input)
-
-
-### compare the sd of landscape for B.lapidarius ----
-res.aov5 <- site.summary.lapi %>% anova_test(sd ~ landscape)
-res.aov5
-pwc5 <- site.summary.lapi %>%
-  pairwise_t_test(sd ~ landscape, p.adjust.method = "bonferroni")
-pwc5
-
-# Show adjusted p-values
-pwc5 <- pwc5 %>% add_xy_position(x = "landscape")
-plot.list[[5]] <-
-  ggboxplot(site.summary.lapi, x = "landscape", y = "sd", fill = "landscape", notch = TRUE) +
-  stat_pvalue_manual(pwc5, label = "p.adj", tip.length = 0, step.increase = 0.1) +
-  labs(subtitle = get_test_label(res.aov5, detailed = TRUE)) +
-  ggtitle("B.lapidarius") + # for the main title
-  xlab("landscape") +
-  ylab("Standard deviation") +
-  scale_x_discrete(labels = c('rural', 'urban')) +
-  theme_classic(base_size = 20) +
-  theme(aspect.ratio = 1) +
-  scale_fill_manual(values = c("#E69F00", "#56B4E9"))
-
-### compare the sd of landscape for B.pascuorum ----
-res.aov6 <- site.summary.pasc %>% anova_test(sd ~ landscape)
-res.aov6
-pwc6 <- site.summary.pasc %>%
-  pairwise_t_test(sd ~ landscape, p.adjust.method = "bonferroni")
-pwc6
-
-# Show adjusted p-values
-pwc6 <- pwc6 %>% add_xy_position(x = "landscape")
-plot.list[[6]] <-
-  ggboxplot(site.summary.pasc, x = "landscape", y = "sd", fill = "landscape", notch = TRUE) +
-  stat_pvalue_manual(pwc6, label = "p.adj", tip.length = 0, step.increase = 0.1) +
-  labs(subtitle = get_test_label(res.aov6, detailed = TRUE)) +
-  ggtitle("B.pascuorum") + # for the main title
-  xlab("landscape") +
-  ylab("Standard deviation") +
-  scale_x_discrete(labels = c('rural', 'urban')) +
-  theme_classic(base_size = 20) +
-  theme(aspect.ratio = 1) +
-  scale_fill_manual(values = c("#E69F00", "#56B4E9")) 
-
-
 ### compare the sd of species in urban areas ----
 res.aov7 <- site.summary.urban %>% anova_test(sd ~ bbspecies)
 res.aov7
@@ -880,6 +889,7 @@ pwc7
 
 # Show adjusted p-values
 pwc7 <- pwc7 %>% add_xy_position(x = "bbspecies")
+#### FIGURE S9c ----
 plot.list[[7]] <-
   ggboxplot(site.summary.urban, x = "bbspecies", y = "sd", fill = "bbspecies", notch = TRUE) +
   stat_pvalue_manual(pwc7, label = "p.adj", tip.length = 0, step.increase = 0.1) +
@@ -890,7 +900,7 @@ plot.list[[7]] <-
   scale_x_discrete(labels = c('B.lapidarius', 'B.pascuorum')) +
   theme_classic(base_size = 20) +
   theme(aspect.ratio = 1) +
-  scale_fill_manual(values = c("#291600","#e0b802")) 
+  scale_fill_manual(values = c("#291600","#e0b802"))
 
 ### compare the sd of species in rural areas ----
 res.aov8 <- site.summary.rural %>% anova_test(sd ~ bbspecies)
@@ -901,6 +911,8 @@ pwc8
 
 # Show adjusted p-values
 pwc8 <- pwc8 %>% add_xy_position(x = "bbspecies")
+
+#### FIGURE S9d ----
 plot.list[[8]] <-
   ggboxplot(site.summary.rural, x = "bbspecies", y = "sd", fill = "bbspecies", notch = TRUE) +
   stat_pvalue_manual(pwc8, label = "p.adj", tip.length = 0, step.increase = 0.1) +
@@ -913,8 +925,9 @@ plot.list[[8]] <-
   theme(aspect.ratio = 1) +
   scale_fill_manual(values = c("#291600","#e0b802")) 
 
+
 ### plotting ----
-#### FIGURE SXX ----
+#### FIGURE S9 ----
 
 # arrange them into one file to export
 setwd(output)
@@ -1072,7 +1085,7 @@ setwd(input)
 # explore relationships
 library(nlme)
 
-#### FIGURE SXX ----
+#### FIGURES SUPPLEMENT SECTION "Bumblebee Morphology and Diet: Species" ----
 # preparation for caption string
 fmt <- "%s: adj.R^2 = %.3f, p = %.3f"
 

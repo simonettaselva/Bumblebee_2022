@@ -6,8 +6,8 @@
 # Project: Bumblebee 2022
 ################################################
 
-# AIM: Characterize the diet composition and structural (taxonomic, functional, and phylogenetic diversity) 
-# and chemical properties of the two bumblebee species in both urban and rural landscapes.
+# Here, all Functional Diversity Metrics and the Phylogenetic Species Variability is calculated 
+# per individual bumblebee or if wanted per site. They are needed in all other script. 
 
 # information: 
 # 1) every subsection works in itself
@@ -66,6 +66,8 @@ res <- rcorr(as.matrix(BB22_full.numeric[,c(12:18)]),
              type="pearson")
 M <- cor(BB22_full.numeric[,c(12:18)], 
          use = "complete.obs")
+
+### FIGURE S3 ----
 corrplot::corrplot(M, type="upper", order="hclust", 
                    p.mat = res$P, sig.level = 0.01, tl.col = "black",
                    col = COL2('RdBu', 10)) # plot correlation with p-values

@@ -6,6 +6,9 @@
 # Project: Bumblebee 2022
 ################################################
 
+# HYPOTHESIS: Bumblebees with more generalistic feeding habits, characterised 
+# by shorter tongue length, will visit a more diverse range of plant species
+
 # information: 
 # 1) every subsection works in itself
 # 2) all the plots not used in the main work are in the script but # are used to not print them
@@ -99,7 +102,8 @@ M <- cor(BB22.ID[, 7:15], use = "complete.obs") # subset data; only explanatory 
 p.mat <- cor.mtest(BB22.ID[, 7:15])
 head(p.mat)
 
-#correlation plot
+#### FIGURE S4 ----
+# correlation plot
 corrplot::corrplot(M, type="upper", order="hclust", 
                    p.mat = p.mat$p, sig.level = 0.01, tl.col = "black",
                    col = COL2('RdBu', 10)) # plot correlation with p-values
@@ -611,6 +615,7 @@ M <- cor(BB22.ID[, 7:15], use = "complete.obs") # subset data; only explanatory 
 p.mat <- cor.mtest(BB22.ID[, 7:15])
 head(p.mat)
 
+#### FIGURE S4 ----
 #correlation plot
 corrplot::corrplot(M, type="upper", order="hclust", 
                    p.mat = p.mat$p, sig.level = 0.01, tl.col = "black",

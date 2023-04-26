@@ -6,8 +6,8 @@
 # Project: Bumblebee 2022
 ################################################
 
-# AIM: Characterize the diet composition and structural (taxonomic, functional, and phylogenetic diversity) 
-# and chemical properties of the two bumblebee species in both urban and rural landscapes.
+# HYPOTHESIS: The bumblebee's diet will change based on the availability of 
+# plants in their landscape
 
 # information: 
 # 1) every subsection works in itself
@@ -101,6 +101,7 @@ for (j in resp) {
   plot_list[[j]] <- p
 }
 
+#### FIGURE 4b ----
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
@@ -126,6 +127,8 @@ traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for l
 metrics <- colnames(BB22.ID[, c(16:19)]) # plant FD to look at (see file BB22_compute_FD); prepare for loop
 
 library(nlme)
+
+#### FIGURES SUPPLEMENT SECTION "Bumblebee Morphology and Diet: Landscape" ----
 
 # perform loop to output plots per relationship summarized per FD
 # preparation for caption string
@@ -232,6 +235,7 @@ for (j in resp) {
   plot_list[[j]] <- p
 }
 
+#### FIGURE 4a ----
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]], plot_list[[2]],
@@ -252,6 +256,7 @@ setwd(output)
 write.csv(w.stats.lapi,"./landscape comparison/functional diversity/lapi_ID/FD_lapi_W_BBtraits_species.csv")
 setwd(input)
 
+#### FIGURES SUPPLEMENT SECTION "Bumblebee Morphology and Diet: Landscape" ----
 # plot the relationship of plants traits of one site and bumblebee traits of one site
 traits <- colnames(BB22.ID[, 7:15]) # bumblebee traits to look at; prepare for loop
 metrics <- colnames(BB22.ID[, c(16:19)]) # plant FD to look at (see file BB22_compute_FD); prepare for loop
@@ -401,6 +406,7 @@ for (j in metrics) {
   plot_list[[j]] <- p
 }
 
+#### FIGURE 4b ----
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
@@ -533,6 +539,7 @@ for (j in metrics) {
   plot_list[[j]] <- p
 }
 
+#### FIGURE 4a ----
 # arrange them into one file to export
 setwd(output)
 plot <- ggarrange(plot_list[[1]],plot_list[[2]],
@@ -939,7 +946,7 @@ a3 <- ggcorrplot(pasc.site[["family"]][axis.order.site, axis.order.site],
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-##### FIGURE SXX ----
+##### FIGURE S10 ----
 # arrange them into one file to export
 setwd(output)
 plot1 <- ggarrange(a1, a2, a3, ncol = 1, nrow = 3,
@@ -1220,7 +1227,7 @@ b3 <- ggcorrplot(pasc.region[["family"]][axis.order.reg, axis.order.reg],
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-##### FIGURE 5a ----
+##### FIGURE 5 ----
 # arrange them into one file to export
 setwd(output)
 plot2 <- ggarrange(b1,b2,b3, ncol = 1, nrow = 3,
@@ -1537,7 +1544,7 @@ c3 <- ggcorrplot(lapi.site[["family"]][axis.order.site, axis.order.site],
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-##### FIGURE SXX ----
+##### FIGURE S10 ----
 # arrange them into one file to export
 setwd(output)
 plot3 <- ggarrange(c1,c2,c3, ncol = 1, nrow = 3,
@@ -1816,7 +1823,7 @@ d3 <- ggcorrplot(lapi.region[["family"]][axis.order.reg, axis.order.reg],
   theme(axis.text.x = element_text(angle = 90)) +
   scale_fill_gradient2(limit = c(0,1), low = "white", high =  "#07575B")
 
-##### FIGURE 5b ----
+##### FIGURE 5 ----
 # arrange them into one file to export
 setwd(output)
 plot4 <- ggarrange(d1,d2,d3, ncol = 1, nrow = 3,
